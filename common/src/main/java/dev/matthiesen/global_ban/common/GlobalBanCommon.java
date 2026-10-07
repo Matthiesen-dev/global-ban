@@ -21,7 +21,6 @@ public final class GlobalBanCommon extends AbstractCommonMod {
 
     public void initialize() {
         super.initialize();
-
         createInfoLog("Initialized");
     }
 }
