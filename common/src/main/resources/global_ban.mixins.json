@@ -10,9 +10,7 @@
     "PlayerListMixin",
     "overrides.BanCommandMixin",
     "overrides.BanIpCommandMixin",
-    "overrides.BanListCommandMixin",
     "overrides.KickCommandMixin",
-    "overrides.PardonCommandMixin",
-    "overrides.PardonIpCommandMixin"
+    "overrides.PardonCommandMixin"
   ]
 }
