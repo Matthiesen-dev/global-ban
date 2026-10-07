@@ -9,7 +9,6 @@ on:
     types: [ published ]
 
 # The dependencies below correspond to:
-# - Cobblemon (MdwFAVRL)
 # - Matthiesen Core (sqEZOmQo)
 ## Fabric Only:
 # - Fabric API (P7dR8mSH) - Required
@@ -31,7 +30,6 @@ jobs:
       modrinth_id: "jUIQUWpJ"
       modrinth_dependencies: |-
         [
-          {"project_id":"MdwFAVRL","dependency_type":"required"},
           {"project_id":"sqEZOmQo","dependency_type":"required"}
         ]
       modrinth_fabric_dependencies: |-
