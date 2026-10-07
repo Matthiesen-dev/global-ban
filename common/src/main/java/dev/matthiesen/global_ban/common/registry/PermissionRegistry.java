@@ -21,7 +21,9 @@ public final class PermissionRegistry {
     public static final Permission COMMAND_ROOT_PERMISSION = register("command.global_ban",
             GlobalBanConfig.PERMISSIONS_CONFIG.commands_root.get());
     public static final Permission COMMAND_RELOAD_PERMISSION = register("command.global_ban.reload",
-            GlobalBanConfig.PERMISSIONS_CONFIG.commands_reload.get());
+            GlobalBanConfig.PERMISSIONS_CONFIG.commands_root_reload.get());
+    public static final Permission COMMAND_IMPORT_PERMISSION = register("command.global_ban.import",
+            GlobalBanConfig.PERMISSIONS_CONFIG.commands_root_import.get());
     public static final Permission COMMAND_KICK_PERMISSION = register("command.kick",
             GlobalBanConfig.PERMISSIONS_CONFIG.commands_kick.get());
     public static final Permission COMMAND_BAN_PERMISSION = register("command.ban",

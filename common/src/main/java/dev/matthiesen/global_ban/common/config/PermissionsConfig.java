@@ -13,7 +13,8 @@ public final class PermissionsConfig {
 
     // Command Permissions
     public ModConfigSpec.EnumValue<PermissionLevel> commands_root;
-    public ModConfigSpec.EnumValue<PermissionLevel> commands_reload;
+    public ModConfigSpec.EnumValue<PermissionLevel> commands_root_reload;
+    public ModConfigSpec.EnumValue<PermissionLevel> commands_root_import;
     public ModConfigSpec.EnumValue<PermissionLevel> commands_kick;
     public ModConfigSpec.EnumValue<PermissionLevel> commands_ban;
     public ModConfigSpec.EnumValue<PermissionLevel> commands_ban_ip;
@@ -42,8 +43,10 @@ public final class PermissionsConfig {
 
         commands_root = builder.comment("Permission level required to use the /global-bans command")
                 .defineEnum("root", PermissionLevel.ALL_COMMANDS);
-        commands_reload = builder.comment("Permission level required to use the /global-bans reload command")
+        commands_root_reload = builder.comment("Permission level required to use the /global-bans reload command")
                 .defineEnum("reload", PermissionLevel.ALL_COMMANDS);
+        commands_root_import = builder.comment("Permission level required to use the /global-bans import command")
+                .defineEnum("import", PermissionLevel.ALL_COMMANDS);
         commands_kick = builder.comment("Permission level required to use the /kick command")
                 .defineEnum("kick", PermissionLevel.ALL_COMMANDS);
         commands_ban = builder.comment("Permission level required to use the /ban command")

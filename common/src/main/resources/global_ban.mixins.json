@@ -8,6 +8,7 @@
   },
   "mixins": [
     "PlayerListMixin",
+    "StoredUserEntryAccessor",
     "overrides.BanCommandMixin",
     "overrides.BanIpCommandMixin",
     "overrides.BanListCommandMixin",
