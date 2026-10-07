@@ -7,6 +7,7 @@ import com.mojang.authlib.GameProfile;
 import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
 import dev.matthiesen.global_ban.common.def.PunishmentRecord;
 import dev.matthiesen.global_ban.common.def.PunishmentType;
+import dev.matthiesen.global_ban.common.registry.CommandRegistry;
 import dev.matthiesen.global_ban.common.registry.PermissionRegistry;
 import dev.matthiesen.global_ban.common.utils.Helpers;
 import dev.matthiesen.libs.faststats.Token;
@@ -63,6 +64,7 @@ public final class GlobalBanCommon extends AbstractCommonMod {
         registerModConfig(MOD_ID, ModConfigType.STARTUP, GlobalBanConfig.PERMISSIONS_SPEC, modConfig("permissions"));
 
         PermissionRegistry.init();
+        CommandRegistry.init();
 
         PlatformEvents.SERVER_STARTING.subscribe(this::onServerStarting);
         PlatformEvents.SERVER_STARTED.subscribe(this::onServerStarted);
