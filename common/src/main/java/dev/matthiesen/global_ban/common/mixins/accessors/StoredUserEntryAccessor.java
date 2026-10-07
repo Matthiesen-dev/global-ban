@@ -1,4 +1,4 @@
-package dev.matthiesen.global_ban.common.mixins;
+package dev.matthiesen.global_ban.common.mixins.accessors;
 
 import net.minecraft.server.players.StoredUserEntry;
 import org.spongepowered.asm.mixin.Mixin;

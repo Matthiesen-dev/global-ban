@@ -5,7 +5,7 @@ import dev.matthiesen.global_ban.common.GlobalBanCommon;
 import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
 import dev.matthiesen.global_ban.common.def.PunishmentRecord;
 import dev.matthiesen.global_ban.common.def.PunishmentType;
-import dev.matthiesen.global_ban.common.mixins.StoredUserEntryAccessor;
+import dev.matthiesen.global_ban.common.mixins.accessors.StoredUserEntryAccessor;
 import net.minecraft.Util;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.players.IpBanList;
