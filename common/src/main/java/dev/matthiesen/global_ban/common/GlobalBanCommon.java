@@ -248,6 +248,8 @@ public final class GlobalBanCommon extends AbstractCommonMod {
                     }
                 }
             }
+        } else {
+            createInfoLog("Punishment expired: " + record.toString());
         }
         GlobalBanConfig.removePunishment(record);
     }

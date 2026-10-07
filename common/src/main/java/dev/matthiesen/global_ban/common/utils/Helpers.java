@@ -26,18 +26,12 @@ public final class Helpers {
         for (Map.Entry<String, String> entry : placeholders.entrySet()) {
             message = message.replace(entry.getKey(), entry.getValue());
         }
-
         return new ProcessedMessage(message);
     }
 
     public record ProcessedMessage(String message) {
         public Component toComponent() {
             return GlobalBanCommon.INSTANCE.getTextParserManager().getTextParser(GlobalBanConfig.SERVER_CONFIG.textParser.get()).parse(message);
-        }
-
-        public String asString() {
-            Component component = toComponent();
-            return component.getString();
         }
     }
 }
