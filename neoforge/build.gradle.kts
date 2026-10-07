@@ -34,10 +34,6 @@ dependencies {
     modImplementation(libs.bundles.neoforgeModImplementation)
     modImplementation(libs.bundles.neoforgeModImplementationNoTransitive) { isTransitive = false }
 
-    forgeRuntimeLibrary(libs.kotlinforforge) {
-        exclude("net.neoforged.fancymodloader", "loader")
-    }
-
     implementation(project(":common", configuration = "namedElements"))
     "developmentNeoForge"(project(":common", configuration = "namedElements")) {
         isTransitive = false
