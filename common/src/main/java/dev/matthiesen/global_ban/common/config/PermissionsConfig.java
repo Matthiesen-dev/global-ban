@@ -8,6 +8,8 @@ public final class PermissionsConfig {
     // Permissions
     public ModConfigSpec.EnumValue<PermissionLevel> seeKnownAccounts;
     public ModConfigSpec.EnumValue<PermissionLevel> seeBans;
+    public ModConfigSpec.EnumValue<PermissionLevel> canBanAdmins;
+    public ModConfigSpec.EnumValue<PermissionLevel> blockPunishments;
 
     // Command Permissions
 
@@ -19,6 +21,10 @@ public final class PermissionsConfig {
                 .defineEnum("seeKnownAccounts", PermissionLevel.ALL_COMMANDS);
         seeBans = builder.comment("Permission level required to see bans in chat when a player is banned")
                 .defineEnum("seeBans", PermissionLevel.ALL_COMMANDS);
+        canBanAdmins = builder.comment("Permission level required to ban admins")
+                .defineEnum("canBanAdmins", PermissionLevel.ALL_COMMANDS);
+        blockPunishments = builder.comment("Permission level required to block punishments")
+                .defineEnum("blockPunishments", PermissionLevel.ALL_COMMANDS);
 
         builder.pop(); // permissions
     }

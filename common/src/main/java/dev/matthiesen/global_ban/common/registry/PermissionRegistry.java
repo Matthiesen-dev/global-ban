@@ -13,6 +13,10 @@ public final class PermissionRegistry {
             GlobalBanConfig.PERMISSIONS_CONFIG.seeKnownAccounts.get());
     public static final Permission SEE_BANS_PERMISSION = register("see_bans",
             GlobalBanConfig.PERMISSIONS_CONFIG.seeBans.get());
+    public static final Permission CAN_BAN_ADMINS_PERMISSION = register("can_ban_admins",
+            GlobalBanConfig.PERMISSIONS_CONFIG.canBanAdmins.get());
+    public static final Permission BLOCK_PUNISHMENTS_PERMISSION = register("block_punishments",
+            GlobalBanConfig.PERMISSIONS_CONFIG.blockPunishments.get());
 
     public static void init() {}
 
