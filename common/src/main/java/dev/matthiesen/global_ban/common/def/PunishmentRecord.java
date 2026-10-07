@@ -2,11 +2,14 @@ package dev.matthiesen.global_ban.common.def;
 
 import com.electronwill.nightconfig.core.Config;
 import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
+import dev.matthiesen.global_ban.common.utils.Helpers;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public record PunishmentRecord(
@@ -109,6 +112,16 @@ public record PunishmentRecord(
         return config;
     }
 
+    public static PunishmentRecord create(ServerPlayer punished, CommandSourceStack punisher, PunishmentType type, long duration) {
+        return create(
+                punished,
+                punisher,
+                type,
+                duration,
+                GlobalBanConfig.SERVER_CONFIG.defaultBanReason.get()
+        );
+    }
+
     public static PunishmentRecord create(ServerPlayer punished, CommandSourceStack punisher, PunishmentType type, long duration, String reason) {
         return create(
                 punished.getUUID(),
@@ -118,6 +131,18 @@ public record PunishmentRecord(
                 type,
                 duration,
                 reason
+        );
+    }
+
+    public static PunishmentRecord create(UUID uuid, String ipAddress, String displayName, CommandSourceStack punisher, PunishmentType type, long duration) {
+        return create(
+                uuid,
+                ipAddress,
+                displayName,
+                punisher,
+                type,
+                duration,
+                GlobalBanConfig.SERVER_CONFIG.defaultBanReason.get()
         );
     }
 
@@ -207,19 +232,42 @@ public record PunishmentRecord(
         }
     }
 
-    public String getDisconnectMessage() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("You are ").append(this.type.name).append("ed");
-        if (this.reason != null && !this.reason.isEmpty()) {
-            sb.append(" for: ").append(this.reason);
-        }
-        if (this.isTemporary()) {
-            sb.append("\nThis punishment will expire in: ").append(this.getFormattedExpirationTime());
-        }
-        return sb.toString();
+    public Component getDisconnectScreenComponent() {
+        var message = switch (this.type) {
+            case BAN -> this.isTemporary() ? GlobalBanConfig.SERVER_CONFIG.messages_tempBanScreen.get() : GlobalBanConfig.SERVER_CONFIG.messages_banScreen.get();
+            case IP_BAN -> this.isTemporary() ? GlobalBanConfig.SERVER_CONFIG.messages_tempIpBanScreen.get() : GlobalBanConfig.SERVER_CONFIG.messages_ipBanScreen.get();
+            case KICK -> GlobalBanConfig.SERVER_CONFIG.messages_kickScreen.get();
+        };
+        String singleStringMessage = String.join("\n", message);
+        var parsed = Helpers.processPlaceholders(singleStringMessage, this.getPlaceholders());
+        return parsed.toComponent();
     }
 
-    public Component getDisconnectChatMessage() {
-        return Component.literal(this.getDisconnectMessage());
+    public Component getChatMessage() {
+        var message = switch (this.type) {
+            case BAN -> this.isTemporary() ? GlobalBanConfig.SERVER_CONFIG.messages_tempBanChatMessage.get() : GlobalBanConfig.SERVER_CONFIG.messages_banChatMessage.get();
+            case IP_BAN -> this.isTemporary() ? GlobalBanConfig.SERVER_CONFIG.messages_tempIpBanChatMessage.get() : GlobalBanConfig.SERVER_CONFIG.messages_ipBanChatMessage.get();
+            case KICK -> GlobalBanConfig.SERVER_CONFIG.messages_kickMessage.get();
+        };
+        String singleStringMessage = String.join("\n", message);
+        var parsed = Helpers.processPlaceholders(singleStringMessage, this.getPlaceholders());
+        return parsed.toComponent();
+    }
+
+    public Map<String, String> getPlaceholders() {
+        HashMap<String, String> placeholders = new HashMap<>();
+
+        placeholders.put("%operator%", this.punisherDisplayName);
+        placeholders.put("%operator_uuid%", this.punisherUuid.toString());
+        placeholders.put("%player%", this.playerDisplayName);
+        placeholders.put("%player_uuid%", this.playerUuid.toString());
+        placeholders.put("%reason%", this.reason);
+        placeholders.put("%type%", this.type.name);
+        placeholders.put("%date%", this.getFormattedDate());
+        placeholders.put("%expiration_date%", this.getFormattedExpirationDate());
+        placeholders.put("%expiration_time%", this.getFormattedExpirationTime());
+        placeholders.put("%server_uuid%", this.serverUuid.toString());
+
+        return placeholders;
     }
 }

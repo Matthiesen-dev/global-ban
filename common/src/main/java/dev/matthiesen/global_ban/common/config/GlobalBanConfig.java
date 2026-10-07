@@ -15,6 +15,9 @@ public final class GlobalBanConfig {
     public static final Punishments PUNISHMENTS;
     public static final ModConfigSpec PUNISHMENTS_SPEC;
 
+    public static final PermissionsConfig PERMISSIONS_CONFIG;
+    public static final ModConfigSpec PERMISSIONS_SPEC;
+
     static {
         Pair<ServerConfig, ModConfigSpec> serverSpecPair = new ModConfigSpec.Builder().configure(ServerConfig::new);
         SERVER_CONFIG = serverSpecPair.getLeft();
@@ -23,6 +26,10 @@ public final class GlobalBanConfig {
         Pair<Punishments, ModConfigSpec> punishmentsPair = new ModConfigSpec.Builder().configure(Punishments::new);
         PUNISHMENTS = punishmentsPair.getLeft();
         PUNISHMENTS_SPEC = punishmentsPair.getRight();
+
+        Pair<PermissionsConfig, ModConfigSpec> permissionsSpecPair = new ModConfigSpec.Builder().configure(PermissionsConfig::new);
+        PERMISSIONS_CONFIG = permissionsSpecPair.getLeft();
+        PERMISSIONS_SPEC = permissionsSpecPair.getRight();
     }
 
     private static List<PunishmentRecord> punishmentCache = null;

@@ -63,7 +63,7 @@ public class PlayerListMixin {
                 PunishmentRecord newPunishment = PunishmentRecord.punishAlt(gameProfile.getId(), gameProfile.getName(), punishment);
                 GlobalBanCommon.INSTANCE.punishPlayer(newPunishment);
             }
-            cir.setReturnValue(punishment.getDisconnectChatMessage());
+            cir.setReturnValue(punishment.getDisconnectScreenComponent());
         }
     }
 }
