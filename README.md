@@ -2,7 +2,6 @@
 
 <div>
   <img src="https://mods.matthiesen.dev/badges/matthiesenCore.svg" alt="Matthiesen Core">
-  <img src="https://mods.matthiesen.dev/badges/cobblemon.svg" alt="Cobblemon">
 </div>
 
 Server side ban management plugin, sync multiple servers, or connect multiple communities together.
@@ -12,7 +11,6 @@ TODO
 ## Requirements
 
 - [Matthiesen Core](https://modrinth.com/mod/matthiesen-core)
-- [Cobblemon](https://modrinth.com/mod/cobblemon)
 - [Fabric API](https://modrinth.com/mod/fabric-api) (Fabric only)
 - [Forge Config API Port](https://modrinth.com/mod/forge-config-api-port) (Fabric only)
 
@@ -22,9 +20,9 @@ Documentation for this mod can be found at [mods.matthiesen.dev](https://mods.ma
 
 ## Version Compatibility
 
-| Minecraft Version | Matthiesen Core Version | Cobblemon Version | Mod Version |
-|-------------------|-------------------------|-------------------|-------------|
-| 1.21.1            | 1.x.x                   | 1.8.0             | 1.x.x       |
+| Minecraft Version | Matthiesen Core Version | Mod Version |
+|-------------------|-------------------------|-------------|
+| 1.21.1            | 1.x.x                   | 1.x.x       |
 
 ## FastStats Metrics
 

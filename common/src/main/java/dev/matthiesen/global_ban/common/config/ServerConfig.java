@@ -11,9 +11,7 @@ public final class ServerConfig {
     public ModConfigSpec.ConfigValue<String> serverUUID;
     public ModConfigSpec.BooleanValue autoBanPlayersByIP;
     public ModConfigSpec.BooleanValue showKnownAccounts;
-
     public ModConfigSpec.ConfigValue<String> defaultBanReason;
-
     public ModConfigSpec.EnumValue<BuiltInTextParsers> textParser;
 
     public ModConfigSpec.ConfigValue<List<? extends String>> messages_banChatMessage;
@@ -21,7 +19,6 @@ public final class ServerConfig {
     public ModConfigSpec.ConfigValue<List<? extends String>> messages_ipBanChatMessage;
     public ModConfigSpec.ConfigValue<List<? extends String>> messages_tempIpBanChatMessage;
     public ModConfigSpec.ConfigValue<List<? extends String>> messages_kickMessage;
-
     public ModConfigSpec.ConfigValue<List<? extends String>> messages_unbanChatMessage;
     public ModConfigSpec.ConfigValue<List<? extends String>> messages_ipUnbanChatMessage;
 
