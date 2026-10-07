@@ -12,7 +12,10 @@ public final class ServerConfig {
     public ServerConfig(ModConfigSpec.Builder builder) {
         builder.comment("Server Config").push("server");
 
-        serverUUID = builder.comment("Server UUID for the global ban system")
+        serverUUID = builder.comment(
+                "Server UUID for the global ban system",
+                "This is only used when syncing bans between servers, and should be unique for each server. If you want to reset your server's UUID, delete this config and restart the server."
+                )
                 .define("serverUUID", UUID.randomUUID().toString());
         autoBanPlayersByIP = builder.comment("Automatically ban alt accounts by IP address when a player is banned")
                 .define("autoBanPlayersByIP", false);
