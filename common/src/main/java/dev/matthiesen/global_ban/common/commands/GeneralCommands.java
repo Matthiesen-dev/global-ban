@@ -3,6 +3,8 @@ package dev.matthiesen.global_ban.common.commands;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import dev.matthiesen.global_ban.common.GlobalBanCommon;
@@ -133,6 +135,15 @@ public final class GeneralCommands implements CoreCommand {
         for (Component message : messages) {
             source.sendSystemMessage(message);
         }
+    }
+
+    public static RequiredArgumentBuilder<CommandSourceStack, String> reasonArgument(String argName) {
+        return Commands.argument(argName, StringArgumentType.greedyString());
+    }
+
+    public static RequiredArgumentBuilder<CommandSourceStack, String> playerArgument(String argName) {
+        return Commands.argument(argName, StringArgumentType.word())
+                .suggests(playerSuggestionProvider());
     }
 
     public static SuggestionProvider<CommandSourceStack> playerSuggestionProvider() {

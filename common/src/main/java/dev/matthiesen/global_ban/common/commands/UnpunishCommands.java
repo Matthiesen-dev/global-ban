@@ -6,6 +6,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import dev.matthiesen.global_ban.common.GlobalBanCommon;
 import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
+import dev.matthiesen.global_ban.common.config.ServerConfig;
 import dev.matthiesen.global_ban.common.def.PunishmentType;
 import dev.matthiesen.global_ban.common.registry.PermissionRegistry;
 import dev.matthiesen.global_ban.common.utils.Helpers;
@@ -36,15 +37,16 @@ public final class UnpunishCommands implements CoreCommand {
     private LiteralArgumentBuilder<CommandSourceStack> create(String command, Permission permission, PunishmentType type) {
         return CommandBuilder.create(command)
                 .requires(src -> PermissionRegistry.checkPermission(src, permission))
-                .argument("player", StringArgumentType.word(), playerArg -> playerArg
-                        .suggests(GeneralCommands.playerSuggestionProvider())
-                        .executes(ctx -> unpunishAction(ctx, type))
+                .then(
+                        GeneralCommands.playerArgument("player")
+                                .executes(ctx -> unpunishAction(ctx, type))
                 )
                 .build();
     }
 
     private int unpunishAction(CommandContext<CommandSourceStack> ctx, PunishmentType type) {
         CompletableFuture.runAsync(() -> {
+            ServerConfig serverConfig = GlobalBanConfig.SERVER_CONFIG;
             var playerArg = StringArgumentType.getString(ctx, "player");
             var player = Helpers.lookupServerUser(playerArg);
 
@@ -71,13 +73,13 @@ public final class UnpunishCommands implements CoreCommand {
                     switch (type) {
                         case BAN -> {
                             count += GlobalBanCommon.INSTANCE.unpunishPlayer(punishment);
-                            var temp = String.join("\n", GlobalBanConfig.SERVER_CONFIG.messages_unbanChatMessage.get());
+                            var temp = String.join("\n", serverConfig.messages_unbanChatMessage.get());
                             var processed = Helpers.processPlaceholders(temp, punishment.getPlaceholders());
                             message = processed.toComponent();
                         }
                         case IP_BAN -> {
                             count += GlobalBanCommon.INSTANCE.unpunishPlayer(punishment);
-                            var temp = String.join("\n", GlobalBanConfig.SERVER_CONFIG.messages_ipUnbanChatMessage.get());
+                            var temp = String.join("\n", serverConfig.messages_ipUnbanChatMessage.get());
                             var processed = Helpers.processPlaceholders(temp, punishment.getPlaceholders());
                             message = processed.toComponent();
                         }
@@ -96,7 +98,7 @@ public final class UnpunishCommands implements CoreCommand {
                         count += GlobalBanCommon.INSTANCE.clearIpPunishments(punishment.playerIp());
                     }
 
-                    var temp = String.join("\n", GlobalBanConfig.SERVER_CONFIG.messages_pardonChatMessage.get());
+                    var temp = String.join("\n", serverConfig.messages_pardonChatMessage.get());
                     var processed = Helpers.processPlaceholders(temp, punishment.getPlaceholders());
                     message = processed.toComponent();
                 }

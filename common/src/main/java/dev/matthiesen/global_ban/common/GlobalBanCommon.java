@@ -18,7 +18,6 @@ import dev.matthiesen.matthiesen_core.common.api.events.server.PlayerEvent;
 import dev.matthiesen.matthiesen_core.common.api.events.server.ServerEvent;
 import dev.matthiesen.matthiesen_core.common.api.platform.loader.ModConfigType;
 import net.minecraft.ChatFormatting;
-import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.HoverEvent;
@@ -139,52 +138,6 @@ public final class GlobalBanCommon extends AbstractCommonMod {
     public void registerAsyncScheduler() {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         scheduler.schedule(this::handleExpiredPunishments, 5L, TimeUnit.MINUTES);
-    }
-
-    public boolean publishPlayer(ServerPlayer punished, CommandSourceStack punisher, PunishmentType type) {
-        return publishPlayer(punished, punisher, type, PunishmentRecord.NON_EXPIRING_PUNISHMENT);
-    }
-
-    public boolean publishPlayer(ServerPlayer punished, CommandSourceStack punisher, PunishmentType type, long duration) {
-        return publishPlayer(punished, punisher, type, duration, GlobalBanConfig.SERVER_CONFIG.defaultBanReason.get());
-    }
-
-    public boolean publishPlayer(ServerPlayer punished, CommandSourceStack punisher, PunishmentType type, String reason) {
-        return publishPlayer(punished, punisher, type, PunishmentRecord.NON_EXPIRING_PUNISHMENT, reason);
-    }
-
-    public boolean publishPlayer(ServerPlayer punished, CommandSourceStack punisher, PunishmentType type, long duration, String reason) {
-        try {
-            PunishmentRecord record = PunishmentRecord.create(punished, punisher, type, duration, reason);
-            punishPlayer(record);
-            return true;
-        } catch (Exception e) {
-            createErrorLog("Failed to publish player punishment: " + e.getMessage(), e);
-            return false;
-        }
-    }
-
-    public boolean punishPlayer(UUID uuid, String ipAddress, String displayName, CommandSourceStack punisher, PunishmentType type) {
-        return punishPlayer(uuid, ipAddress, displayName, punisher, type, PunishmentRecord.NON_EXPIRING_PUNISHMENT);
-    }
-
-    public boolean punishPlayer(UUID uuid, String ipAddress, String displayName, CommandSourceStack punisher, PunishmentType type, long duration) {
-        return punishPlayer(uuid, ipAddress, displayName, punisher, type, duration, GlobalBanConfig.SERVER_CONFIG.defaultBanReason.get());
-    }
-
-    public boolean punishPlayer(UUID uuid, String ipAddress, String displayName, CommandSourceStack punisher, PunishmentType type, String reason) {
-        return punishPlayer(uuid, ipAddress, displayName, punisher, type, PunishmentRecord.NON_EXPIRING_PUNISHMENT, reason);
-    }
-
-    public boolean punishPlayer(UUID uuid, String ipAddress, String displayName, CommandSourceStack punisher, PunishmentType type, long duration, String reason) {
-        try {
-            PunishmentRecord record = PunishmentRecord.create(uuid, ipAddress, displayName, punisher, type, duration, reason);
-            punishPlayer(record);
-            return true;
-        } catch (Exception e) {
-            createErrorLog("Failed to publish player punishment: " + e.getMessage(), e);
-            return false;
-        }
     }
 
     public void punishPlayer(PunishmentRecord record) {

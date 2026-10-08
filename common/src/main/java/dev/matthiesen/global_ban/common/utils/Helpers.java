@@ -12,25 +12,19 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.players.GameProfileCache;
 
 import java.net.SocketAddress;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public final class Helpers {
-    public static boolean isPunishableBy(GameProfile profile, CommandSourceStack source) {
+    public static boolean isPunishableBy(ServerUser profile, CommandSourceStack source) {
         if (profile == null) {
             return true;
         }
-
+        GameProfile gameProfile = new GameProfile(profile.getUUID(), profile.getUsername());
         var server = GlobalBanCommon.INSTANCE.getCommonUtils().getServer();
-        var entry = server.getPlayerList().getOps().get(profile);
-
+        var entry = server.getPlayerList().getOps().get(gameProfile);
         boolean canBanAdmins = PermissionRegistry.checkPermission(source, PermissionRegistry.CAN_BAN_ADMINS_PERMISSION);
         boolean blocksPunishments = PermissionRegistry.checkPermission(source, PermissionRegistry.BLOCK_PUNISHMENTS_PERMISSION);
-
         boolean permission = canBanAdmins && !blocksPunishments;
-
         return (server.name().equals("Server") && source.getEntity() == null) || ((entry == null || source.hasPermission(entry.getLevel())))
                 && !blocksPunishments
                 && permission;
@@ -42,7 +36,7 @@ public final class Helpers {
                 .toList();
     }
 
-    public static ServerUser lookupServerUser(String usernameOrIp) {
+    public static List<ServerUser> lookupServerUsers(String usernameOrIp) {
         try {
             boolean isUuid;
             boolean isIpLike = InetAddresses.isInetAddress(usernameOrIp);
@@ -64,24 +58,29 @@ public final class Helpers {
             }
 
             if (serverUser != null) {
-                return serverUser;
+                return List.of(serverUser);
             }
 
             GameProfileCache profileCache = GlobalBanCommon.INSTANCE.getCommonUtils().getServer().getProfileCache();
             if (profileCache == null) {
-                return new ServerUser(usernameOrIp);
+                return List.of(new ServerUser(usernameOrIp));
             }
 
             Set<UUID> uuidCache = GlobalBanCommon.IP_TO_UUID_CACHE.get(usernameOrIp);
+
+            List<ServerUser> users = new ArrayList<>();
+
             if (uuidCache == null || uuidCache.isEmpty()) {
-                return new ServerUser(usernameOrIp);
+                return List.of(new ServerUser(usernameOrIp));
             } else {
                 for (var uuidEntry : uuidCache) {
                     var optional = profileCache.get(uuidEntry);
-                    if (optional.isPresent()) {
-                        return new ServerUser(optional.get().getName());
-                    }
+                    optional.ifPresent(profile -> users.add(new ServerUser(profile.getName())));
                 }
+            }
+
+            if (!users.isEmpty()) {
+                return users;
             }
 
             GameProfile profile = null;
@@ -90,13 +89,17 @@ public final class Helpers {
                 profile = possibleProfile.orElse(null);
             }
             if (profile == null) {
-                return new ServerUser("UnknownPlayer");
+                return List.of(new ServerUser("UnknownPlayer"));
             }
-            return new ServerUser(profile.getId());
+            return List.of(new ServerUser(profile.getId()));
         } catch (Exception e) {
             GlobalBanCommon.INSTANCE.createErrorLog("Failed to lookup server user for: " + usernameOrIp, e);
-            return null;
+            return List.of();
         }
+    }
+
+    public static ServerUser lookupServerUser(String usernameOrIp) {
+        return lookupServerUsers(usernameOrIp).stream().findFirst().orElse(null);
     }
 
     public static String stringifyAddress(SocketAddress socketAddress) {
@@ -122,6 +125,40 @@ public final class Helpers {
     public record ProcessedMessage(String message) {
         public Component toComponent() {
             return GlobalBanCommon.INSTANCE.getTextParserManager().getTextParser(GlobalBanConfig.SERVER_CONFIG.textParser.get()).parse(message);
+        }
+    }
+
+    /**
+     * Parses a duration string into milliseconds.
+     * Supports formats like "1d", "2h", "30m", "15s", "1y", "6mo", "2w", and combinations like "1d2h30m".
+     *
+     * @param text the duration string to parse
+     * @return the duration in milliseconds
+     * @throws NumberFormatException if the input format is invalid
+     */
+    public static long parseDuration(String text) throws NumberFormatException {
+        text = text.toLowerCase(Locale.ROOT);
+        try {
+            return Long.parseLong(text);
+        } catch (NumberFormatException e) {
+            String[] times = text.replaceAll("([a-z]+)", "$1|").split("\\|");
+            long time = 0;
+            for (String x : times) {
+                String numberOnly = x.replaceAll("[a-z]", "");
+                String suffixOnly = x.replaceAll("[^a-z]", "");
+
+                time = (long) (time + switch (suffixOnly) {
+                    case "c" -> Double.parseDouble(numberOnly) * 60 * 60 * 24L * 365L * 100L;
+                    case "y", "year", "years" -> Double.parseDouble(numberOnly) * 60 * 60 * 24L * 365L;
+                    case "mo", "month", "months" -> Double.parseDouble(numberOnly) * 60 * 60 * 24L * 30L;
+                    case "w", "week", "weeks" -> Double.parseDouble(numberOnly) * 60 * 60 * 24L * 7L;
+                    case "d", "day", "days" -> Double.parseDouble(numberOnly) * 60 * 60 * 24;
+                    case "h", "hour", "hours" -> Double.parseDouble(numberOnly) * 60 * 60;
+                    case "m", "minute", "minutes" -> Double.parseDouble(numberOnly) * 60;
+                    default -> Double.parseDouble(numberOnly);
+                });
+            }
+            return time;
         }
     }
 }
