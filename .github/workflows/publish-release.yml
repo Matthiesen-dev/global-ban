@@ -10,7 +10,7 @@ on:
 
 # The dependencies below correspond to:
 # - Matthiesen Core (sqEZOmQo)
-# - GooeyLibs (KzjvlKEN)
+# - GooeyLibs (KzjvlKEN) - Optional
 ## Fabric Only:
 # - Fabric API (P7dR8mSH) - Required
 # - ForgeConfigAPI Port (ohNO6lps) - Required
@@ -31,8 +31,8 @@ jobs:
       modrinth_id: "jUIQUWpJ"
       modrinth_dependencies: |-
         [
-          {"project_id":"KzjvlKEN","dependency_type":"required"},
-          {"project_id":"sqEZOmQo","dependency_type":"required"}
+          {"project_id":"sqEZOmQo","dependency_type":"required"},
+          {"project_id":"KzjvlKEN","dependency_type":"optional"}
         ]
       modrinth_fabric_dependencies: |-
         [

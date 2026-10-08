@@ -2,7 +2,7 @@
 
 <div>
   <img src="https://mods.matthiesen.dev/badges/matthiesenCore.svg" alt="Matthiesen Core">
-  <img src="https://mods.matthiesen.dev/badges/gooeylibs.svg" alt="GooeyLibs">
+  <img src="https://mods.matthiesen.dev/badges/gooeylibs_optional.svg" alt="GooeyLibs">
 </div>
 
 Server side ban management plugin, sync multiple servers, or connect multiple communities together.
@@ -12,9 +12,12 @@ TODO
 ## Requirements
 
 - [Matthiesen Core](https://modrinth.com/mod/matthiesen-core)
-- [GooeyLibs](https://modrinth.com/mod/gooeylibs)
 - [Fabric API](https://modrinth.com/mod/fabric-api) (Fabric only)
 - [Forge Config API Port](https://modrinth.com/mod/forge-config-api-port) (Fabric only)
+
+### Optional Dependencies
+
+- [GooeyLibs](https://modrinth.com/mod/gooeylibs) - Required for GUI-based moderation tools, otherwise all moderation is done via commands.
 
 ## Docs
 
