@@ -107,6 +107,11 @@ public final class UnpunishCommands implements CoreCommand {
                     } else {
                         ctx.getSource().sendSystemMessage(message);
                     }
+                    for (ServerPlayer plistEntry : GlobalBanCommon.INSTANCE.getCommonUtils().getServer().getPlayerList().getPlayers()) {
+                        if (PermissionRegistry.checkPermission(plistEntry, PermissionRegistry.SEE_BANS_PERMISSION)) {
+                            plistEntry.sendSystemMessage(message);
+                        }
+                    }
                 } else {
                     MutableComponent noPunishmentMessage = Component.literal("No punishment found for: " + player.getUsername()).withStyle(ChatFormatting.RED);
                     if (executor != null) {

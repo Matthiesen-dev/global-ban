@@ -24,6 +24,10 @@ public record PunishmentRecord(
         String reason,
         UUID serverUuid
 ) {
+    public static final long NON_EXPIRING_PUNISHMENT = -1L;
+    public static final String UNKNOWN_PLAYER_NAME = "UnknownPlayer";
+    public static final String UNDEFINED_IP_ADDRESS = "undefined";
+
     public static PunishmentRecord punishAlt(UUID playerUuid, String playerDisplayName, PunishmentRecord previousRecord) {
         return new PunishmentRecord(
                 PunishmentType.BAN,
@@ -175,7 +179,7 @@ public record PunishmentRecord(
     }
 
     public boolean isTemporary() {
-        return this.duration > -1;
+        return this.duration > NON_EXPIRING_PUNISHMENT;
     }
 
     public boolean isExpired() {
@@ -183,7 +187,7 @@ public record PunishmentRecord(
     }
 
     public Date getExpirationDate() {
-        return this.isTemporary() ? new Date((this.timestamp() + this.duration)) : new Date(Long.MAX_VALUE -1);
+        return this.isTemporary() ? new Date((this.timestamp() + this.duration)) : new Date(Long.MAX_VALUE - 1);
     }
 
     public Date getDate() {
@@ -199,7 +203,7 @@ public record PunishmentRecord(
     }
 
     public String getFormattedExpirationTime() {
-        if (this.duration() > -1) {
+        if (this.duration() > NON_EXPIRING_PUNISHMENT) {
             long x = this.duration + this.timestamp - System.currentTimeMillis() / 1000;
 
             long seconds = x % 60;

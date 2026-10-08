@@ -70,14 +70,14 @@ public final class BanImporter {
             assert entry.getExpires() != null;
             expiration = entry.getExpires().getTime() / 1000;
         } catch (Exception e) {
-            expiration = -1;
+            expiration = PunishmentRecord.NON_EXPIRING_PUNISHMENT;
         }
         return new PunishmentRecord(
                 PunishmentType.BAN,
                 creation,
                 expiration,
                 profile.getId(),
-                "undefined",
+                PunishmentRecord.UNDEFINED_IP_ADDRESS,
                 profile.getName(),
                 Util.NIL_UUID,
                 entry.getSource(),
@@ -93,7 +93,7 @@ public final class BanImporter {
             assert entry.getExpires() != null;
             expiration = entry.getExpires().getTime() / 1000;
         } catch (Exception e) {
-            expiration = -1;
+            expiration = PunishmentRecord.NON_EXPIRING_PUNISHMENT;
         }
         return new PunishmentRecord(
                 PunishmentType.IP_BAN,
@@ -101,7 +101,7 @@ public final class BanImporter {
                 expiration,
                 Util.NIL_UUID,
                 ip,
-                "Unknown Player",
+                PunishmentRecord.UNKNOWN_PLAYER_NAME,
                 Util.NIL_UUID,
                 entry.getSource(),
                 entry.getReason(),
