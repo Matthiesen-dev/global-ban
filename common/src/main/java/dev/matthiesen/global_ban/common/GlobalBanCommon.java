@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.authlib.GameProfile;
 import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
+import dev.matthiesen.global_ban.common.config.ServerConfig;
 import dev.matthiesen.global_ban.common.def.PunishmentRecord;
 import dev.matthiesen.global_ban.common.def.PunishmentType;
 import dev.matthiesen.global_ban.common.registry.CommandRegistry;
@@ -136,8 +137,9 @@ public final class GlobalBanCommon extends AbstractCommonMod {
     }
 
     public void registerAsyncScheduler() {
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        scheduler.schedule(this::handleExpiredPunishments, 5L, TimeUnit.MINUTES);
+        ServerConfig serverConfig = GlobalBanConfig.SERVER_CONFIG;
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(serverConfig.scheduler_cpuCorePoolSize.getAsInt());
+        scheduler.schedule(this::handleExpiredPunishments, serverConfig.scheduler_expiredPunishmentsCheckInterval.getAsLong(), TimeUnit.MINUTES);
     }
 
     public void punishPlayer(PunishmentRecord record) {
@@ -173,9 +175,11 @@ public final class GlobalBanCommon extends AbstractCommonMod {
         }
 
         getCommonUtils().getServer().sendSystemMessage(record.getChatMessage());
-        for (ServerPlayer player : getCommonUtils().getServer().getPlayerList().getPlayers()) {
-            if (PermissionRegistry.checkPermission(player, PermissionRegistry.SEE_BANS_PERMISSION)) {
-                player.sendSystemMessage(record.getChatMessage());
+        if (GlobalBanConfig.SERVER_CONFIG.showPunishActionsInChat.getAsBoolean()) {
+            for (ServerPlayer player : getCommonUtils().getServer().getPlayerList().getPlayers()) {
+                if (PermissionRegistry.checkPermission(player, PermissionRegistry.SEE_BANS_PERMISSION)) {
+                    player.sendSystemMessage(record.getChatMessage());
+                }
             }
         }
 
@@ -226,9 +230,11 @@ public final class GlobalBanCommon extends AbstractCommonMod {
         Component message = ComponentUtils.formatList(playerMessages, Component.literal(" "));
         getCommonUtils().getServer().sendSystemMessage(message);
 
-        for (ServerPlayer player : getCommonUtils().getServer().getPlayerList().getPlayers()) {
-            if (PermissionRegistry.checkPermission(player, PermissionRegistry.SEE_KNOWN_ACCOUNTS_PERMISSION)) {
-                player.sendSystemMessage(message);
+        if (GlobalBanConfig.SERVER_CONFIG.showPunishActionsInChat.getAsBoolean()) {
+            for (ServerPlayer player : getCommonUtils().getServer().getPlayerList().getPlayers()) {
+                if (PermissionRegistry.checkPermission(player, PermissionRegistry.SEE_KNOWN_ACCOUNTS_PERMISSION)) {
+                    player.sendSystemMessage(message);
+                }
             }
         }
     }
@@ -256,9 +262,11 @@ public final class GlobalBanCommon extends AbstractCommonMod {
                 String singleStringMessage = String.join("\n", message);
                 var parsed = Helpers.processPlaceholders(singleStringMessage, record.getPlaceholders());
                 getCommonUtils().getServer().sendSystemMessage(parsed.toComponent());
-                for (ServerPlayer player : getCommonUtils().getServer().getPlayerList().getPlayers()) {
-                    if (PermissionRegistry.checkPermission(player, PermissionRegistry.SEE_BANS_PERMISSION)) {
-                        player.sendSystemMessage(parsed.toComponent());
+                if (GlobalBanConfig.SERVER_CONFIG.showPunishActionsInChat.getAsBoolean()) {
+                    for (ServerPlayer player : getCommonUtils().getServer().getPlayerList().getPlayers()) {
+                        if (PermissionRegistry.checkPermission(player, PermissionRegistry.SEE_BANS_PERMISSION)) {
+                            player.sendSystemMessage(parsed.toComponent());
+                        }
                     }
                 }
             }

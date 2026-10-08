@@ -106,7 +106,7 @@ public final class GlobalBanConfig {
         return difference;
     }
 
-    public static void syncPunishments() {
+    public static void syncPunishmentsWithWebAPI() {
         // TODO: Implement syncing logic to remote API once that system is in place. For now, this is a placeholder to indicate where syncing would occur.
     }
 

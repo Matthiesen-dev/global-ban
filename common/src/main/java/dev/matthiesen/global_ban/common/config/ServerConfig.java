@@ -11,8 +11,12 @@ public final class ServerConfig {
     public ModConfigSpec.ConfigValue<String> serverUUID;
     public ModConfigSpec.BooleanValue autoBanPlayersByIP;
     public ModConfigSpec.BooleanValue showKnownAccounts;
+    public ModConfigSpec.BooleanValue showPunishActionsInChat;
     public ModConfigSpec.ConfigValue<String> defaultBanReason;
     public ModConfigSpec.EnumValue<BuiltInTextParsers> textParser;
+
+    public ModConfigSpec.IntValue scheduler_cpuCorePoolSize;
+    public ModConfigSpec.LongValue scheduler_expiredPunishmentsCheckInterval;
 
     public ModConfigSpec.ConfigValue<List<? extends String>> messages_banChatMessage;
     public ModConfigSpec.ConfigValue<List<? extends String>> messages_tempBanChatMessage;
@@ -22,7 +26,6 @@ public final class ServerConfig {
     public ModConfigSpec.ConfigValue<List<? extends String>> messages_unbanChatMessage;
     public ModConfigSpec.ConfigValue<List<? extends String>> messages_ipUnbanChatMessage;
     public ModConfigSpec.ConfigValue<List<? extends String>> messages_pardonChatMessage;
-
     public ModConfigSpec.ConfigValue<List<? extends String>> messages_banScreen;
     public ModConfigSpec.ConfigValue<List<? extends String>> messages_tempBanScreen;
     public ModConfigSpec.ConfigValue<List<? extends String>> messages_ipBanScreen;
@@ -41,6 +44,8 @@ public final class ServerConfig {
                 .define("autoBanPlayersByIP", false);
         showKnownAccounts = builder.comment("Show known accounts for a player when they join the server")
                 .define("showKnownAccounts", false);
+        showPunishActionsInChat = builder.comment("Show punish actions in chat")
+                .define("showPunishActionsInChat", false);
 
         defaultBanReason = builder.comment("Default ban reason to use when banning a player without a reason")
                 .define("defaultBanReason", "Unknown reason");
@@ -48,9 +53,15 @@ public final class ServerConfig {
         textParser = builder.comment("The text parser to use for parsing text")
                 .defineEnum("textParser", BuiltInTextParsers.VANILLA);
 
+        builder.comment("Scheduler Config").push("scheduler");
+        scheduler_cpuCorePoolSize = builder.comment("The number of CPU cores to use for the scheduler")
+                .defineInRange("cpuCorePoolSize", 1, 1, Integer.MAX_VALUE);
+        scheduler_expiredPunishmentsCheckInterval = builder.comment("The interval in minutes to check for and process expired punishments")
+                .defineInRange("expiredPunishmentsCheckInterval", 5L, 1L, Long.MAX_VALUE);
+        builder.pop(); // scheduler
+
         builder.comment("Messages to display to players when they are banned, temp banned, or kicked")
                 .push("messages");
-
         messages_banChatMessage = builder.comment("The message to display to players when they are banned (chat)")
                 .defineList(
                         "banChatMessage",
@@ -103,7 +114,6 @@ public final class ServerConfig {
                         () -> "",
                         obj -> obj instanceof String
                 );
-
         messages_unbanChatMessage = builder.comment("The message to display to players when they are unbanned (chat)")
                 .defineList(
                         "unbanChatMessage",
@@ -113,7 +123,6 @@ public final class ServerConfig {
                         () -> "",
                         obj -> obj instanceof String
                 );
-
         messages_ipUnbanChatMessage = builder.comment("The message to display to players when they are IP unbanned (chat)")
                 .defineList(
                         "ipUnbanChatMessage",
@@ -123,7 +132,6 @@ public final class ServerConfig {
                         () -> "",
                         obj -> obj instanceof String
                 );
-
         messages_pardonChatMessage = builder.comment("The message to display to players when they are pardoned (chat)")
                 .defineList(
                         "pardonChatMessage",
@@ -133,7 +141,6 @@ public final class ServerConfig {
                         () -> "",
                         obj -> obj instanceof String
                 );
-
         messages_banScreen = builder.comment("The message to display to players when they are banned (disconnect screen)")
                 .defineList(
                         "banScreen",
@@ -191,7 +198,6 @@ public final class ServerConfig {
                         () -> "",
                         obj -> obj instanceof String
                 );
-
         builder.pop(); // messages
 
         builder.pop(); // server
