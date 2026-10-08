@@ -18,6 +18,6 @@ public class BanListCommandMixin {
             require = 0
     )
     private static String globalBan$modifyVanillaCommand(String def) {
-        return "minecraft:ban-list";
+        return "minecraft:banlist";
     }
 }
