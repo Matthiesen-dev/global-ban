@@ -4,6 +4,7 @@ import com.google.common.net.InetAddresses;
 import com.mojang.authlib.GameProfile;
 import dev.matthiesen.global_ban.common.GlobalBanCommon;
 import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
+import dev.matthiesen.global_ban.common.def.PunishmentRecord;
 import dev.matthiesen.global_ban.common.registry.PermissionRegistry;
 import dev.matthiesen.matthiesen_core.common.utility.player_data.ServerUser;
 import net.minecraft.commands.CommandSourceStack;
@@ -11,6 +12,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.players.GameProfileCache;
 
 import java.net.SocketAddress;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -32,6 +34,12 @@ public final class Helpers {
         return (server.name().equals("Server") && source.getEntity() == null) || ((entry == null || source.hasPermission(entry.getLevel())))
                 && !blocksPunishments
                 && permission;
+    }
+
+    public static List<PunishmentRecord> getPunishmentsForUser(ServerUser user) {
+        return GlobalBanConfig.getPunished().stream()
+                .filter(p -> !p.isExpired() && (p.playerUuid().equals(user.getUUID())))
+                .toList();
     }
 
     public static ServerUser lookupServerUser(String usernameOrIp) {

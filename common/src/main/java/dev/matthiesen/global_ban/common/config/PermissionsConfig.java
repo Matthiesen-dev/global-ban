@@ -22,6 +22,7 @@ public final class PermissionsConfig {
     public ModConfigSpec.EnumValue<PermissionLevel> commands_temp_ban_ip;
     public ModConfigSpec.EnumValue<PermissionLevel> commands_ban_list;
     public ModConfigSpec.EnumValue<PermissionLevel> commands_pardon;
+    public ModConfigSpec.EnumValue<PermissionLevel> commands_pardon_ip;
     public ModConfigSpec.EnumValue<PermissionLevel> commands_unban;
     public ModConfigSpec.EnumValue<PermissionLevel> commands_unban_ip;
 
@@ -61,6 +62,8 @@ public final class PermissionsConfig {
                 .defineEnum("ban-list", PermissionLevel.ALL_COMMANDS);
         commands_pardon = builder.comment("Permission level required to use the /pardon command")
                 .defineEnum("pardon", PermissionLevel.ALL_COMMANDS);
+        commands_pardon_ip = builder.comment("Permission level required to use the /pardon-ip command")
+                .defineEnum("pardon-ip", PermissionLevel.ALL_COMMANDS);
         commands_unban = builder.comment("Permission level required to use the /unban command")
                 .defineEnum("unban", PermissionLevel.ALL_COMMANDS);
         commands_unban_ip = builder.comment("Permission level required to use the /unban-ip command")

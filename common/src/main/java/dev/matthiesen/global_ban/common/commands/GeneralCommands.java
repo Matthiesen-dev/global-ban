@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
 import dev.matthiesen.global_ban.common.GlobalBanCommon;
 import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
 import dev.matthiesen.global_ban.common.def.PunishmentRecord;
@@ -22,6 +23,7 @@ import net.minecraft.server.level.ServerPlayer;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 
 public final class GeneralCommands implements CoreCommand {
@@ -131,5 +133,19 @@ public final class GeneralCommands implements CoreCommand {
         for (Component message : messages) {
             source.sendSystemMessage(message);
         }
+    }
+
+    public static SuggestionProvider<CommandSourceStack> playerSuggestionProvider() {
+        return (ctx, builder) -> {
+            String remaining = builder.getRemaining().toLowerCase(Locale.ROOT);
+
+            for (String player : ctx.getSource().getServer().getPlayerNames()) {
+                if (player.toLowerCase(Locale.ROOT).contains(remaining)) {
+                    builder.suggest(player);
+                }
+            }
+
+            return builder.buildFuture();
+        };
     }
 }

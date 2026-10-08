@@ -233,11 +233,19 @@ public final class GlobalBanCommon extends AbstractCommonMod {
         }
     }
 
-    public void unpunishPlayer(PunishmentRecord record) {
-        unpunishPlayer(record, false);
+    public int clearPunishments(UUID player) {
+        return GlobalBanConfig.clearPunishments(player);
     }
 
-    public void unpunishPlayer(PunishmentRecord record, boolean expired) {
+    public int clearIpPunishments(String ip) {
+        return GlobalBanConfig.clearIpPunishments(ip);
+    }
+
+    public int unpunishPlayer(PunishmentRecord record) {
+        return unpunishPlayer(record, false);
+    }
+
+    public int unpunishPlayer(PunishmentRecord record, boolean expired) {
         if (!expired) {
             var message = switch (record.type()) {
                 case BAN -> GlobalBanConfig.SERVER_CONFIG.messages_unbanChatMessage.get();
@@ -257,7 +265,7 @@ public final class GlobalBanCommon extends AbstractCommonMod {
         } else {
             createInfoLog("Punishment expired: " + record.toString());
         }
-        GlobalBanConfig.removePunishment(record);
+        return GlobalBanConfig.removePunishment(record);
     }
 
     public void handleExpiredPunishments() {

@@ -75,12 +75,35 @@ public final class GlobalBanConfig {
         reloadPunished();
     }
 
-    public static void removePunishment(PunishmentRecord punishment) {
+    public static int removePunishment(PunishmentRecord punishment) {
         List<PunishmentRecord> bannedPlayers = getPunished();
-        if (!bannedPlayers.contains(punishment)) return; // Not banned, no need to remove
+        if (!bannedPlayers.contains(punishment)) return 0; // Not banned, no need to remove
         bannedPlayers.remove(punishment);
         PUNISHMENTS.punished.set(bannedPlayers.stream().map(PunishmentRecord::serialize).toList());
         reloadPunished();
+        return 1;
+    }
+
+    public static int clearPunishments(UUID player) {
+        List<PunishmentRecord> bannedPlayers = getPunished();
+        List<PunishmentRecord> updatedList = bannedPlayers.stream()
+                .filter(punishment -> !punishment.playerUuid().equals(player))
+                .toList();
+        int difference = bannedPlayers.size() - updatedList.size();
+        PUNISHMENTS.punished.set(updatedList.stream().map(PunishmentRecord::serialize).toList());
+        reloadPunished();
+        return difference;
+    }
+
+    public static int clearIpPunishments(String ipAddress) {
+        List<PunishmentRecord> bannedPlayers = getPunished();
+        List<PunishmentRecord> updatedList = bannedPlayers.stream()
+                .filter(punishment -> !punishment.playerIp().equals(ipAddress))
+                .toList();
+        int difference = bannedPlayers.size() - updatedList.size();
+        PUNISHMENTS.punished.set(updatedList.stream().map(PunishmentRecord::serialize).toList());
+        reloadPunished();
+        return difference;
     }
 
     public static void syncPunishments() {

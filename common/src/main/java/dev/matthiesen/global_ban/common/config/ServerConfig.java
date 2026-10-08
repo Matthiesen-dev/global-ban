@@ -21,6 +21,7 @@ public final class ServerConfig {
     public ModConfigSpec.ConfigValue<List<? extends String>> messages_kickMessage;
     public ModConfigSpec.ConfigValue<List<? extends String>> messages_unbanChatMessage;
     public ModConfigSpec.ConfigValue<List<? extends String>> messages_ipUnbanChatMessage;
+    public ModConfigSpec.ConfigValue<List<? extends String>> messages_pardonChatMessage;
 
     public ModConfigSpec.ConfigValue<List<? extends String>> messages_banScreen;
     public ModConfigSpec.ConfigValue<List<? extends String>> messages_tempBanScreen;
@@ -118,6 +119,16 @@ public final class ServerConfig {
                         "ipUnbanChatMessage",
                         List.of(
                                 "Player &c%player% &rhas been IP unbanned by &6%operator%&r!"
+                        ),
+                        () -> "",
+                        obj -> obj instanceof String
+                );
+
+        messages_pardonChatMessage = builder.comment("The message to display to players when they are pardoned (chat)")
+                .defineList(
+                        "pardonChatMessage",
+                        List.of(
+                                "Player &c%player% &rhas been pardoned by &6%operator%&r!"
                         ),
                         () -> "",
                         obj -> obj instanceof String

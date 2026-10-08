@@ -17,7 +17,6 @@ public final class PermissionRegistry {
             GlobalBanConfig.PERMISSIONS_CONFIG.canBanAdmins.get());
     public static final Permission BLOCK_PUNISHMENTS_PERMISSION = register("block_punishments",
             GlobalBanConfig.PERMISSIONS_CONFIG.blockPunishments.get());
-
     public static final Permission COMMAND_ROOT_PERMISSION = register("command.global_ban",
             GlobalBanConfig.PERMISSIONS_CONFIG.commands_root.get());
     public static final Permission COMMAND_RELOAD_PERMISSION = register("command.global_ban.reload",
@@ -38,6 +37,8 @@ public final class PermissionRegistry {
             GlobalBanConfig.PERMISSIONS_CONFIG.commands_ban_list.get());
     public static final Permission COMMAND_PARDON_PERMISSION = register("command.pardon",
             GlobalBanConfig.PERMISSIONS_CONFIG.commands_pardon.get());
+    public static final Permission COMMAND_PARDON_IP_PERMISSION = register("command.pardon_ip",
+            GlobalBanConfig.PERMISSIONS_CONFIG.commands_pardon_ip.get());
     public static final Permission COMMAND_UNBAN_PERMISSION = register("command.unban",
             GlobalBanConfig.PERMISSIONS_CONFIG.commands_unban.get());
     public static final Permission COMMAND_UNBAN_IP_PERMISSION = register("command.unban_ip",
