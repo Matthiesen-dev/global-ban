@@ -1,14 +1,19 @@
 package dev.matthiesen.global_ban.common.utils;
 
+import com.google.common.net.InetAddresses;
 import com.mojang.authlib.GameProfile;
 import dev.matthiesen.global_ban.common.GlobalBanCommon;
 import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
 import dev.matthiesen.global_ban.common.registry.PermissionRegistry;
+import dev.matthiesen.matthiesen_core.common.utility.player_data.ServerUser;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.players.GameProfileCache;
 
 import java.net.SocketAddress;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 public final class Helpers {
     public static boolean isPunishableBy(GameProfile profile, CommandSourceStack source) {
@@ -27,6 +32,63 @@ public final class Helpers {
         return (server.name().equals("Server") && source.getEntity() == null) || ((entry == null || source.hasPermission(entry.getLevel())))
                 && !blocksPunishments
                 && permission;
+    }
+
+    public static ServerUser lookupServerUser(String usernameOrIp) {
+        try {
+            boolean isUuid;
+            boolean isIpLike = InetAddresses.isInetAddress(usernameOrIp);
+
+            UUID uuid = null;
+
+            try {
+                uuid = UUID.fromString(usernameOrIp);
+                isUuid = true;
+            } catch (IllegalArgumentException e) {
+                isUuid = false;
+            }
+
+            ServerUser serverUser = null;
+            if (isUuid) {
+                serverUser = new ServerUser(uuid);
+            } else if (!isIpLike) {
+                serverUser = new ServerUser(usernameOrIp);
+            }
+
+            if (serverUser != null) {
+                return serverUser;
+            }
+
+            GameProfileCache profileCache = GlobalBanCommon.INSTANCE.getCommonUtils().getServer().getProfileCache();
+            if (profileCache == null) {
+                return new ServerUser(usernameOrIp);
+            }
+
+            Set<UUID> uuidCache = GlobalBanCommon.IP_TO_UUID_CACHE.get(usernameOrIp);
+            if (uuidCache == null || uuidCache.isEmpty()) {
+                return new ServerUser(usernameOrIp);
+            } else {
+                for (var uuidEntry : uuidCache) {
+                    var optional = profileCache.get(uuidEntry);
+                    if (optional.isPresent()) {
+                        return new ServerUser(optional.get().getName());
+                    }
+                }
+            }
+
+            GameProfile profile = null;
+            var possibleProfile = profileCache.get(usernameOrIp);
+            if (possibleProfile.isPresent()) {
+                profile = possibleProfile.orElse(null);
+            }
+            if (profile == null) {
+                return new ServerUser(uuid);
+            }
+            return new ServerUser(profile.getId());
+        } catch (Exception e) {
+            GlobalBanCommon.INSTANCE.createErrorLog("Failed to lookup server user for: " + usernameOrIp, e);
+            return null;
+        }
     }
 
     public static String stringifyAddress(SocketAddress socketAddress) {
