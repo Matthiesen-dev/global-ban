@@ -12,6 +12,7 @@ publish = "0.35.0"
 matthiesen_core = "1.2.7"
 sponge-mixin = "0.8.5"
 forge-config-api-port = "21.1.6"
+gooeylibs = "3.1.1-1.21.x"
 
 [plugins]
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
@@ -37,24 +38,27 @@ matthiesen-core-neoforge = { group = "dev.matthiesen", name = "matthiesen-core-n
 sponge-mixin = { group = "org.spongepowered", name = "mixin", version.ref = "sponge-mixin" }
 forge-config-api-port-common = { group = "fuzs.forgeconfigapiport", name = "forgeconfigapiport-common-neoforgeapi", version.ref = "forge-config-api-port" }
 forge-config-api-port-fabric = { group = "fuzs.forgeconfigapiport", name = "forgeconfigapiport-fabric", version.ref = "forge-config-api-port" }
+gooeylibs-api = { group = "ca.landonjw.gooeylibs", name = "api", version.ref = "gooeylibs" }
+gooeylibs-fabric = { group = "ca.landonjw.gooeylibs", name = "fabric", version.ref = "gooeylibs" }
+gooeylibs-neoforge = { group = "ca.landonjw.gooeylibs", name = "neoforge", version.ref = "gooeylibs" }
 
 [bundles]
 commonCompileOnly = ["sponge-mixin", "forge-config-api-port-common"]
 commonImplementation = []
 commonModCompileOnly = []
-commonModImplementation = []
+commonModImplementation = ["gooeylibs-api"]
 commonModImplementationNoTransitive = ["matthiesen-core-common"]
 
 fabricCompileOnly = []
 fabricImplementation = []
 fabricModCompileOnly = []
-fabricModRuntimeOnly = ["forge-config-api-port-fabric"]
+fabricModRuntimeOnly = ["forge-config-api-port-fabric", "gooeylibs-fabric"]
 fabricModImplementation = ["fabric-loader", "fabric-api"]
 fabricModImplementationNoTransitive = ["matthiesen-core-fabric"]
 
 neoforgeCompileOnly = []
 neoforgeImplementation = []
 neoforgeModCompileOnly = []
-neoforgeModRuntimeOnly = []
+neoforgeModRuntimeOnly = ["gooeylibs-neoforge"]
 neoforgeModImplementation = []
 neoforgeModImplementationNoTransitive = ["matthiesen-core-neoforge"]

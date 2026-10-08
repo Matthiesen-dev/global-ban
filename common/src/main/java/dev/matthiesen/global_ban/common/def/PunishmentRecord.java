@@ -58,28 +58,28 @@ public record PunishmentRecord(
         if (!(config.get("type") instanceof String typeRaw) || PunishmentType.fromName(typeRaw) == null) {
             return false;
         }
-        if (!(config.get("timestamp") instanceof Long timestamp)) {
+        if (!(config.get("timestamp") instanceof Long)) {
             return false;
         }
-        if (!(config.get("duration") instanceof Long duration)) {
+        if (!(config.get("duration") instanceof Long)) {
             return false;
         }
         if (!(config.get("playerUuid") instanceof String playerUuidRaw)) {
             return false;
         }
-        if (!(config.get("playerIp") instanceof String playerIp)) {
+        if (!(config.get("playerIp") instanceof String)) {
             return false;
         }
-        if (!(config.get("playerDisplayName") instanceof String playerDisplayName)) {
+        if (!(config.get("playerDisplayName") instanceof String)) {
             return false;
         }
         if (!(config.get("punisherUuid") instanceof String punisherUuidRaw)) {
             return false;
         }
-        if (!(config.get("punisherDisplayName") instanceof String punisherDisplayName)) {
+        if (!(config.get("punisherDisplayName") instanceof String)) {
             return false;
         }
-        if (!(config.get("reason") instanceof String reason)) {
+        if (!(config.get("reason") instanceof String)) {
             return false;
         }
         if (!(config.get("serverUuid") instanceof String serverUuidRaw)) {
@@ -95,21 +95,6 @@ public record PunishmentRecord(
         }
 
         return true;
-    }
-
-    public Config serialize() {
-        Config config = Config.inMemory();
-        config.set("type", this.type.name);
-        config.set("timestamp", this.timestamp);
-        config.set("duration", this.duration);
-        config.set("playerUuid", this.playerUuid.toString());
-        config.set("playerIp", this.playerIp);
-        config.set("playerDisplayName", this.playerDisplayName);
-        config.set("punisherUuid", this.punisherUuid.toString());
-        config.set("punisherDisplayName", this.punisherDisplayName);
-        config.set("reason", this.reason);
-        config.set("serverUuid", this.serverUuid.toString());
-        return config;
     }
 
     public static PunishmentRecord create(ServerPlayer punished, CommandSourceStack punisher, PunishmentType type, long duration) {
@@ -172,6 +157,21 @@ public record PunishmentRecord(
                 reason,
                 serverUuid
         );
+    }
+
+    public Config serialize() {
+        Config config = Config.inMemory();
+        config.set("type", this.type.name);
+        config.set("timestamp", this.timestamp);
+        config.set("duration", this.duration);
+        config.set("playerUuid", this.playerUuid.toString());
+        config.set("playerIp", this.playerIp);
+        config.set("playerDisplayName", this.playerDisplayName);
+        config.set("punisherUuid", this.punisherUuid.toString());
+        config.set("punisherDisplayName", this.punisherDisplayName);
+        config.set("reason", this.reason);
+        config.set("serverUuid", this.serverUuid.toString());
+        return config;
     }
 
     public boolean isTemporary() {

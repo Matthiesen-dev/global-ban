@@ -76,6 +76,10 @@ public final class GlobalBanCommon extends AbstractCommonMod {
         createInfoLog("Initialized");
     }
 
+    public boolean isGooeyLibsLoaded() {
+        return getCommonUtils().isModLoaded("gooeylibs");
+    }
+
     private void onConfigReloading(ConfigEvent.Reloading reloading) {
         GlobalBanConfig.invalidatePunished();
         createInfoLog("Reloaded Global Ban configuration");

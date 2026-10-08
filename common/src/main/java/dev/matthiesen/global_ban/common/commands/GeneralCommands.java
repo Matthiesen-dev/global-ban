@@ -3,8 +3,10 @@ package dev.matthiesen.global_ban.common.commands;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.context.CommandContext;
+import dev.matthiesen.global_ban.common.GlobalBanCommon;
 import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
 import dev.matthiesen.global_ban.common.def.PunishmentRecord;
+import dev.matthiesen.global_ban.common.menu.BanListMenu;
 import dev.matthiesen.global_ban.common.registry.PermissionRegistry;
 import dev.matthiesen.global_ban.common.utils.BanImporter;
 import dev.matthiesen.matthiesen_core.common.api.command.CoreCommand;
@@ -13,6 +15,7 @@ import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Comparator;
 import java.util.List;
@@ -74,7 +77,7 @@ public final class GeneralCommands implements CoreCommand {
             List<PunishmentRecord> punishments = GlobalBanConfig.getPunished();
             punishments.sort(Comparator.comparingLong(p -> -p.timestamp()));
 
-            if (source.isPlayer()) {
+            if (source.isPlayer() && GlobalBanCommon.INSTANCE.isGooeyLibsLoaded()) {
                 createBanListMenu(punishments, source);
             } else {
                 createBanListTextOutput(punishments, source);
@@ -84,6 +87,8 @@ public final class GeneralCommands implements CoreCommand {
     }
 
     private void createBanListMenu(List<PunishmentRecord> punishments, CommandSourceStack source) {
+        ServerPlayer player = source.getPlayer();
+        new BanListMenu(player, punishments).open();
     }
 
     private void createBanListTextOutput(List<PunishmentRecord> punishments, CommandSourceStack source) {

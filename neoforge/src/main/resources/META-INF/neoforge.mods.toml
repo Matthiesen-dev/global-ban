@@ -36,3 +36,11 @@ mandatory = true
 versionRange = "[1.2.7,)"
 ordering = "AFTER"
 side = "BOTH"
+
+[[dependencies.${mod_id}]]
+modId = "gooeylibs"
+type = "optional"
+mandatory = true
+versionRange = "[3.1.1,)"
+ordering = "AFTER"
+side = "SERVER"
