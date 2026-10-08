@@ -56,16 +56,8 @@ public final class MenuUtilities {
         };
     }
 
-    public static ItemStack getPlayerRecordItem(PunishmentRecord punishment) {
-        ServerUser serverUser = new ServerUser(punishment.playerUuid());
-        GameProfile gameProfile;
-        if (serverUser.isOnline()) {
-            gameProfile = serverUser.getOnlinePlayer().getGameProfile();
-        } else {
-            gameProfile = new GameProfile(serverUser.getUUID(), serverUser.getUsername());
-        }
-        ResolvableProfile profile = new ResolvableProfile(gameProfile);
-        Component[] lore = new Component[]{
+    private static Component[] getRecordLore(PunishmentRecord punishment) {
+        return new Component[]{
                 Component.literal("Type: ").setStyle(Style.EMPTY.withBold(true))
                         .append(Component.literal(punishment.type().name()).setStyle(Style.EMPTY.withColor(ChatFormatting.RED))),
                 Component.literal("Date: ").setStyle(Style.EMPTY.withBold(true))
@@ -77,6 +69,23 @@ public final class MenuUtilities {
                 Component.literal("Reason: ").setStyle(Style.EMPTY.withBold(true))
                         .append(Component.literal(punishment.reason()).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)))
         };
+    }
+
+    private static ResolvableProfile getResolvableProfile(PunishmentRecord punishment) {
+        ServerUser serverUser = new ServerUser(punishment.playerUuid());
+        GameProfile gameProfile;
+        if (serverUser.isOnline()) {
+            gameProfile = serverUser.getOnlinePlayer().getGameProfile();
+        } else {
+            gameProfile = new GameProfile(serverUser.getUUID(), serverUser.getUsername());
+        }
+        return new ResolvableProfile(gameProfile);
+    }
+
+    public static ItemStack getPlayerRecordItem(PunishmentRecord punishment) {
+        ServerUser serverUser = new ServerUser(punishment.playerUuid());
+        ResolvableProfile profile = getResolvableProfile(punishment);
+        Component[] lore = getRecordLore(punishment);
         return new ItemBuilder(PLAYER_RECORD_ITEM)
                 .hideAdditional()
                 .setCustomName(Component.literal(serverUser.getUsername()))
@@ -89,18 +98,7 @@ public final class MenuUtilities {
     }
 
     public static ItemStack getIpRecordItem(PunishmentRecord punishment) {
-        Component[] lore = new Component[]{
-                Component.literal("Type: ").setStyle(Style.EMPTY.withBold(true))
-                        .append(Component.literal(punishment.type().name()).setStyle(Style.EMPTY.withColor(ChatFormatting.RED))),
-                Component.literal("Date: ").setStyle(Style.EMPTY.withBold(true))
-                        .append(Component.literal(punishment.getFormattedDate()).setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW))),
-                Component.literal("Expires: ").setStyle(Style.EMPTY.withBold(true))
-                        .append(Component.literal(punishment.getFormattedExpirationDate()).setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW))),
-                Component.literal("By: ").setStyle(Style.EMPTY.withBold(true))
-                        .append(Component.literal(punishment.punisherDisplayName()).setStyle(Style.EMPTY.withColor(ChatFormatting.GREEN))),
-                Component.literal("Reason: ").setStyle(Style.EMPTY.withBold(true))
-                        .append(Component.literal(punishment.reason()).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)))
-        };
+        Component[] lore = getRecordLore(punishment);
         return new ItemBuilder(IP_RECORD_ITEM)
                 .hideAdditional()
                 .setCustomName(Component.literal(punishment.playerIp()))
