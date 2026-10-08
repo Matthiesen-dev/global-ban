@@ -49,11 +49,33 @@ public final class MenuUtilities {
     }
 
     public static ItemStack getRecordItem(PunishmentRecord record) {
+        ItemBuilder base = getRecordItemBuilder(record);
         return switch (record.type()) {
-            case BAN -> getPlayerRecordItem(record);
-            case IP_BAN -> getIpRecordItem(record);
+            case BAN -> base.modifyStack(stack -> {
+                stack.set(DataComponents.PROFILE, getResolvableProfile(record));
+                return stack;
+            }).build();
+            case IP_BAN -> base.build();
             default -> throw new IllegalArgumentException("Unsupported punishment type: " + record.type());
         };
+    }
+
+    public static ItemBuilder getRecordItemBuilder(PunishmentRecord record) {
+        Item item;
+        String name;
+        Component[] lore = getRecordLore(record);
+        switch (record.type()) {
+            case BAN -> {
+                item = PLAYER_RECORD_ITEM;
+                name = new ServerUser(record.playerUuid()).getUsername();
+            }
+            case IP_BAN -> {
+                item = IP_RECORD_ITEM;
+                name = record.playerIp();
+            }
+            default -> throw new IllegalArgumentException("Unsupported punishment type: " + record.type());
+        }
+        return new ItemBuilder(item).hideAdditional().setCustomName(Component.literal(name)).addLore(lore);
     }
 
     private static Component[] getRecordLore(PunishmentRecord punishment) {
@@ -80,29 +102,5 @@ public final class MenuUtilities {
             gameProfile = new GameProfile(serverUser.getUUID(), serverUser.getUsername());
         }
         return new ResolvableProfile(gameProfile);
-    }
-
-    public static ItemStack getPlayerRecordItem(PunishmentRecord punishment) {
-        ServerUser serverUser = new ServerUser(punishment.playerUuid());
-        ResolvableProfile profile = getResolvableProfile(punishment);
-        Component[] lore = getRecordLore(punishment);
-        return new ItemBuilder(PLAYER_RECORD_ITEM)
-                .hideAdditional()
-                .setCustomName(Component.literal(serverUser.getUsername()))
-                .addLore(lore)
-                .modifyStack(stack -> {
-                    stack.set(DataComponents.PROFILE, profile);
-                    return stack;
-                })
-                .build();
-    }
-
-    public static ItemStack getIpRecordItem(PunishmentRecord punishment) {
-        Component[] lore = getRecordLore(punishment);
-        return new ItemBuilder(IP_RECORD_ITEM)
-                .hideAdditional()
-                .setCustomName(Component.literal(punishment.playerIp()))
-                .addLore(lore)
-                .build();
     }
 }

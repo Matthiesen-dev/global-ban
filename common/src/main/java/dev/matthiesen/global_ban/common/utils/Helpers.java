@@ -128,14 +128,6 @@ public final class Helpers {
         }
     }
 
-    /**
-     * Parses a duration string into milliseconds.
-     * Supports formats like "1d", "2h", "30m", "15s", "1y", "6mo", "2w", and combinations like "1d2h30m".
-     *
-     * @param text the duration string to parse
-     * @return the duration in milliseconds
-     * @throws NumberFormatException if the input format is invalid
-     */
     public static long parseDuration(String text) throws NumberFormatException {
         text = text.toLowerCase(Locale.ROOT);
         try {
