@@ -82,7 +82,7 @@ public final class Helpers {
                 profile = possibleProfile.orElse(null);
             }
             if (profile == null) {
-                return new ServerUser(uuid);
+                return new ServerUser("UnknownPlayer");
             }
             return new ServerUser(profile.getId());
         } catch (Exception e) {
