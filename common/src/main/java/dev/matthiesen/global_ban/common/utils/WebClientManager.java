@@ -35,12 +35,16 @@ public final class WebClientManager {
                 .build();
     }
 
+    public record ExampleResponse(String field1, int field2) {
+        // Add any necessary methods or validation here
+    }
+
     public static void getRequestExample() {
         HttpRequest request = getRequest("https://api.example.com/data");
         CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(response -> {
                     if (response.statusCode() == 200) {
-                        return GSON.fromJson(response.body(), Object.class); // Replace Object with your desired class
+                        return GSON.fromJson(response.body(), ExampleResponse.class); // Replace Object with your desired class
                     } else {
                         throw new RuntimeException("Failed to fetch data: " + response.statusCode());
                     }
