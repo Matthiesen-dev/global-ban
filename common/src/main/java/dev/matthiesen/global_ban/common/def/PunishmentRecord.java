@@ -101,16 +101,6 @@ public record PunishmentRecord(
         return true;
     }
 
-    public static PunishmentRecord create(ServerPlayer punished, CommandSourceStack punisher, PunishmentType type, long duration) {
-        return create(
-                punished,
-                punisher,
-                type,
-                duration,
-                GlobalBanConfig.SERVER_CONFIG.defaultBanReason.get()
-        );
-    }
-
     public static PunishmentRecord create(ServerPlayer punished, CommandSourceStack punisher, PunishmentType type, long duration, String reason) {
         return create(
                 punished.getUUID(),
@@ -120,18 +110,6 @@ public record PunishmentRecord(
                 type,
                 duration,
                 reason
-        );
-    }
-
-    public static PunishmentRecord create(UUID uuid, String ipAddress, String displayName, CommandSourceStack punisher, PunishmentType type, long duration) {
-        return create(
-                uuid,
-                ipAddress,
-                displayName,
-                punisher,
-                type,
-                duration,
-                GlobalBanConfig.SERVER_CONFIG.defaultBanReason.get()
         );
     }
 

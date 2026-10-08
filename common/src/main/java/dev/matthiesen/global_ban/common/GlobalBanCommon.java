@@ -142,25 +142,15 @@ public final class GlobalBanCommon extends AbstractCommonMod {
     }
 
     public boolean publishPlayer(ServerPlayer punished, CommandSourceStack punisher, PunishmentType type) {
-        try {
-            PunishmentRecord record = PunishmentRecord.create(punished, punisher, type, PunishmentRecord.NON_EXPIRING_PUNISHMENT);
-            punishPlayer(record);
-            return true;
-        } catch (Exception e) {
-            createErrorLog("Failed to publish player punishment: " + e.getMessage(), e);
-            return false;
-        }
+        return publishPlayer(punished, punisher, type, PunishmentRecord.NON_EXPIRING_PUNISHMENT);
     }
 
     public boolean publishPlayer(ServerPlayer punished, CommandSourceStack punisher, PunishmentType type, long duration) {
-        try {
-            PunishmentRecord record = PunishmentRecord.create(punished, punisher, type, duration);
-            punishPlayer(record);
-            return true;
-        } catch (Exception e) {
-            createErrorLog("Failed to publish player punishment: " + e.getMessage(), e);
-            return false;
-        }
+        return publishPlayer(punished, punisher, type, duration, GlobalBanConfig.SERVER_CONFIG.defaultBanReason.get());
+    }
+
+    public boolean publishPlayer(ServerPlayer punished, CommandSourceStack punisher, PunishmentType type, String reason) {
+        return publishPlayer(punished, punisher, type, PunishmentRecord.NON_EXPIRING_PUNISHMENT, reason);
     }
 
     public boolean publishPlayer(ServerPlayer punished, CommandSourceStack punisher, PunishmentType type, long duration, String reason) {
@@ -174,29 +164,19 @@ public final class GlobalBanCommon extends AbstractCommonMod {
         }
     }
 
-    public boolean punishPlayer(UUID uuid, String ipAddress, String displayName,CommandSourceStack punisher, PunishmentType type) {
-        try {
-            PunishmentRecord record = PunishmentRecord.create(uuid, ipAddress, displayName, punisher, type, PunishmentRecord.NON_EXPIRING_PUNISHMENT);
-            punishPlayer(record);
-            return true;
-        } catch (Exception e) {
-            createErrorLog("Failed to publish player punishment: " + e.getMessage(), e);
-            return false;
-        }
+    public boolean punishPlayer(UUID uuid, String ipAddress, String displayName, CommandSourceStack punisher, PunishmentType type) {
+        return punishPlayer(uuid, ipAddress, displayName, punisher, type, PunishmentRecord.NON_EXPIRING_PUNISHMENT);
     }
 
-    public boolean punishPlayer(UUID uuid, String ipAddress, String displayName,CommandSourceStack punisher, PunishmentType type, long duration) {
-        try {
-            PunishmentRecord record = PunishmentRecord.create(uuid, ipAddress, displayName, punisher, type, duration);
-            punishPlayer(record);
-            return true;
-        } catch (Exception e) {
-            createErrorLog("Failed to publish player punishment: " + e.getMessage(), e);
-            return false;
-        }
+    public boolean punishPlayer(UUID uuid, String ipAddress, String displayName, CommandSourceStack punisher, PunishmentType type, long duration) {
+        return punishPlayer(uuid, ipAddress, displayName, punisher, type, duration, GlobalBanConfig.SERVER_CONFIG.defaultBanReason.get());
     }
 
-    public boolean punishPlayer(UUID uuid, String ipAddress, String displayName,CommandSourceStack punisher, PunishmentType type, long duration, String reason) {
+    public boolean punishPlayer(UUID uuid, String ipAddress, String displayName, CommandSourceStack punisher, PunishmentType type, String reason) {
+        return punishPlayer(uuid, ipAddress, displayName, punisher, type, PunishmentRecord.NON_EXPIRING_PUNISHMENT, reason);
+    }
+
+    public boolean punishPlayer(UUID uuid, String ipAddress, String displayName, CommandSourceStack punisher, PunishmentType type, long duration, String reason) {
         try {
             PunishmentRecord record = PunishmentRecord.create(uuid, ipAddress, displayName, punisher, type, duration, reason);
             punishPlayer(record);
