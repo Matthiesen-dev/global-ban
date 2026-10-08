@@ -11,6 +11,11 @@ public final class PunishCommands implements CoreCommand {
 
     @Override
     public void register(CommandDispatcher<CommandSourceStack> commandDispatcher, CommandBuildContext commandBuildContext, Commands.CommandSelection commandSelection) {
-
+        // TODO:
+        // kick
+        // ban
+        // tempban
+        // ban-ip
+        // tempban-ip
     }
 }

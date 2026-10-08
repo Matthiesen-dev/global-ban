@@ -11,6 +11,10 @@ public final class UnpunishCommands implements CoreCommand {
 
     @Override
     public void register(CommandDispatcher<CommandSourceStack> commandDispatcher, CommandBuildContext commandBuildContext, Commands.CommandSelection commandSelection) {
-
+        // TODO:
+        // unban
+        // unban-ip
+        // pardon
+        // pardon-ip
     }
 }
