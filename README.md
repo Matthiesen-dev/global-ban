@@ -11,6 +11,10 @@ ability to ban players across multiple servers, and even across multiple communi
 Custom ban messages, reasons, and durations can be set for the different punishment types, and can be configured to be different for each server. 
 This allows for a more personalized experience for the player, and can help to reduce confusion when a player is banned from multiple servers.
 
+**TODO:**
+- [ ] More GUI features for moderation tools, currently only the banlist is available in GUI form, but more features will be added in the future.
+- [ ] Add sync system for multiple server using a web-based API, allowing for server owners to connect multiple servers together, and even connect multiple communities together.
+
 ## Commands
 
 | Command                                 | Description                                                                                                               |
