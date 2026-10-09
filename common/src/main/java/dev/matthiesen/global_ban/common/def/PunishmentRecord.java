@@ -27,6 +27,36 @@ public record PunishmentRecord(
     public static final String UNKNOWN_PLAYER_NAME = "UnknownPlayer";
     public static final String UNDEFINED_IP_ADDRESS = "undefined";
 
+    public record Sync(PunishmentRecord record, SyncType type) {
+        public static Config serialize(Sync sync) {
+            Config config = Config.inMemory();
+            config.set("record", sync.record.serialize());
+            config.set("type", sync.type.name());
+            return config;
+        }
+
+        public static Sync deserialize(Config config) {
+            PunishmentRecord record = PunishmentRecord.deserialize(config.get("record"));
+            SyncType type = SyncType.valueOf(config.get("type"));
+            return new Sync(record, type);
+        }
+
+        public static boolean isValid(Config config) {
+            if (!(config.get("record") instanceof Config recordConfig) || !PunishmentRecord.isValid(recordConfig)) {
+                return false;
+            }
+            if (!(config.get("type") instanceof String typeRaw)) {
+                return false;
+            }
+            try {
+                SyncType.valueOf(typeRaw);
+            } catch (IllegalArgumentException e) {
+                return false;
+            }
+            return true;
+        }
+    }
+
     public static PunishmentRecord punishAlt(UUID playerUuid, String playerDisplayName, PunishmentRecord previousRecord) {
         return new PunishmentRecord(
                 PunishmentType.BAN,

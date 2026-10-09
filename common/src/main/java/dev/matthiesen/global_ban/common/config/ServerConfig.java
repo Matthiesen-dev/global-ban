@@ -15,6 +15,8 @@ public final class ServerConfig {
     public ModConfigSpec.ConfigValue<String> defaultBanReason;
     public ModConfigSpec.EnumValue<BuiltInTextParsers> textParser;
 
+    public ModConfigSpec.BooleanValue sync_enable;
+
     public ModConfigSpec.IntValue scheduler_cpuCorePoolSize;
     public ModConfigSpec.LongValue scheduler_expiredPunishmentsCheckInterval;
 
@@ -52,6 +54,11 @@ public final class ServerConfig {
 
         textParser = builder.comment("The text parser to use for parsing text")
                 .defineEnum("textParser", BuiltInTextParsers.VANILLA);
+
+        builder.comment("Sync Config").push("sync");
+        sync_enable = builder.comment("Enable syncing of punishments between servers")
+                .define("enable", false);
+        builder.pop(); // sync
 
         builder.comment("Scheduler Config").push("scheduler");
         scheduler_cpuCorePoolSize = builder.comment("The number of CPU cores to use for the scheduler")

@@ -2,9 +2,11 @@ package dev.matthiesen.global_ban.common.config;
 
 import dev.matthiesen.global_ban.common.def.PunishmentRecord;
 import dev.matthiesen.global_ban.common.def.PunishmentType;
+import dev.matthiesen.global_ban.common.def.SyncType;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -71,6 +73,9 @@ public final class GlobalBanConfig {
         List<PunishmentRecord> bannedPlayers = getPunished();
         if (bannedPlayers.contains(punishment)) return; // Already banned, no need to add again
         bannedPlayers.add(punishment);
+        if (GlobalBanConfig.SERVER_CONFIG.sync_enable.getAsBoolean()) {
+            appendPunishmentToPendingSync(punishment, SyncType.ADD);
+        }
         PUNISHMENTS.punished.set(bannedPlayers.stream().map(PunishmentRecord::serialize).toList());
         reloadPunished();
     }
@@ -79,6 +84,9 @@ public final class GlobalBanConfig {
         List<PunishmentRecord> bannedPlayers = getPunished();
         if (!bannedPlayers.contains(punishment)) return 0; // Not banned, no need to remove
         bannedPlayers.remove(punishment);
+        if (GlobalBanConfig.SERVER_CONFIG.sync_enable.getAsBoolean()) {
+            appendPunishmentToPendingSync(punishment, SyncType.REMOVE);
+        }
         PUNISHMENTS.punished.set(bannedPlayers.stream().map(PunishmentRecord::serialize).toList());
         reloadPunished();
         return 1;
@@ -89,6 +97,14 @@ public final class GlobalBanConfig {
         List<PunishmentRecord> updatedList = bannedPlayers.stream()
                 .filter(punishment -> !punishment.playerUuid().equals(player))
                 .toList();
+
+        if (GlobalBanConfig.SERVER_CONFIG.sync_enable.getAsBoolean()) {
+            var removedPunishments = bannedPlayers.stream()
+                    .filter(punishment -> punishment.playerUuid().equals(player))
+                    .toList();
+            removedPunishments.forEach(punishment -> appendPunishmentToPendingSync(punishment, SyncType.REMOVE));
+        }
+
         int difference = bannedPlayers.size() - updatedList.size();
         PUNISHMENTS.punished.set(updatedList.stream().map(PunishmentRecord::serialize).toList());
         reloadPunished();
@@ -100,10 +116,34 @@ public final class GlobalBanConfig {
         List<PunishmentRecord> updatedList = bannedPlayers.stream()
                 .filter(punishment -> !punishment.playerIp().equals(ipAddress))
                 .toList();
+
+        if (GlobalBanConfig.SERVER_CONFIG.sync_enable.getAsBoolean()) {
+            var removedPunishments = bannedPlayers.stream()
+                    .filter(punishment -> punishment.playerIp().equals(ipAddress))
+                    .toList();
+            removedPunishments.forEach(punishment -> appendPunishmentToPendingSync(punishment, SyncType.REMOVE));
+        }
+
         int difference = bannedPlayers.size() - updatedList.size();
         PUNISHMENTS.punished.set(updatedList.stream().map(PunishmentRecord::serialize).toList());
         reloadPunished();
         return difference;
+    }
+
+    public static boolean hasPendingSyncPunishments() {
+        return !PUNISHMENTS.punished_pendingSync.get().isEmpty();
+    }
+
+    public static void appendPunishmentToPendingSync(PunishmentRecord punishment, SyncType syncType) {
+        List<PunishmentRecord.Sync> pendingSyncList = new ArrayList<>(PUNISHMENTS.punished_pendingSync.get().stream()
+                .map(PunishmentRecord.Sync::deserialize)
+                .toList());
+        pendingSyncList.add(new PunishmentRecord.Sync(punishment, syncType));
+        PUNISHMENTS.punished_pendingSync.set(pendingSyncList.stream().map(PunishmentRecord.Sync::serialize).toList());
+    }
+
+    public static void clearPendingSyncPunishments() {
+        PUNISHMENTS.punished_pendingSync.set(new ArrayList<>());
     }
 
     public static void syncPunishmentsWithWebAPI() {
