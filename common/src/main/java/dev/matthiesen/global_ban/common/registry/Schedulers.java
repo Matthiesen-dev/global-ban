@@ -17,10 +17,9 @@ public final class Schedulers {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(serverConfig.scheduler_cpuCorePoolSize.getAsInt());
 
         scheduler.schedule(Schedulers::handleExpiredPunishments, serverConfig.scheduler_expiredPunishmentsCheckInterval.getAsLong(), TimeUnit.MINUTES);
-        // TODO: Enable this when the sync API is ready
-        // if (serverConfig.scheduler_apiSyncEnabled.getAsBoolean()) {
-        //    scheduler.schedule(PunishmentSync::run, serverConfig.scheduler_apiSyncInterval.getAsLong(), TimeUnit.MINUTES);
-        // }
+         if (serverConfig.scheduler_apiSyncEnabled.getAsBoolean()) {
+            scheduler.schedule(PunishmentSync::run, serverConfig.scheduler_apiSyncInterval.getAsLong(), TimeUnit.MINUTES);
+         }
     }
 
     public static void handleExpiredPunishments() {

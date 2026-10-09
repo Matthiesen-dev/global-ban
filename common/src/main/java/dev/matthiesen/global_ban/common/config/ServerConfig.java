@@ -61,7 +61,7 @@ public final class ServerConfig {
                 .defineInRange("cpuCorePoolSize", 1, 1, Integer.MAX_VALUE);
         scheduler_expiredPunishmentsCheckInterval = builder.comment("The interval in minutes to check for and process expired punishments")
                 .defineInRange("expiredPunishmentsCheckInterval", 5L, 1L, Long.MAX_VALUE);
-        scheduler_apiSyncEnabled = builder.comment("Enable syncing of punishments to a remote API (not yet implemented)")
+        scheduler_apiSyncEnabled = builder.comment("Enable syncing of punishments to a remote API (Requires compatible API to be set up)")
                 .define("apiSyncEnabled", false);
         scheduler_apiSyncInterval = builder.comment("The interval in minutes to sync punishments to the remote API")
                 .defineInRange("apiSyncInterval", 30L, 1L, Long.MAX_VALUE);
