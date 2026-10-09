@@ -16,6 +16,8 @@ public final class ServerConfig {
     public ModConfigSpec.EnumValue<BuiltInTextParsers> textParser;
 
     public ModConfigSpec.BooleanValue sync_enable;
+    public ModConfigSpec.LongValue sync_interval;
+    public ModConfigSpec.ConfigValue<String> sync_apiUrl;
 
     public ModConfigSpec.IntValue scheduler_cpuCorePoolSize;
     public ModConfigSpec.LongValue scheduler_expiredPunishmentsCheckInterval;
@@ -59,8 +61,12 @@ public final class ServerConfig {
                 "Sync Config",
                 "NOTE: This feature is not yet implemented."
         ).push("sync");
-        sync_enable = builder.comment("Enable syncing of punishments between servers")
+        sync_enable = builder.comment("Enable syncing of punishments to a remote API (not yet implemented)")
                 .define("enable", false);
+        sync_interval = builder.comment("The interval in minutes to sync punishments to the remote API")
+                .defineInRange("interval", 5L, 1L, Long.MAX_VALUE);
+        sync_apiUrl = builder.comment("The URL of the remote API to sync punishments with")
+                .define("apiUrl", "");
         builder.pop(); // sync
 
         builder.comment("Scheduler Config").push("scheduler");

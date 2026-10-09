@@ -150,10 +150,6 @@ public final class GlobalBanConfig {
         PUNISHMENTS.punished_pendingSync.set(new ArrayList<>());
     }
 
-    public static void syncPunishmentsWithWebAPI() {
-        // TODO: Implement syncing logic to remote API once that system is in place. For now, this is a placeholder to indicate where syncing would occur.
-    }
-
     public static UUID getServerUUID() {
         return UUID.fromString(SERVER_CONFIG.serverUUID.get());
     }
