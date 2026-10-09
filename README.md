@@ -11,10 +11,6 @@ ability to ban players across multiple servers, and even across multiple communi
 Custom ban messages, reasons, and durations can be set for the different punishment types, and can be configured to be different for each server. 
 This allows for a more personalized experience for the player, and can help to reduce confusion when a player is banned from multiple servers.
 
-**TODO:**
-- [ ] More GUI features for moderation tools, currently only the banlist is available in GUI form, but more features will be added in the future.
-- [ ] Add sync system for multiple server using a web-based API, allowing for server owners to connect multiple servers together, and even connect multiple communities together.
-
 ## Commands
 
 | Command                                 | Description                                                                                                               |
@@ -74,6 +70,17 @@ commands and features of the global-ban system.
 | `global_ban.command.pardon`            | Allows Admins to use the `/pardon` command.                             |
 | `global_ban.command.pardon_ip`         | Allows Admins to use the `/pardon-ip` command.                          |
 | `global_ban.command.ban_list`          | Allows Admins to use the `/global-ban banlist` & `/banlist` commands.   |
+
+## Remote API Sync
+
+Global Ban has the ability to sync punishments to a remote API, allowing for multiple servers to share the same ban list.
+This allows for Admins to ban players across multiple servers, and if desired, across multiple connected communities. 
+This feature is disabled by default, and can be enabled in the configuration file.
+
+A Remote API server implementation is required to use this feature, and is not included with the mod itself, and must be hosted separately. 
+
+> **Note:** This feature is still in development, and does not have a Remote API server implementation available yet. 
+> If you are interested in helping to develop this feature, please reach out to the developer in the [Discord](https://discord.gg/4ePfVRgexS) server.
 
 ## Requirements
 
