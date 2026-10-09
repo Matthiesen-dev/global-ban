@@ -37,7 +37,7 @@ public record PunishmentRecord(
 
         public static Sync deserialize(Config config) {
             PunishmentRecord record = PunishmentRecord.deserialize(config.get("record"));
-            SyncType type = SyncType.valueOf(config.get("type"));
+            SyncType type = SyncType.fromName(config.get("type"));
             return new Sync(record, type);
         }
 
@@ -48,12 +48,7 @@ public record PunishmentRecord(
             if (!(config.get("type") instanceof String typeRaw)) {
                 return false;
             }
-            try {
-                SyncType.valueOf(typeRaw);
-            } catch (IllegalArgumentException e) {
-                return false;
-            }
-            return true;
+            return SyncType.fromName(typeRaw) != null;
         }
     }
 
