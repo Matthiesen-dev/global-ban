@@ -55,7 +55,10 @@ public final class ServerConfig {
         textParser = builder.comment("The text parser to use for parsing text")
                 .defineEnum("textParser", BuiltInTextParsers.VANILLA);
 
-        builder.comment("Sync Config").push("sync");
+        builder.comment(
+                "Sync Config",
+                "NOTE: This feature is not yet implemented."
+        ).push("sync");
         sync_enable = builder.comment("Enable syncing of punishments between servers")
                 .define("enable", false);
         builder.pop(); // sync

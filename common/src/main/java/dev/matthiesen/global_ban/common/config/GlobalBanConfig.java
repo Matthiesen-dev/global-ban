@@ -134,10 +134,14 @@ public final class GlobalBanConfig {
         return !PUNISHMENTS.punished_pendingSync.get().isEmpty();
     }
 
-    public static void appendPunishmentToPendingSync(PunishmentRecord punishment, SyncType syncType) {
-        List<PunishmentRecord.Sync> pendingSyncList = new ArrayList<>(PUNISHMENTS.punished_pendingSync.get().stream()
+    public static List<PunishmentRecord.Sync> getPendingSyncPunishments() {
+        return PUNISHMENTS.punished_pendingSync.get().stream()
                 .map(PunishmentRecord.Sync::deserialize)
-                .toList());
+                .toList();
+    }
+
+    public static void appendPunishmentToPendingSync(PunishmentRecord punishment, SyncType syncType) {
+        List<PunishmentRecord.Sync> pendingSyncList = new ArrayList<>(getPendingSyncPunishments());
         pendingSyncList.add(new PunishmentRecord.Sync(punishment, syncType));
         PUNISHMENTS.punished_pendingSync.set(pendingSyncList.stream().map(PunishmentRecord.Sync::serialize).toList());
     }
