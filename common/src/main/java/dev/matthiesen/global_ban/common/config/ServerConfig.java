@@ -64,7 +64,7 @@ public final class ServerConfig {
         scheduler_apiSyncEnabled = builder.comment("Enable syncing of punishments to a remote API (not yet implemented)")
                 .define("apiSyncEnabled", false);
         scheduler_apiSyncInterval = builder.comment("The interval in minutes to sync punishments to the remote API")
-                .defineInRange("apiSyncInterval", 5L, 1L, Long.MAX_VALUE);
+                .defineInRange("apiSyncInterval", 30L, 1L, Long.MAX_VALUE);
         scheduler_apiSyncUrl = builder.comment("The URL of the remote API to sync punishments with")
                 .define("apiSyncUrl", "");
         builder.pop(); // scheduler
