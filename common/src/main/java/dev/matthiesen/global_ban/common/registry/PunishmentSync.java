@@ -21,7 +21,7 @@ public final class PunishmentSync {
     }
 
     public static void run() {
-        String apiUrl = GlobalBanConfig.SERVER_CONFIG.sync_apiUrl.get();
+        String apiUrl = GlobalBanConfig.SERVER_CONFIG.scheduler_apiSyncUrl.get();
         if (apiUrl == null || apiUrl.isEmpty()) {
             GlobalBanCommon.INSTANCE.createWarnLog("Sync API URL is not configured. Skipping punishment sync.");
             return;

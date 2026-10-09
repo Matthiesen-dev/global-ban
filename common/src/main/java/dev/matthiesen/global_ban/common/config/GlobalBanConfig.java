@@ -73,7 +73,7 @@ public final class GlobalBanConfig {
         List<PunishmentRecord> bannedPlayers = getPunished();
         if (bannedPlayers.contains(punishment)) return; // Already banned, no need to add again
         bannedPlayers.add(punishment);
-        if (GlobalBanConfig.SERVER_CONFIG.sync_enable.getAsBoolean()) {
+        if (GlobalBanConfig.SERVER_CONFIG.scheduler_apiSyncEnabled.getAsBoolean()) {
             appendPunishmentToPendingSync(punishment, SyncType.ADD);
         }
         PUNISHMENTS.punished.set(bannedPlayers.stream().map(PunishmentRecord::serialize).toList());
@@ -84,7 +84,7 @@ public final class GlobalBanConfig {
         List<PunishmentRecord> bannedPlayers = getPunished();
         if (!bannedPlayers.contains(punishment)) return 0; // Not banned, no need to remove
         bannedPlayers.remove(punishment);
-        if (GlobalBanConfig.SERVER_CONFIG.sync_enable.getAsBoolean()) {
+        if (GlobalBanConfig.SERVER_CONFIG.scheduler_apiSyncEnabled.getAsBoolean()) {
             appendPunishmentToPendingSync(punishment, SyncType.REMOVE);
         }
         PUNISHMENTS.punished.set(bannedPlayers.stream().map(PunishmentRecord::serialize).toList());
@@ -98,7 +98,7 @@ public final class GlobalBanConfig {
                 .filter(punishment -> !punishment.playerUuid().equals(player))
                 .toList();
 
-        if (GlobalBanConfig.SERVER_CONFIG.sync_enable.getAsBoolean()) {
+        if (GlobalBanConfig.SERVER_CONFIG.scheduler_apiSyncEnabled.getAsBoolean()) {
             var removedPunishments = bannedPlayers.stream()
                     .filter(punishment -> punishment.playerUuid().equals(player))
                     .toList();
@@ -117,7 +117,7 @@ public final class GlobalBanConfig {
                 .filter(punishment -> !punishment.playerIp().equals(ipAddress))
                 .toList();
 
-        if (GlobalBanConfig.SERVER_CONFIG.sync_enable.getAsBoolean()) {
+        if (GlobalBanConfig.SERVER_CONFIG.scheduler_apiSyncEnabled.getAsBoolean()) {
             var removedPunishments = bannedPlayers.stream()
                     .filter(punishment -> punishment.playerIp().equals(ipAddress))
                     .toList();

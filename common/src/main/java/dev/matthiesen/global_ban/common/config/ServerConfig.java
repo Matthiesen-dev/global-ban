@@ -15,12 +15,11 @@ public final class ServerConfig {
     public ModConfigSpec.ConfigValue<String> defaultBanReason;
     public ModConfigSpec.EnumValue<BuiltInTextParsers> textParser;
 
-    public ModConfigSpec.BooleanValue sync_enable;
-    public ModConfigSpec.LongValue sync_interval;
-    public ModConfigSpec.ConfigValue<String> sync_apiUrl;
-
     public ModConfigSpec.IntValue scheduler_cpuCorePoolSize;
     public ModConfigSpec.LongValue scheduler_expiredPunishmentsCheckInterval;
+    public ModConfigSpec.BooleanValue scheduler_apiSyncEnabled;
+    public ModConfigSpec.LongValue scheduler_apiSyncInterval;
+    public ModConfigSpec.ConfigValue<String> scheduler_apiSyncUrl;
 
     public ModConfigSpec.ConfigValue<List<? extends String>> messages_banChatMessage;
     public ModConfigSpec.ConfigValue<List<? extends String>> messages_tempBanChatMessage;
@@ -57,23 +56,17 @@ public final class ServerConfig {
         textParser = builder.comment("The text parser to use for parsing text")
                 .defineEnum("textParser", BuiltInTextParsers.VANILLA);
 
-        builder.comment(
-                "Sync Config",
-                "NOTE: This feature is not yet implemented."
-        ).push("sync");
-        sync_enable = builder.comment("Enable syncing of punishments to a remote API (not yet implemented)")
-                .define("enable", false);
-        sync_interval = builder.comment("The interval in minutes to sync punishments to the remote API")
-                .defineInRange("interval", 5L, 1L, Long.MAX_VALUE);
-        sync_apiUrl = builder.comment("The URL of the remote API to sync punishments with")
-                .define("apiUrl", "");
-        builder.pop(); // sync
-
         builder.comment("Scheduler Config").push("scheduler");
         scheduler_cpuCorePoolSize = builder.comment("The number of CPU cores to use for the scheduler")
                 .defineInRange("cpuCorePoolSize", 1, 1, Integer.MAX_VALUE);
         scheduler_expiredPunishmentsCheckInterval = builder.comment("The interval in minutes to check for and process expired punishments")
                 .defineInRange("expiredPunishmentsCheckInterval", 5L, 1L, Long.MAX_VALUE);
+        scheduler_apiSyncEnabled = builder.comment("Enable syncing of punishments to a remote API (not yet implemented)")
+                .define("apiSyncEnabled", false);
+        scheduler_apiSyncInterval = builder.comment("The interval in minutes to sync punishments to the remote API")
+                .defineInRange("apiSyncInterval", 5L, 1L, Long.MAX_VALUE);
+        scheduler_apiSyncUrl = builder.comment("The URL of the remote API to sync punishments with")
+                .define("apiSyncUrl", "");
         builder.pop(); // scheduler
 
         builder.comment("Messages to display to players when they are banned, temp banned, or kicked")
