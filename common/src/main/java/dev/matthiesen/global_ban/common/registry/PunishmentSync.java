@@ -1,10 +1,9 @@
 package dev.matthiesen.global_ban.common.registry;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import dev.matthiesen.global_ban.common.GlobalBanCommon;
 import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
 import dev.matthiesen.global_ban.common.def.PunishmentRecord;
+import dev.matthiesen.global_ban.common.def.SyncData;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -37,11 +36,11 @@ public final class PunishmentSync {
                     return SyncData.fromJson(response.body());
                 })
                 .thenAccept(syncData -> {
-                    if (syncData.punishments.isEmpty()) {
+                    if (syncData.punishments().isEmpty()) {
                         GlobalBanCommon.INSTANCE.createInfoLog("No punishments received from the sync API.");
                     } else {
-                        GlobalBanCommon.INSTANCE.createInfoLog("Received " + syncData.punishments.size() + " punishments from the sync API.");
-                        for (var newPunishment : syncData.punishments) {
+                        GlobalBanCommon.INSTANCE.createInfoLog("Received " + syncData.punishments().size() + " punishments from the sync API.");
+                        for (var newPunishment : syncData.punishments()) {
                             switch (newPunishment.type()) {
                                 case ADD -> GlobalBanCommon.INSTANCE.punishPlayer(newPunishment.record());
                                 case REMOVE -> GlobalBanCommon.INSTANCE.unpunishPlayer(newPunishment.record());
@@ -75,18 +74,4 @@ public final class PunishmentSync {
     private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(10))
             .build();
-
-    public record SyncData(List<PunishmentRecord.Sync> punishments) {
-        public static SyncData fromJson(String json) {
-            return GSON.fromJson(json, SyncData.class);
-        }
-
-        public String toJson() {
-            return GSON.toJson(this);
-        }
-
-        private static final Gson GSON = new GsonBuilder()
-                .disableHtmlEscaping()
-                .create();
-    }
 }
