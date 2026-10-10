@@ -79,8 +79,7 @@ This feature is disabled by default, and can be enabled in the configuration fil
 
 A Remote API server implementation is required to use this feature, and is not included with the mod itself, and must be hosted separately. 
 
-> **Note:** This feature is still in development, and does not have a Remote API server implementation available yet. 
-> If you are interested in helping to develop this feature, please reach out to the developer in the [Discord](https://discord.gg/4ePfVRgexS) server.
+For more information on how to set up a Remote API server, please see the [Global Ban Web API](https://github.com/Matthiesen-dev/global-ban-webapi) GitHub repository.
 
 ## Requirements
 
