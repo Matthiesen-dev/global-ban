@@ -8,6 +8,8 @@ import dev.matthiesen.global_ban.common.GlobalBanCommon;
 import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
 import dev.matthiesen.global_ban.common.config.ServerConfig;
 import dev.matthiesen.global_ban.common.def.PunishmentType;
+import dev.matthiesen.global_ban.common.def.events.ClearPunishmentEvent;
+import dev.matthiesen.global_ban.common.def.events.UnPunishPlayerEvent;
 import dev.matthiesen.global_ban.common.registry.PermissionRegistry;
 import dev.matthiesen.global_ban.common.utils.Helpers;
 import dev.matthiesen.matthiesen_core.common.api.command.CoreCommand;
@@ -72,13 +74,15 @@ public final class UnpunishCommands implements CoreCommand {
                 if (type != null) {
                     switch (type) {
                         case BAN -> {
-                            count += GlobalBanCommon.INSTANCE.unpunishPlayer(punishment);
+                            Integer result = GlobalBanCommon.Events.UNPUNISH_PLAYER.emit(new UnPunishPlayerEvent(punishment, false));
+                            count += result != null ? result : 0;
                             var temp = String.join("\n", serverConfig.messages_unbanChatMessage.get());
                             var processed = Helpers.processPlaceholders(temp, punishment.getPlaceholders());
                             message = processed.toComponent();
                         }
                         case IP_BAN -> {
-                            count += GlobalBanCommon.INSTANCE.unpunishPlayer(punishment);
+                            Integer result = GlobalBanCommon.Events.UNPUNISH_PLAYER.emit(new UnPunishPlayerEvent(punishment, false));
+                            count += result != null ? result : 0;
                             var temp = String.join("\n", serverConfig.messages_ipUnbanChatMessage.get());
                             var processed = Helpers.processPlaceholders(temp, punishment.getPlaceholders());
                             message = processed.toComponent();
@@ -86,16 +90,20 @@ public final class UnpunishCommands implements CoreCommand {
                     }
                 } else {
                     if (player.getUUID() != null) {
-                        count += GlobalBanCommon.INSTANCE.clearPunishments(player.getUUID());
+                        Integer result = GlobalBanCommon.Events.CLEAR_PUNISHMENTS.emit(ClearPunishmentEvent.fromUUID(player.getUUID()));
+                        count += result != null ? result : 0;
                     }
                     if (player.getOnlinePlayer() != null) {
-                        count += GlobalBanCommon.INSTANCE.clearIpPunishments(player.getOnlinePlayer().getIpAddress());
+                        Integer result = GlobalBanCommon.Events.CLEAR_PUNISHMENTS.emit(ClearPunishmentEvent.fromIpAddress(player.getOnlinePlayer().getIpAddress()));
+                        count += result != null ? result : 0;
                     }
                     if (punishment.playerUuid() != null) {
-                        count += GlobalBanCommon.INSTANCE.clearPunishments(punishment.playerUuid());
+                        Integer result = GlobalBanCommon.Events.CLEAR_PUNISHMENTS.emit(ClearPunishmentEvent.fromUUID(punishment.playerUuid()));
+                        count += result != null ? result : 0;
                     }
                     if (punishment.playerIp() != null) {
-                        count += GlobalBanCommon.INSTANCE.clearIpPunishments(punishment.playerIp());
+                        Integer result = GlobalBanCommon.Events.CLEAR_PUNISHMENTS.emit(ClearPunishmentEvent.fromIpAddress(punishment.playerIp()));
+                        count += result != null ? result : 0;
                     }
 
                     var temp = String.join("\n", serverConfig.messages_pardonChatMessage.get());

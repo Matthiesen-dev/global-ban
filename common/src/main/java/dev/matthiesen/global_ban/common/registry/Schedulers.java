@@ -4,6 +4,7 @@ import dev.matthiesen.global_ban.common.GlobalBanCommon;
 import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
 import dev.matthiesen.global_ban.common.config.ServerConfig;
 import dev.matthiesen.global_ban.common.def.PunishmentRecord;
+import dev.matthiesen.global_ban.common.def.events.UnPunishPlayerEvent;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,7 +36,7 @@ public final class Schedulers {
 
         GlobalBanCommon.INSTANCE.getCommonUtils().getServer().execute(() -> {
             for (PunishmentRecord record : expiredPunishments) {
-                GlobalBanCommon.INSTANCE.unpunishPlayer(record, true);
+                GlobalBanCommon.Events.UNPUNISH_PLAYER.emit(new UnPunishPlayerEvent(record, true));
             }
         });
     }

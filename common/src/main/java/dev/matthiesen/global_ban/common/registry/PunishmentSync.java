@@ -4,6 +4,8 @@ import dev.matthiesen.global_ban.common.GlobalBanCommon;
 import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
 import dev.matthiesen.global_ban.common.def.PunishmentRecord;
 import dev.matthiesen.global_ban.common.def.SyncData;
+import dev.matthiesen.global_ban.common.def.events.PunishPlayerEvent;
+import dev.matthiesen.global_ban.common.def.events.UnPunishPlayerEvent;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -42,8 +44,8 @@ public final class PunishmentSync {
                         GlobalBanCommon.INSTANCE.createInfoLog("Received " + syncData.punishments().size() + " punishments from the sync API.");
                         for (var newPunishment : syncData.punishments()) {
                             switch (newPunishment.type()) {
-                                case ADD -> GlobalBanCommon.INSTANCE.punishPlayer(newPunishment.record());
-                                case REMOVE -> GlobalBanCommon.INSTANCE.unpunishPlayer(newPunishment.record());
+                                case ADD -> GlobalBanCommon.Events.PUNISH_PLAYER.emit(new PunishPlayerEvent(newPunishment.record()));
+                                case REMOVE -> GlobalBanCommon.Events.UNPUNISH_PLAYER.emit(new UnPunishPlayerEvent(newPunishment.record(), false));
                             }
                         }
                     }

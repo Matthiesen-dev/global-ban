@@ -10,6 +10,7 @@ import ca.landonjw.gooeylibs2.api.page.Page;
 import ca.landonjw.gooeylibs2.api.template.types.ChestTemplate;
 import dev.matthiesen.global_ban.common.GlobalBanCommon;
 import dev.matthiesen.global_ban.common.def.PunishmentRecord;
+import dev.matthiesen.global_ban.common.def.events.UnPunishPlayerEvent;
 import dev.matthiesen.global_ban.common.utils.MenuUtilities;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -38,7 +39,7 @@ public record PunishmentMenu(ServerPlayer player, PunishmentRecord punishment) {
         GooeyButton unpunishButton = GooeyButton.builder()
                 .display(MenuUtilities.getUnpunishItem(getLabel()))
                 .onClick(event -> {
-                    GlobalBanCommon.INSTANCE.unpunishPlayer(punishment);
+                    GlobalBanCommon.Events.UNPUNISH_PLAYER.emit(new UnPunishPlayerEvent(punishment, false));
                     new BanListMenu(player).open();
                 })
                 .build();
