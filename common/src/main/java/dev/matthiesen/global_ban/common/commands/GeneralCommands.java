@@ -46,7 +46,7 @@ public final class GeneralCommands implements CoreCommand {
                 .executes(this::listAction)
                 .argument("page", IntegerArgumentType.integer(1), arg -> arg.executes(this::listAction));
 
-        CommandBuilder rootCmd = CommandBuilder.create("global-bans")
+        CommandBuilder rootCmd = CommandBuilder.create("global-ban")
                 .requires(src -> PermissionRegistry.checkPermission(src, PermissionRegistry.COMMAND_ROOT_PERMISSION))
                 .then(reloadCmd)
                 .then(importCmd)

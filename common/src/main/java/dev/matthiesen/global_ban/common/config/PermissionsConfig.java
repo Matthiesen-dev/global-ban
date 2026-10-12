@@ -42,11 +42,11 @@ public final class PermissionsConfig {
         builder.comment("Permissions for the Global Ban commands. These permissions control access to the /global-bans command and its subcommands.")
                 .push("commands");
 
-        commands_root = builder.comment("Permission level required to use the /global-bans command")
+        commands_root = builder.comment("Permission level required to use the /global-ban command")
                 .defineEnum("root", PermissionLevel.ALL_COMMANDS);
-        commands_root_reload = builder.comment("Permission level required to use the /global-bans reload command")
+        commands_root_reload = builder.comment("Permission level required to use the /global-ban reload command")
                 .defineEnum("reload", PermissionLevel.ALL_COMMANDS);
-        commands_root_import = builder.comment("Permission level required to use the /global-bans import command")
+        commands_root_import = builder.comment("Permission level required to use the /global-ban import command")
                 .defineEnum("import", PermissionLevel.ALL_COMMANDS);
         commands_kick = builder.comment("Permission level required to use the /kick command")
                 .defineEnum("kick", PermissionLevel.ALL_COMMANDS);
@@ -58,7 +58,7 @@ public final class PermissionsConfig {
                 .defineEnum("temp-ban", PermissionLevel.ALL_COMMANDS);
         commands_temp_ban_ip = builder.comment("Permission level required to use the /temp-ban-ip command")
                 .defineEnum("temp-ban-ip", PermissionLevel.ALL_COMMANDS);
-        commands_ban_list = builder.comment("Permission level required to use the /ban-list command")
+        commands_ban_list = builder.comment("Permission level required to use the /banlist command")
                 .defineEnum("ban-list", PermissionLevel.ALL_COMMANDS);
         commands_pardon = builder.comment("Permission level required to use the /pardon command")
                 .defineEnum("pardon", PermissionLevel.ALL_COMMANDS);
