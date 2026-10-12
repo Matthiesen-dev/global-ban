@@ -81,6 +81,9 @@ A Remote API server implementation is required to use this feature, and is not i
 
 For more information on how to set up a Remote API server, please see the [Global Ban Web API](https://github.com/Matthiesen-dev/global-ban-webapi) GitHub repository.
 
+> A public Remote API server is also available for use, and can be found at [https://global-ban.matthiesen.dev](https://global-ban.matthiesen.dev). 
+> This server is maintained by the developer, and is free to use for all users of the Global Ban mod. However, it is recommended to host your own Remote API server for better performance and reliability.
+
 ## Requirements
 
 - [Matthiesen Core](https://modrinth.com/mod/matthiesen-core)
