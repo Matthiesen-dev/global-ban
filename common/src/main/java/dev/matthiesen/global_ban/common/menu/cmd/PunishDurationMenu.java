@@ -51,7 +51,7 @@ public final class PunishDurationMenu extends PaginatedScreen {
         return getDurations().stream()
                 .map(duration -> GooeyButton.builder()
                         .display(MenuUtilities.getDurationItem(duration))
-                        .onClick(action -> new PunishReasonMenu(executor, type, target, Helpers.parseDuration(duration), true).open())
+                        .onClick(action -> new PunishReasonMenu(executor, type, target, Helpers.parseDuration(duration)).open())
                         .build())
                 .toList();
     }

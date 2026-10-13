@@ -48,7 +48,7 @@ public final class PunishMenu extends PaginatedScreen {
             if (temp) {
                 buttons.add(PunishDurationMenu.create(executor, type, player));
             } else {
-                buttons.add(PunishReasonMenu.create(executor, type, player, PunishmentRecord.NON_EXPIRING_PUNISHMENT, false));
+                buttons.add(PunishReasonMenu.create(executor, type, player, PunishmentRecord.NON_EXPIRING_PUNISHMENT));
             }
         }
 

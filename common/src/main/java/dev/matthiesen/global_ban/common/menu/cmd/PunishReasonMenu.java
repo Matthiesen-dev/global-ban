@@ -3,6 +3,7 @@ package dev.matthiesen.global_ban.common.menu.cmd;
 import ca.landonjw.gooeylibs2.api.button.Button;
 import ca.landonjw.gooeylibs2.api.button.GooeyButton;
 import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
+import dev.matthiesen.global_ban.common.def.PunishmentRecord;
 import dev.matthiesen.global_ban.common.def.PunishmentType;
 import dev.matthiesen.global_ban.common.menu.PaginatedScreen;
 import dev.matthiesen.global_ban.common.utils.MenuUtilities;
@@ -18,20 +19,20 @@ public final class PunishReasonMenu extends PaginatedScreen {
     private final long duration;
     private final boolean isTemp;
 
-    public PunishReasonMenu(ServerPlayer player, PunishmentType type, ServerPlayer target, long duration, boolean isTemp) {
+    public PunishReasonMenu(ServerPlayer player, PunishmentType type, ServerPlayer target, long duration) {
         super(player);
         this.executor = player;
         this.type = type;
         this.target = target;
         this.duration = duration;
-        this.isTemp = isTemp;
+        this.isTemp = duration != PunishmentRecord.NON_EXPIRING_PUNISHMENT;
     }
 
-    public static Button create(ServerPlayer executor, PunishmentType type, ServerPlayer target, long duration, boolean isTemp) {
+    public static Button create(ServerPlayer executor, PunishmentType type, ServerPlayer target, long duration) {
         return GooeyButton.builder()
                 .display(MenuUtilities.getPlayerHeadItem(target))
                 .onClick(action ->
-                        new PunishReasonMenu(executor, type, target, duration, isTemp).open()
+                        new PunishReasonMenu(executor, type, target, duration).open()
                 )
                 .build();
     }
