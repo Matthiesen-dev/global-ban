@@ -55,7 +55,7 @@ public record PunishConfirmationMenu(
                 .build();
 
         Button confirmButton = GooeyButton.builder()
-                .display(MenuUtilities.getUnpunishItem(target.getName().getString()))
+                .display(MenuUtilities.getPunishItem(target.getName().getString()))
                 .onClick(action -> {
                     GlobalBanCommon.Events.PUNISH_PLAYER.emit(new PunishPlayerEvent(record));
                     UIManager.closeUI(executor);

@@ -46,7 +46,7 @@ public final class PunishMenu extends PaginatedScreen {
             if (player.getUUID().equals(executor.getUUID())) continue;
             if (!Helpers.isPunishableBy(player, executor)) continue;
             if (temp) {
-                buttons.add(PunishTempDurationMenu.create(executor, type, player));
+                buttons.add(PunishDurationMenu.create(executor, type, player));
             } else {
                 buttons.add(PunishReasonMenu.create(executor, type, player, PunishmentRecord.NON_EXPIRING_PUNISHMENT, false));
             }

@@ -58,6 +58,10 @@ public final class MenuUtilities {
         return builder(UNPUNISH_ITEM, Component.literal("Unpunish " + playerNameOrIp));
     }
 
+    public static ItemStack getPunishItem(String playerNameOrIp) {
+        return builder(UNPUNISH_ITEM, Component.literal("Punish " + playerNameOrIp));
+    }
+
     public static ItemStack getRecordItem(PunishmentRecord record) {
         ItemBuilder base = getRecordItemBuilder(record);
         return switch (record.type()) {

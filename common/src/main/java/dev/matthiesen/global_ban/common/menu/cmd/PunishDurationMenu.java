@@ -12,12 +12,12 @@ import net.minecraft.server.level.ServerPlayer;
 
 import java.util.List;
 
-public final class PunishTempDurationMenu extends PaginatedScreen {
+public final class PunishDurationMenu extends PaginatedScreen {
     private final ServerPlayer executor;
     private final PunishmentType type;
     private final ServerPlayer target;
 
-    public PunishTempDurationMenu(ServerPlayer player, PunishmentType type, ServerPlayer target) {
+    public PunishDurationMenu(ServerPlayer player, PunishmentType type, ServerPlayer target) {
         super(player);
         this.executor = player;
         this.type = type;
@@ -28,7 +28,7 @@ public final class PunishTempDurationMenu extends PaginatedScreen {
         return GooeyButton.builder()
                 .display(MenuUtilities.getPlayerHeadItem(target))
                 .onClick(action ->
-                        new PunishTempDurationMenu(executor, type, target).open()
+                        new PunishDurationMenu(executor, type, target).open()
                 )
                 .build();
     }
@@ -37,7 +37,7 @@ public final class PunishTempDurationMenu extends PaginatedScreen {
         return switch (type) {
             case BAN -> "Temporary Ban Duration";
             case IP_BAN -> "Temporary IP Ban Duration";
-            case KICK -> "Kick";
+            case KICK -> "How did you get here? Kicks don't have durations!";
         };
     }
 
