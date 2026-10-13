@@ -71,7 +71,8 @@ public final class UnpunishCommands implements CoreCommand {
                     ctx.getSource().sendFailure(Component.literal("You must be a player to use this command."));
                 }
             } else {
-                ctx.getSource().sendFailure(Component.literal("GooeyLibs is not loaded, GUI commands are unavailable."));
+                // When Gooeylibs is not loaded, we cannot open the menu, so mimic the vanilla behavior of an incomplete command
+                ctx.getSource().sendFailure(Component.literal("Command is invalid or incomplete.").withStyle(ChatFormatting.RED));
             }
         });
         return 1;

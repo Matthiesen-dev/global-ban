@@ -17,6 +17,7 @@ import dev.matthiesen.global_ban.common.utils.Helpers;
 import dev.matthiesen.matthiesen_core.common.api.command.CoreCommand;
 import dev.matthiesen.matthiesen_core.common.api.permissions.Permission;
 import dev.matthiesen.matthiesen_core.common.utility.commands.CommandBuilder;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -64,7 +65,8 @@ public final class PunishCommands implements CoreCommand {
                     ctx.getSource().sendFailure(Component.literal("This command can only be executed by a player."));
                 }
             } else {
-                ctx.getSource().sendFailure(Component.literal("GooeyLibs is not loaded, GUI commands are unavailable."));
+                // When Gooeylibs is not loaded, we cannot open the menu, so mimic the vanilla behavior of an incomplete command
+                ctx.getSource().sendFailure(Component.literal("Command is invalid or incomplete.").withStyle(ChatFormatting.RED));
             }
         });
         return 1;
