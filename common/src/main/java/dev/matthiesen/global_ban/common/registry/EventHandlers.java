@@ -151,6 +151,16 @@ public final class EventHandlers {
         if (record.type().shouldKick && record.type().ipBased) {
             boolean alreadyBanned = false;
 
+            // If punishment is an IP ban, we need to ensure that the IP is not a private IP address scope before proceeding with the punishment.
+            if (Helpers.isPrivateIpAddress(record.playerIp()) ) {
+                GlobalBanCommon.INSTANCE.createWarnLog("Admin " + record.punisherDisplayName() + " (" + record.punisherUuid() + ") attempted to punish IP " + record.playerIp() + ", which is a private IP address. This action has been blocked.");
+                ServerPlayer punisher = getServer().getPlayerList().getPlayer(record.punisherUuid());
+                if (punisher != null) {
+                    punisher.sendSystemMessage(Component.literal("You attempted to punish IP " + record.playerIp() + ", which is a private IP address. This action has been blocked.").withStyle(ChatFormatting.RED));
+                }
+                return;
+            }
+
             for (ServerPlayer player : getServer().getPlayerList().getPlayers()) {
                 if (player.getIpAddress().equals(record.playerIp())) {
                     player.connection.disconnect(record.getDisconnectScreenComponent());

@@ -161,4 +161,40 @@ public final class Helpers {
             return time;
         }
     }
+
+    public static boolean isPrivateIpAddress(String ipAddress) {
+        return isPrivateIpv4Address(ipAddress) || isPrivateIpv6Address(ipAddress);
+    }
+
+    public static boolean isPrivateIpv4Address(String s) {
+        String[] parts = s.split("\\.");
+        if (parts.length != 4) {
+            return false;
+        }
+        try {
+            int firstOctet = Integer.parseInt(parts[0]);
+            int secondOctet = Integer.parseInt(parts[1]);
+
+            return (firstOctet == 10) ||
+                    (firstOctet == 172 && secondOctet >= 16 && secondOctet <= 31) ||
+                    (firstOctet == 192 && secondOctet == 168);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    public static boolean isPrivateIpv6Address(String s) {
+        if (!s.contains(":")) {
+            return false;
+        }
+        String[] parts = s.split(":");
+        if (parts.length < 3) {
+            return false;
+        }
+        String firstPart = parts[0];
+        return firstPart.equalsIgnoreCase("fc") ||
+                firstPart.equalsIgnoreCase("fd") ||
+                firstPart.equalsIgnoreCase("fc00") ||
+                firstPart.equalsIgnoreCase("fd00");
+    }
 }
