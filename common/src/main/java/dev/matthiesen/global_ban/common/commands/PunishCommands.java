@@ -9,6 +9,7 @@ import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
 import dev.matthiesen.global_ban.common.config.ServerConfig;
 import dev.matthiesen.global_ban.common.def.PunishmentRecord;
 import dev.matthiesen.global_ban.common.def.PunishmentType;
+import dev.matthiesen.global_ban.common.def.events.PunishPlayerEvent;
 import dev.matthiesen.global_ban.common.registry.PermissionRegistry;
 import dev.matthiesen.global_ban.common.utils.Helpers;
 import dev.matthiesen.matthiesen_core.common.api.command.CoreCommand;
@@ -97,7 +98,7 @@ public final class PunishCommands implements CoreCommand {
                                 ctx.getSource(),
                                 type, duration, reason
                         );
-                        GlobalBanCommon.INSTANCE.punishPlayer(punishment);
+                        GlobalBanCommon.Events.PUNISH_PLAYER.emit(new PunishPlayerEvent(punishment));
                     }
                 }
             }
