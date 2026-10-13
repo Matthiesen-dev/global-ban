@@ -4,21 +4,25 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.matthiesen.global_ban.common.GlobalBanCommon;
 import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
 import dev.matthiesen.global_ban.common.config.ServerConfig;
 import dev.matthiesen.global_ban.common.def.PunishmentRecord;
 import dev.matthiesen.global_ban.common.def.PunishmentType;
 import dev.matthiesen.global_ban.common.def.events.PunishPlayerEvent;
+import dev.matthiesen.global_ban.common.menu.cmd.PunishMenu;
 import dev.matthiesen.global_ban.common.registry.PermissionRegistry;
 import dev.matthiesen.global_ban.common.utils.Helpers;
 import dev.matthiesen.matthiesen_core.common.api.command.CoreCommand;
 import dev.matthiesen.matthiesen_core.common.api.permissions.Permission;
 import dev.matthiesen.matthiesen_core.common.utility.commands.CommandBuilder;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -46,8 +50,26 @@ public final class PunishCommands implements CoreCommand {
         );
         return CommandBuilder.create(command)
                 .requires(src -> PermissionRegistry.checkPermission(src, permission))
+                .executes(ctx -> punishGUIAction(ctx, type, temp))
                 .then(temp ? tempArg : permArg)
                 .build();
+    }
+
+    private int punishGUIAction(CommandContext<CommandSourceStack> ctx, PunishmentType type, boolean isTemp) {
+        CompletableFuture.runAsync(() -> {
+            if (GlobalBanCommon.INSTANCE.isGooeyLibsLoaded()) {
+                try {
+                    ServerPlayer executor = ctx.getSource().getPlayerOrException();
+                    new PunishMenu(executor, type, isTemp).open();
+                } catch (CommandSyntaxException e) {
+                    ctx.getSource().sendFailure(Component.literal("This command can only be executed by a player."));
+                }
+            } else {
+                // When Gooeylibs is not loaded, we cannot open the menu, so mimic the vanilla behavior of an incomplete command
+                ctx.getSource().sendFailure(Component.literal("Command is invalid or incomplete.").withStyle(ChatFormatting.RED));
+            }
+        });
+        return 1;
     }
 
     private int punishAction(CommandContext<CommandSourceStack> ctx, PunishmentType type, boolean isTemp) {

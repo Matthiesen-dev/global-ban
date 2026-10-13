@@ -8,6 +8,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -21,6 +22,10 @@ public final class MenuUtilities {
     public static final Item PLAYER_RECORD_ITEM = Items.PLAYER_HEAD;
     public static final Item IP_RECORD_ITEM = Items.NAME_TAG;
     public static final Item UNPUNISH_ITEM = Items.GREEN_DYE;
+    public static final Item PUNISH_ITEM = Items.RED_DYE;
+    public static final Item PARDON_ITEM = Items.GREEN_DYE;
+    public static final Item DURATION_ITEM = Items.CLOCK;
+    public static final Item REASON_ITEM = Items.PAPER;
 
     private static ItemStack builder(Item item, Component name) {
         return new ItemBuilder(item)
@@ -57,6 +62,22 @@ public final class MenuUtilities {
         return builder(UNPUNISH_ITEM, Component.literal("Unpunish " + playerNameOrIp));
     }
 
+    public static ItemStack getPardonItem(String playerNameOrIp) {
+        return builder(PARDON_ITEM, Component.literal("Pardon " + playerNameOrIp));
+    }
+
+    public static ItemStack getPunishItem(String playerNameOrIp) {
+        return builder(PUNISH_ITEM, Component.literal("Punish " + playerNameOrIp));
+    }
+
+    public static ItemStack getDurationItem(String duration) {
+        return builder(DURATION_ITEM, Component.literal("Duration: " + duration));
+    }
+
+    public static ItemStack getReasonItem(String reason) {
+        return builder(REASON_ITEM, Component.literal("Reason: " + reason));
+    }
+
     public static ItemStack getRecordItem(PunishmentRecord record) {
         ItemBuilder base = getRecordItemBuilder(record);
         return switch (record.type()) {
@@ -67,6 +88,18 @@ public final class MenuUtilities {
             case IP_BAN -> base.build();
             default -> throw new IllegalArgumentException("Unsupported punishment type: " + record.type());
         };
+    }
+
+    public static ItemStack getPlayerHeadItem(ServerPlayer player) {
+        ItemBuilder builder = new ItemBuilder(Items.PLAYER_HEAD)
+                .hideAdditional()
+                .setCustomName(player.getName());
+        GameProfile profile = player.getGameProfile();
+        builder.modifyStack(stack -> {
+            stack.set(DataComponents.PROFILE, new ResolvableProfile(profile));
+            return stack;
+        });
+        return builder.build();
     }
 
     public static ItemBuilder getRecordItemBuilder(PunishmentRecord record) {

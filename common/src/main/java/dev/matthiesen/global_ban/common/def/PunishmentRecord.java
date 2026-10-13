@@ -5,6 +5,7 @@ import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
 import dev.matthiesen.global_ban.common.utils.Helpers;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -123,6 +124,19 @@ public record PunishmentRecord(
         }
 
         return true;
+    }
+
+    public static PunishmentRecord create(ServerPlayer target, CommandSourceStack punisher, PunishmentType type, long duration, String reason) {
+        return create(
+                target.getUUID(),
+                target.getIpAddress(),
+                target.getGameProfile().getName(),
+                punisher,
+                type,
+                duration,
+                reason,
+                GlobalBanConfig.getServerUUID()
+        );
     }
 
     public static PunishmentRecord create(UUID uuid, String ipAddress, String displayName, CommandSourceStack punisher, PunishmentType type, long duration, String reason) {

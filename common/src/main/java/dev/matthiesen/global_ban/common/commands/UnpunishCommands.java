@@ -7,9 +7,11 @@ import com.mojang.brigadier.context.CommandContext;
 import dev.matthiesen.global_ban.common.GlobalBanCommon;
 import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
 import dev.matthiesen.global_ban.common.config.ServerConfig;
+import dev.matthiesen.global_ban.common.def.PunishmentRecord;
 import dev.matthiesen.global_ban.common.def.PunishmentType;
 import dev.matthiesen.global_ban.common.def.events.ClearPunishmentEvent;
 import dev.matthiesen.global_ban.common.def.events.UnPunishPlayerEvent;
+import dev.matthiesen.global_ban.common.menu.BanListMenu;
 import dev.matthiesen.global_ban.common.registry.PermissionRegistry;
 import dev.matthiesen.global_ban.common.utils.Helpers;
 import dev.matthiesen.matthiesen_core.common.api.command.CoreCommand;
@@ -23,6 +25,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public final class UnpunishCommands implements CoreCommand {
@@ -39,11 +43,39 @@ public final class UnpunishCommands implements CoreCommand {
     private LiteralArgumentBuilder<CommandSourceStack> create(String command, Permission permission, PunishmentType type) {
         return CommandBuilder.create(command)
                 .requires(src -> PermissionRegistry.checkPermission(src, permission))
+                .executes(ctx -> createBanListMenu(ctx, type))
                 .then(
                         GeneralCommands.playerArgument("player")
                                 .executes(ctx -> unpunishAction(ctx, type))
                 )
                 .build();
+    }
+
+    private int createBanListMenu(CommandContext<CommandSourceStack> ctx, PunishmentType type) {
+        CompletableFuture.runAsync(() -> {
+            if (GlobalBanCommon.INSTANCE.isGooeyLibsLoaded()) {
+                try {
+                    ServerPlayer player = ctx.getSource().getPlayer();
+                    List<PunishmentRecord> punishments = GlobalBanConfig.getPunished();
+                    punishments.sort(Comparator.comparingLong(p -> -p.timestamp()));
+                    switch (type) {
+                        case IP_BAN -> punishments = punishments.stream()
+                                .filter(p -> p.type() == PunishmentType.IP_BAN)
+                                .toList();
+                        case BAN -> punishments = punishments.stream()
+                                .filter(p -> p.type() == PunishmentType.BAN)
+                                .toList();
+                    }
+                    new BanListMenu(player, punishments).open();
+                } catch (Exception e) {
+                    ctx.getSource().sendFailure(Component.literal("You must be a player to use this command."));
+                }
+            } else {
+                // When Gooeylibs is not loaded, we cannot open the menu, so mimic the vanilla behavior of an incomplete command
+                ctx.getSource().sendFailure(Component.literal("Command is invalid or incomplete.").withStyle(ChatFormatting.RED));
+            }
+        });
+        return 1;
     }
 
     private int unpunishAction(CommandContext<CommandSourceStack> ctx, PunishmentType type) {
