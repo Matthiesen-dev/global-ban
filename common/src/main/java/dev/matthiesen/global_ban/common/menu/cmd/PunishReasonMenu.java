@@ -61,7 +61,7 @@ public final class PunishReasonMenu extends PaginatedScreen {
     public List<GooeyButton> getReasonButtons() {
         return getReasons().stream()
                 .map(reason -> GooeyButton.builder()
-                        .display(MenuUtilities.getPageItem(getReasons().indexOf(reason) + 1, getReasons().size()))
+                        .display(MenuUtilities.getReasonItem(reason))
                         .onClick(action -> new PunishConfirmationMenu(executor, type, target, duration, reason).open())
                         .build())
                 .toList();
