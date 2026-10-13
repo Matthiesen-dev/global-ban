@@ -8,6 +8,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -67,6 +68,18 @@ public final class MenuUtilities {
             case IP_BAN -> base.build();
             default -> throw new IllegalArgumentException("Unsupported punishment type: " + record.type());
         };
+    }
+
+    public static ItemStack getPlayerHeadItem(ServerPlayer player) {
+        ItemBuilder builder = new ItemBuilder(Items.PLAYER_HEAD)
+                .hideAdditional()
+                .setCustomName(player.getName());
+        GameProfile profile = player.getGameProfile();
+        builder.modifyStack(stack -> {
+            stack.set(DataComponents.PROFILE, new ResolvableProfile(profile));
+            return stack;
+        });
+        return builder.build();
     }
 
     public static ItemBuilder getRecordItemBuilder(PunishmentRecord record) {

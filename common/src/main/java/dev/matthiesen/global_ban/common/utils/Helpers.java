@@ -9,12 +9,20 @@ import dev.matthiesen.global_ban.common.registry.PermissionRegistry;
 import dev.matthiesen.matthiesen_core.common.utility.player_data.ServerUser;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.GameProfileCache;
 
 import java.net.SocketAddress;
 import java.util.*;
 
 public final class Helpers {
+    public static boolean isPunishableBy(ServerPlayer target, ServerPlayer executor) {
+        if (target == null || executor == null) {
+            return true;
+        }
+        return isPunishableBy(new ServerUser(target), executor.createCommandSourceStack());
+    }
+
     public static boolean isPunishableBy(ServerUser profile, CommandSourceStack source) {
         if (profile == null) {
             return true;
