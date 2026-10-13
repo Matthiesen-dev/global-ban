@@ -2,6 +2,7 @@ package dev.matthiesen.global_ban.common.menu.cmd;
 
 import ca.landonjw.gooeylibs2.api.button.Button;
 import dev.matthiesen.global_ban.common.GlobalBanCommon;
+import dev.matthiesen.global_ban.common.def.PunishmentRecord;
 import dev.matthiesen.global_ban.common.def.PunishmentType;
 import dev.matthiesen.global_ban.common.menu.PaginatedScreen;
 import dev.matthiesen.global_ban.common.utils.Helpers;
@@ -47,7 +48,7 @@ public final class PunishMenu extends PaginatedScreen {
             if (temp) {
                 buttons.add(PunishTempDurationMenu.create(executor, type, player));
             } else {
-                buttons.add(PunishPermReasonMenu.create(executor, type, player));
+                buttons.add(PunishReasonMenu.create(executor, type, player, PunishmentRecord.NON_EXPIRING_PUNISHMENT, false));
             }
         }
 

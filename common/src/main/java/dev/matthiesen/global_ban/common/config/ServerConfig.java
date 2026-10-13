@@ -21,6 +21,11 @@ public final class ServerConfig {
     public ModConfigSpec.LongValue scheduler_apiSyncInterval;
     public ModConfigSpec.ConfigValue<String> scheduler_apiSyncUrl;
 
+    public ModConfigSpec.ConfigValue<List<? extends String>> gui_banReasons;
+    public ModConfigSpec.ConfigValue<List<? extends String>> gui_tempBanReasons;
+    public ModConfigSpec.ConfigValue<List<? extends String>> gui_tempDurations;
+    public ModConfigSpec.ConfigValue<List<? extends String>> gui_kickReasons;
+
     public ModConfigSpec.ConfigValue<List<? extends String>> messages_banChatMessage;
     public ModConfigSpec.ConfigValue<List<? extends String>> messages_tempBanChatMessage;
     public ModConfigSpec.ConfigValue<List<? extends String>> messages_ipBanChatMessage;
@@ -68,6 +73,37 @@ public final class ServerConfig {
         scheduler_apiSyncUrl = builder.comment("The URL of the remote API to sync punishments with")
                 .define("apiSyncUrl", "");
         builder.pop(); // scheduler
+
+        builder.comment("GUI Config").push("gui");
+        gui_banReasons = builder.comment("List of reasons to display in the GUI for banning players")
+                .defineListAllowEmpty(
+                        List.of("banReasons"),
+                        List.of("Cheating", "Griefing", "Harassment", "Spamming", "Other"),
+                        null,
+                        obj -> obj instanceof String
+                );
+        gui_tempBanReasons = builder.comment("List of reasons to display in the GUI for temp banning players")
+                .defineListAllowEmpty(
+                        List.of("tempBanReasons"),
+                        List.of("Cheating", "Griefing", "Harassment", "Spamming", "Other"),
+                        null,
+                        obj -> obj instanceof String
+                );
+        gui_tempDurations = builder.comment("List of durations to display in the GUI for temp banning players")
+                .defineListAllowEmpty(
+                        List.of("tempDurations"),
+                        List.of("1h", "6h", "12h", "1d", "3d", "1w", "2w", "1m"),
+                        null,
+                        obj -> obj instanceof String
+                );
+        gui_kickReasons = builder.comment("List of reasons to display in the GUI for kicking players")
+                .defineListAllowEmpty(
+                        List.of("kickReasons"),
+                        List.of("Cheating", "Griefing", "Harassment", "Spamming", "Other"),
+                        null,
+                        obj -> obj instanceof String
+                );
+        builder.pop(); // gui
 
         builder.comment("Messages to display to players when they are banned, temp banned, or kicked")
                 .push("messages");

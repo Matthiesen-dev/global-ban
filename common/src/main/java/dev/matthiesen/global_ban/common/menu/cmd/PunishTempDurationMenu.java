@@ -2,8 +2,10 @@ package dev.matthiesen.global_ban.common.menu.cmd;
 
 import ca.landonjw.gooeylibs2.api.button.Button;
 import ca.landonjw.gooeylibs2.api.button.GooeyButton;
+import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
 import dev.matthiesen.global_ban.common.def.PunishmentType;
 import dev.matthiesen.global_ban.common.menu.PaginatedScreen;
+import dev.matthiesen.global_ban.common.utils.Helpers;
 import dev.matthiesen.global_ban.common.utils.MenuUtilities;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -39,6 +41,21 @@ public final class PunishTempDurationMenu extends PaginatedScreen {
         };
     }
 
+    @SuppressWarnings("unchecked")
+    private List<String> getDurations() {
+        var durations = GlobalBanConfig.SERVER_CONFIG.gui_tempDurations.get();
+        return (List<String>) durations;
+    }
+
+    private List<GooeyButton> getDurationButtons() {
+        return getDurations().stream()
+                .map(duration -> GooeyButton.builder()
+                        .display(MenuUtilities.getPageItem(getDurations().indexOf(duration) + 1, getDurations().size()))
+                        .onClick(action -> new PunishReasonMenu(executor, type, target, Helpers.parseDuration(duration), true).open())
+                        .build())
+                .toList();
+    }
+
     @Override
     public Component getDisplayTitle() {
         return Component.literal(getLabel());
@@ -46,7 +63,6 @@ public final class PunishTempDurationMenu extends PaginatedScreen {
 
     @Override
     public List<Button> getContentButtons() {
-        // TODO: Implement buttons selection for Duration that will then forward to Reason Selection
-        return List.of();
+        return List.copyOf(getDurationButtons());
     }
 }
