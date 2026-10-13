@@ -22,6 +22,10 @@ public final class MenuUtilities {
     public static final Item PLAYER_RECORD_ITEM = Items.PLAYER_HEAD;
     public static final Item IP_RECORD_ITEM = Items.NAME_TAG;
     public static final Item UNPUNISH_ITEM = Items.GREEN_DYE;
+    public static final Item PUNISH_ITEM = Items.RED_DYE;
+    public static final Item PARDON_ITEM = Items.GREEN_DYE;
+    public static final Item DURATION_ITEM = Items.CLOCK;
+    public static final Item REASON_ITEM = Items.PAPER;
 
     private static ItemStack builder(Item item, Component name) {
         return new ItemBuilder(item)
@@ -59,19 +63,19 @@ public final class MenuUtilities {
     }
 
     public static ItemStack getPardonItem(String playerNameOrIp) {
-        return builder(UNPUNISH_ITEM, Component.literal("Pardon " + playerNameOrIp));
+        return builder(PARDON_ITEM, Component.literal("Pardon " + playerNameOrIp));
     }
 
     public static ItemStack getPunishItem(String playerNameOrIp) {
-        return builder(UNPUNISH_ITEM, Component.literal("Punish " + playerNameOrIp));
+        return builder(PUNISH_ITEM, Component.literal("Punish " + playerNameOrIp));
     }
 
     public static ItemStack getDurationItem(String duration) {
-        return builder(PAGE_PLACEHOLDER, Component.literal("Duration: " + duration));
+        return builder(DURATION_ITEM, Component.literal("Duration: " + duration));
     }
 
     public static ItemStack getReasonItem(String reason) {
-        return builder(PAGE_PLACEHOLDER, Component.literal("Reason: " + reason));
+        return builder(REASON_ITEM, Component.literal("Reason: " + reason));
     }
 
     public static ItemStack getRecordItem(PunishmentRecord record) {
