@@ -30,10 +30,10 @@ public final class GlobalBanCommon extends AbstractCommonMod {
 
     public static class Events {
         public static final EventObservable<CanPlayerLogin.Pre> CAN_PLAYER_LOGIN_PRE = new EventObservable<>();
+        public static final ResultEventObservable<CanPlayerLogin.Post, PunishmentRecord> CAN_PLAYER_LOGIN_POST = new ResultEventObservable<>();
         public static final EventObservable<PunishPlayerEvent> PUNISH_PLAYER = new EventObservable<>();
         public static final ResultEventObservable<UnPunishPlayerEvent, Integer> UNPUNISH_PLAYER = new ResultEventObservable<>();
         public static final ResultEventObservable<ClearPunishmentEvent, Integer> CLEAR_PUNISHMENTS = new ResultEventObservable<>();
-        public static final ResultEventObservable<CanPlayerLogin.Post, PunishmentRecord> CAN_PLAYER_LOGIN_POST = new ResultEventObservable<>();
     }
 
     public GlobalBanCommon() {
