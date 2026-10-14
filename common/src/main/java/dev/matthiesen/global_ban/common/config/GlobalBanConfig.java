@@ -78,6 +78,7 @@ public final class GlobalBanConfig {
             appendPunishmentToPendingSync(punishment, SyncType.ADD);
         }
         PUNISHMENTS.punished.set(bannedPlayers.stream().map(PunishmentRecord::serialize).toList());
+        PUNISHMENTS.punished.save();
         reloadPunished();
     }
 
@@ -89,6 +90,7 @@ public final class GlobalBanConfig {
             appendPunishmentToPendingSync(punishment, SyncType.REMOVE);
         }
         PUNISHMENTS.punished.set(bannedPlayers.stream().map(PunishmentRecord::serialize).toList());
+        PUNISHMENTS.punished.save();
         reloadPunished();
         return 1;
     }
@@ -108,6 +110,7 @@ public final class GlobalBanConfig {
 
         int difference = bannedPlayers.size() - updatedList.size();
         PUNISHMENTS.punished.set(updatedList.stream().map(PunishmentRecord::serialize).toList());
+        PUNISHMENTS.punished.save();
         reloadPunished();
         return difference;
     }
@@ -127,6 +130,7 @@ public final class GlobalBanConfig {
 
         int difference = bannedPlayers.size() - updatedList.size();
         PUNISHMENTS.punished.set(updatedList.stream().map(PunishmentRecord::serialize).toList());
+        PUNISHMENTS.punished.save();
         reloadPunished();
         return difference;
     }
@@ -145,10 +149,12 @@ public final class GlobalBanConfig {
         List<PunishmentRecord.Sync> pendingSyncList = new ArrayList<>(getPendingSyncPunishments());
         pendingSyncList.add(new PunishmentRecord.Sync(punishment, syncType));
         PUNISHMENTS.punished_pendingSync.set(pendingSyncList.stream().map(PunishmentRecord.Sync::serialize).toList());
+        PUNISHMENTS.punished_pendingSync.save();
     }
 
     public static void clearPendingSyncPunishments() {
         PUNISHMENTS.punished_pendingSync.set(new ArrayList<>());
+        PUNISHMENTS.punished_pendingSync.save();
     }
 
     public static UUID getServerUUID() {
