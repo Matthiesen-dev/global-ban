@@ -1,7 +1,5 @@
 package dev.matthiesen.global_ban.common.registry;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.mojang.authlib.GameProfile;
 import dev.matthiesen.global_ban.common.GlobalBanCommon;
 import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
@@ -31,9 +29,6 @@ import java.util.*;
 
 @SuppressWarnings("unused")
 public final class EventHandlers {
-    public static final Gson GSON = new GsonBuilder().disableHtmlEscaping()
-            .create();
-
     public static void onServerStarting(ServerEvent.Starting starting) {
         IpCache.handleServerStarting();
     }
