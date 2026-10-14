@@ -87,10 +87,10 @@ public record PunishmentRecord(
         if (!(config.get("type") instanceof String typeRaw) || PunishmentType.fromName(typeRaw) == null) {
             return false;
         }
-        if (!(config.get("timestamp") instanceof Long)) {
+        if (!(config.get("timestamp") instanceof Number)) {
             return false;
         }
-        if (!(config.get("duration") instanceof Long)) {
+        if (!(config.get("duration") instanceof Number)) {
             return false;
         }
         if (!(config.get("playerUuid") instanceof String playerUuidRaw)) {
