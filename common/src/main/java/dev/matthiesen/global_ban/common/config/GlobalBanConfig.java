@@ -36,19 +36,26 @@ public final class GlobalBanConfig {
 
     private static final List<PunishmentRecord> punishmentCache = new ArrayList<>();
 
-    public static List<PunishmentRecord> getPunished() {
+    private static synchronized List<PunishmentRecord> getAllRecords() {
         if (punishmentCache.isEmpty()) {
             punishmentCache.addAll(loadPunished());
         }
         return new ArrayList<>(punishmentCache);
     }
 
-    public static void reloadPunished() {
+    /**
+     * Active punishments only; records that are soft-deleted while awaiting removal sync are excluded.
+     */
+    public static List<PunishmentRecord> getPunished() {
+        return getAllRecords().stream().filter(punishment -> !punishment.removed).toList();
+    }
+
+    public static synchronized void reloadPunished() {
         punishmentCache.clear();
         punishmentCache.addAll(loadPunished());
     }
 
-    public static void invalidatePunished() {
+    public static synchronized void invalidatePunished() {
         punishmentCache.clear();
     }
 
@@ -56,6 +63,33 @@ public final class GlobalBanConfig {
         return PUNISHMENTS.punished.get().stream()
                 .map(PunishmentRecord::deserialize)
                 .toList();
+    }
+
+    private static void saveRecords(List<PunishmentRecord> records) {
+        PUNISHMENTS.punished.set(records.stream().map(PunishmentRecord::serialize).toList());
+        PUNISHMENTS.punished.save();
+        reloadPunished();
+    }
+
+    private static boolean isSyncEnabled() {
+        return GlobalBanConfig.SERVER_CONFIG.scheduler_apiSyncEnabled.getAsBoolean();
+    }
+
+    /**
+     * Removes the matching records, or soft-deletes them when the remote API still needs to be told about the removal.
+     */
+    private static int removeMatching(List<PunishmentRecord> all, java.util.function.Predicate<PunishmentRecord> filter, boolean fromRemote) {
+        int count = 0;
+        for (PunishmentRecord record : new ArrayList<>(all)) {
+            if (record.removed || !filter.test(record)) continue;
+            count++;
+            if (!fromRemote && isSyncEnabled() && record.synced) {
+                record.markAsRemoved();
+            } else {
+                all.remove(record);
+            }
+        }
+        return count;
     }
 
     public static List<PunishmentRecord> isPlayerUUIDPunished(UUID player) {
@@ -70,105 +104,80 @@ public final class GlobalBanConfig {
                 .toList();
     }
 
-    public static void addPunishment(PunishmentRecord punishment) {
-        List<PunishmentRecord> bannedPlayers = getPunished();
-        if (bannedPlayers.contains(punishment)) return; // Already banned, no need to add again
-        bannedPlayers.add(punishment);
-        if (GlobalBanConfig.SERVER_CONFIG.scheduler_apiSyncEnabled.getAsBoolean()) {
-            appendPunishmentToPendingSync(punishment, SyncType.ADD);
-        }
-        PUNISHMENTS.punished.set(bannedPlayers.stream().map(PunishmentRecord::serialize).toList());
-        PUNISHMENTS.punished.save();
-        reloadPunished();
+    public static synchronized void addPunishment(PunishmentRecord punishment) {
+        List<PunishmentRecord> records = getAllRecords();
+        if (records.stream().anyMatch(record -> !record.removed && record.matches(punishment))) return; // Already banned, no need to add again
+        records.removeIf(record -> record.removed && record.matches(punishment));
+        records.add(punishment);
+        saveRecords(records);
     }
 
     public static int removePunishment(PunishmentRecord punishment) {
-        List<PunishmentRecord> bannedPlayers = getPunished();
-        if (!bannedPlayers.contains(punishment)) return 0; // Not banned, no need to remove
-        bannedPlayers.remove(punishment);
-        if (GlobalBanConfig.SERVER_CONFIG.scheduler_apiSyncEnabled.getAsBoolean()) {
-            appendPunishmentToPendingSync(punishment, SyncType.REMOVE);
-        }
-        PUNISHMENTS.punished.set(bannedPlayers.stream().map(PunishmentRecord::serialize).toList());
-        PUNISHMENTS.punished.save();
-        reloadPunished();
+        return removePunishment(punishment, false);
+    }
+
+    /**
+     * @param fromRemote true when the removal originated from the remote API, so it must not be synced back
+     */
+    public static synchronized int removePunishment(PunishmentRecord punishment, boolean fromRemote) {
+        List<PunishmentRecord> records = getAllRecords();
+        int removed = removeMatching(records, record -> record.matches(punishment), fromRemote);
+        if (removed == 0) return 0; // Not banned, no need to remove
+        saveRecords(records);
         return 1;
     }
 
-    public static int clearPunishments(UUID player) {
-        List<PunishmentRecord> bannedPlayers = getPunished();
-        List<PunishmentRecord> updatedList = bannedPlayers.stream()
-                .filter(punishment -> !punishment.playerUuid.equals(player))
-                .toList();
-
-        if (GlobalBanConfig.SERVER_CONFIG.scheduler_apiSyncEnabled.getAsBoolean()) {
-            var removedPunishments = bannedPlayers.stream()
-                    .filter(punishment -> punishment.playerUuid.equals(player))
-                    .toList();
-            removedPunishments.forEach(punishment -> appendPunishmentToPendingSync(punishment, SyncType.REMOVE));
-        }
-
-        int difference = bannedPlayers.size() - updatedList.size();
-        PUNISHMENTS.punished.set(updatedList.stream().map(PunishmentRecord::serialize).toList());
-        PUNISHMENTS.punished.save();
-        reloadPunished();
+    public static synchronized int clearPunishments(UUID player) {
+        List<PunishmentRecord> records = getAllRecords();
+        int difference = removeMatching(records, punishment -> punishment.playerUuid.equals(player), false);
+        saveRecords(records);
         return difference;
     }
 
-    public static int clearIpPunishments(String ipAddress) {
-        List<PunishmentRecord> bannedPlayers = getPunished();
-        List<PunishmentRecord> updatedList = bannedPlayers.stream()
-                .filter(punishment -> !punishment.playerIp.equals(ipAddress))
-                .toList();
-
-        if (GlobalBanConfig.SERVER_CONFIG.scheduler_apiSyncEnabled.getAsBoolean()) {
-            var removedPunishments = bannedPlayers.stream()
-                    .filter(punishment -> punishment.playerIp.equals(ipAddress))
-                    .toList();
-            removedPunishments.forEach(punishment -> appendPunishmentToPendingSync(punishment, SyncType.REMOVE));
-        }
-
-        int difference = bannedPlayers.size() - updatedList.size();
-        PUNISHMENTS.punished.set(updatedList.stream().map(PunishmentRecord::serialize).toList());
-        PUNISHMENTS.punished.save();
-        reloadPunished();
+    public static synchronized int clearIpPunishments(String ipAddress) {
+        List<PunishmentRecord> records = getAllRecords();
+        int difference = removeMatching(records, punishment -> punishment.playerIp.equals(ipAddress), false);
+        saveRecords(records);
         return difference;
     }
 
     public static boolean hasPendingSyncPunishments() {
-        return !PUNISHMENTS.punished_pendingSync.get().isEmpty();
+        return getAllRecords().stream().anyMatch(record -> !record.synced);
     }
 
     public static List<PunishmentRecord.Sync> getPendingSyncPunishments() {
-        return PUNISHMENTS.punished_pendingSync.get().stream()
-                .map(PunishmentRecord.Sync::deserialize)
+        return getAllRecords().stream()
+                .filter(record -> !record.synced)
+                .map(record -> new PunishmentRecord.Sync(record, record.removed ? SyncType.REMOVE : SyncType.ADD))
                 .toList();
     }
 
-    public static void appendPunishmentToPendingSync(PunishmentRecord punishment, SyncType syncType) {
-        List<PunishmentRecord.Sync> pendingSyncList = new ArrayList<>(getPendingSyncPunishments());
-        pendingSyncList.add(new PunishmentRecord.Sync(punishment, syncType));
-        PUNISHMENTS.punished_pendingSync.set(pendingSyncList.stream().map(PunishmentRecord.Sync::serialize).toList());
-        PUNISHMENTS.punished_pendingSync.save();
-    }
-
-    public static void clearPendingSyncPunishments() {
-        PUNISHMENTS.punished_pendingSync.set(new ArrayList<>());
-        PUNISHMENTS.punished_pendingSync.save();
+    /**
+     * Marks the given (previously sent) pending records as synced, and purges removed records whose removal has been synced.
+     */
+    public static synchronized void markPendingSynced(List<PunishmentRecord.Sync> sent) {
+        List<PunishmentRecord> records = getAllRecords();
+        for (PunishmentRecord record : records) {
+            if (record.synced) continue;
+            for (PunishmentRecord.Sync sync : sent) {
+                if (sync.record().matches(record) && (sync.type() == SyncType.REMOVE) == record.removed) {
+                    record.markAsSynced();
+                    break;
+                }
+            }
+        }
+        records.removeIf(record -> record.removed && record.synced);
+        saveRecords(records);
     }
 
     /**
      * This method is intended to be called when a server is first registered with a Remote API server, and already has punishments in it's cache.
-     * This method will take all current punishments in the server's cache and add them to the pending sync list, so that they can be sent to the Remote API server on the next sync.
+     * This method will flag all current punishments as unsynced, so that they are sent to the Remote API server on the next sync.
      */
-    public static void createForceSyncRequest() {
-        List<PunishmentRecord> currentPunishments = getPunished();
-        List<PunishmentRecord.Sync> pendingSyncList = new ArrayList<>(getPendingSyncPunishments());
-        for (PunishmentRecord punishment : currentPunishments) {
-            pendingSyncList.add(new PunishmentRecord.Sync(punishment, SyncType.ADD));
-        }
-        PUNISHMENTS.punished_pendingSync.set(pendingSyncList.stream().map(PunishmentRecord.Sync::serialize).toList());
-        PUNISHMENTS.punished_pendingSync.save();
+    public static synchronized void createForceSyncRequest() {
+        List<PunishmentRecord> records = getAllRecords();
+        records.forEach(record -> record.synced = false);
+        saveRecords(records);
     }
 
     public static UUID getServerUUID() {

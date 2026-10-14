@@ -229,7 +229,7 @@ public final class EventHandlers {
         } else {
             GlobalBanCommon.INSTANCE.createInfoLog("Punishment expired: " + record.toString());
         }
-        return GlobalBanConfig.removePunishment(record);
+        return GlobalBanConfig.removePunishment(record, event.fromRemote());
     }
 
     public static Integer onClearPunishments(ClearPunishmentEvent event) {

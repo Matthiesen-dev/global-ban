@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class PunishmentRecord {
+public final class PunishmentRecord {
     public static final long NON_EXPIRING_PUNISHMENT = -1L;
     public static final String UNKNOWN_PLAYER_NAME = "UnknownPlayer";
     public static final String UNDEFINED_IP_ADDRESS = "undefined";
@@ -31,9 +31,23 @@ public class PunishmentRecord {
     public String reason;
     public UUID serverUuid;
     public boolean synced;
+    // Soft-delete marker: the record stays in the list until the removal has been synced. Not sent to the API.
+    public transient boolean removed;
 
     public void markAsSynced() {
         this.synced = true;
+    }
+
+    public void markAsRemoved() {
+        this.removed = true;
+        this.synced = false;
+    }
+
+    public boolean matches(PunishmentRecord other) {
+        return this.type == other.type
+                && this.timestamp == other.timestamp
+                && this.playerUuid.equals(other.playerUuid)
+                && java.util.Objects.equals(this.playerIp, other.playerIp);
     }
 
     public PunishmentRecord(
@@ -46,8 +60,7 @@ public class PunishmentRecord {
             UUID punisherUuid,
             String punisherDisplayName,
             String reason,
-            UUID serverUuid,
-            boolean synced
+            UUID serverUuid
     ) {
         this.type = type;
         this.timestamp = timestamp;
@@ -59,32 +72,9 @@ public class PunishmentRecord {
         this.punisherDisplayName = punisherDisplayName;
         this.reason = reason;
         this.serverUuid = serverUuid;
-        this.synced = synced;
     }
 
     public record Sync(PunishmentRecord record, SyncType type) {
-        public static Config serialize(Sync sync) {
-            Config config = Config.inMemory();
-            config.set("record", sync.record.serialize());
-            config.set("type", sync.type.name());
-            return config;
-        }
-
-        public static Sync deserialize(Config config) {
-            PunishmentRecord record = PunishmentRecord.deserialize(config.get("record"));
-            SyncType type = SyncType.fromName(config.get("type"));
-            return new Sync(record, type);
-        }
-
-        public static boolean isValid(Config config) {
-            if (!(config.get("record") instanceof Config recordConfig) || !PunishmentRecord.isValid(recordConfig)) {
-                return false;
-            }
-            if (!(config.get("type") instanceof String typeRaw)) {
-                return false;
-            }
-            return SyncType.fromName(typeRaw) != null;
-        }
     }
 
     public static PunishmentRecord punishAlt(UUID playerUuid, String playerDisplayName, PunishmentRecord previousRecord) {
@@ -98,17 +88,14 @@ public class PunishmentRecord {
                 previousRecord.punisherUuid,
                 previousRecord.punisherDisplayName,
                 previousRecord.reason,
-                previousRecord.serverUuid,
-                false
+                previousRecord.serverUuid
         );
     }
 
     public static PunishmentRecord deserialize(Config config) {
-        boolean isSynced = false;
-        if (config.get("synced") instanceof Boolean) {
-            isSynced = config.get("synced");
-        }
-        return new PunishmentRecord(
+        boolean isSynced = config.get("synced") instanceof Boolean synced && synced;
+        boolean isRemoved = config.get("removed") instanceof Boolean removed && removed;
+        PunishmentRecord record = new PunishmentRecord(
                 PunishmentType.fromName(config.get("type")),
                 config.getLong("timestamp"),
                 config.getLong("duration"),
@@ -118,9 +105,11 @@ public class PunishmentRecord {
                 UUID.fromString(config.get("punisherUuid")),
                 config.get("punisherDisplayName"),
                 config.get("reason"),
-                UUID.fromString(config.get("serverUuid")),
-                isSynced
+                UUID.fromString(config.get("serverUuid"))
         );
+        record.removed = isRemoved;
+        record.synced = isSynced;
+        return record;
     }
 
     public static boolean isValid(Config config) {
@@ -203,8 +192,7 @@ public class PunishmentRecord {
                 punisher.getEntity() != null ? punisher.getEntity().getUUID() : net.minecraft.Util.NIL_UUID,
                 punisher.getTextName(),
                 reason,
-                serverUuid,
-                false
+                serverUuid
         );
     }
 
@@ -221,6 +209,7 @@ public class PunishmentRecord {
         config.set("reason", this.reason);
         config.set("serverUuid", this.serverUuid.toString());
         config.set("synced", this.synced);
+        config.set("removed", this.removed);
         return config;
     }
 
