@@ -143,7 +143,7 @@ public final class MenuUtilities {
         if (serverUser.isOnline()) {
             gameProfile = serverUser.getOnlinePlayer().getGameProfile();
         } else {
-            gameProfile = new GameProfile(serverUser.getUUID(), serverUser.getUsername());
+            gameProfile = new GameProfile(punishment.playerUuid(), punishment.playerDisplayName());
         }
         return new ResolvableProfile(gameProfile);
     }
