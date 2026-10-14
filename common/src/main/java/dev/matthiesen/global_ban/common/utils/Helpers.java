@@ -74,7 +74,7 @@ public final class Helpers {
                 return List.of(new ServerUser(usernameOrIp));
             }
 
-            Set<UUID> uuidCache = GlobalBanCommon.IP_TO_UUID_CACHE.get(usernameOrIp);
+            Set<UUID> uuidCache = IpCache.getUuidByIp(usernameOrIp);
 
             List<ServerUser> users = new ArrayList<>();
 

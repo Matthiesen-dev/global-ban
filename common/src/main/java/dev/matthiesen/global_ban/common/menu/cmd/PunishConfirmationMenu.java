@@ -12,8 +12,10 @@ import dev.matthiesen.global_ban.common.def.PunishmentRecord;
 import dev.matthiesen.global_ban.common.def.PunishmentType;
 import dev.matthiesen.global_ban.common.def.events.PunishPlayerEvent;
 import dev.matthiesen.global_ban.common.utils.MenuUtilities;
+import dev.matthiesen.matthiesen_core.common.utility.SoundsPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 
 import java.util.List;
 
@@ -59,12 +61,16 @@ public record PunishConfirmationMenu(
                 .onClick(action -> {
                     GlobalBanCommon.Events.PUNISH_PLAYER.emit(new PunishPlayerEvent(record));
                     UIManager.closeUI(executor);
+                    new SoundsPlayer(SoundEvents.UI_BUTTON_CLICK.value()).play(executor);
                 })
                 .build();
 
         Button cancelButton = GooeyButton.builder()
                 .display(MenuUtilities.getCancelItem())
-                .onClick(action -> UIManager.closeUI(executor))
+                .onClick(action -> {
+                    UIManager.closeUI(executor);
+                    new SoundsPlayer(SoundEvents.UI_BUTTON_CLICK.value()).play(executor);
+                })
                 .build();
 
         ChestTemplate template = ChestTemplate.builder(3)
@@ -82,5 +88,6 @@ public record PunishConfirmationMenu(
 
     public void open() {
         UIManager.openUIForcefully(executor, getPage());
+        new SoundsPlayer(SoundEvents.UI_BUTTON_CLICK.value()).play(executor);
     }
 }

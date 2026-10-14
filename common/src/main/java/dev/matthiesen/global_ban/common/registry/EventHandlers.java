@@ -1,8 +1,5 @@
 package dev.matthiesen.global_ban.common.registry;
 
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.mojang.authlib.GameProfile;
 import dev.matthiesen.global_ban.common.GlobalBanCommon;
 import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
@@ -14,6 +11,7 @@ import dev.matthiesen.global_ban.common.def.events.ClearPunishmentEvent;
 import dev.matthiesen.global_ban.common.def.events.PunishPlayerEvent;
 import dev.matthiesen.global_ban.common.def.events.UnPunishPlayerEvent;
 import dev.matthiesen.global_ban.common.utils.Helpers;
+import dev.matthiesen.global_ban.common.utils.IpCache;
 import dev.matthiesen.matthiesen_core.common.api.events.config.ConfigEvent;
 import dev.matthiesen.matthiesen_core.common.api.events.server.PlayerEvent;
 import dev.matthiesen.matthiesen_core.common.api.events.server.ServerEvent;
@@ -28,36 +26,11 @@ import net.minecraft.server.level.ServerPlayer;
 import java.io.*;
 import java.net.SocketAddress;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("unused")
 public final class EventHandlers {
-    public static final Gson GSON = new GsonBuilder().disableHtmlEscaping()
-            .create();
-
     public static void onServerStarting(ServerEvent.Starting starting) {
-        try {
-            ConcurrentHashMap<String, String> cache = GlobalBanCommon.IP_CACHE_FILE.exists()
-                    ? GSON.fromJson(new FileReader(GlobalBanCommon.IP_CACHE_FILE), new TypeToken<ConcurrentHashMap<String, String>>() {}.getType())
-                    : null;
-
-            if (cache != null) {
-                for (var entry : cache.entrySet()) {
-                    try {
-                        UUID uuid = UUID.fromString(entry.getValue());
-                        String ip = entry.getKey();
-
-                        GlobalBanCommon.UUID_TO_IP_CACHE.put(uuid, ip);
-                        GlobalBanCommon.IP_TO_UUID_CACHE.computeIfAbsent(ip, k -> ConcurrentHashMap.newKeySet()).add(uuid);
-                    } catch (Exception e) {
-                        // Ignore invalid entries
-                    }
-                }
-            }
-
-        } catch (FileNotFoundException e) {
-            GlobalBanCommon.INSTANCE.createWarnLog("IP cache file not found, creating a new one...");
-        }
+        IpCache.handleServerStarting();
     }
 
     public static void onServerStarted(ServerEvent.Started started) {
@@ -66,20 +39,7 @@ public final class EventHandlers {
     }
 
     public static void onServerStopping(ServerEvent.Stopping stopping) {
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(GlobalBanCommon.IP_CACHE_FILE));
-
-            var ipCache = new HashMap<>();
-
-            for (var entry : GlobalBanCommon.UUID_TO_IP_CACHE.entrySet()) {
-                ipCache.put(entry.getKey().toString(), entry.getValue());
-            }
-
-            writer.write(GSON.toJson(ipCache));
-            writer.close();
-        } catch (IOException exception) {
-            GlobalBanCommon.INSTANCE.createErrorLog("Failed to save IP cache file: " + exception.getMessage(), exception);
-        }
+        IpCache.writeCacheToFile();
     }
 
     public static void onConfigReloading(ConfigEvent.Reloading reloading) {
@@ -96,7 +56,7 @@ public final class EventHandlers {
         }
 
         String ip = join.player().getIpAddress();
-        Set<UUID> knownAccounts = GlobalBanCommon.IP_TO_UUID_CACHE.get(ip);
+        Set<UUID> knownAccounts = IpCache.getUuidByIp(ip);
 
         if (knownAccounts == null || knownAccounts.isEmpty()) return;
 
@@ -244,8 +204,7 @@ public final class EventHandlers {
     public static void onCanPlayerLoginPre(CanPlayerLogin.Pre event) {
         if (event.socketAddress() != null) {
             String stringAddress = Helpers.stringifyAddress(event.socketAddress());
-            GlobalBanCommon.UUID_TO_IP_CACHE.put(event.gameProfile().getId(), stringAddress);
-            GlobalBanCommon.IP_TO_UUID_CACHE.computeIfAbsent(stringAddress, ip -> new HashSet<>()).add(event.gameProfile().getId());
+            IpCache.addToCache(event.gameProfile().getId(), stringAddress);
         }
     }
 
