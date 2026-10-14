@@ -109,12 +109,12 @@ public final class MenuUtilities {
         switch (record.type()) {
             case BAN -> {
                 item = PLAYER_RECORD_ITEM;
-                String username = new ServerUser(record.playerUuid()).getUsername();
-                name = username != null ? username : record.playerDisplayName();
+                String username = new ServerUser(record.playerUuid).getUsername();
+                name = username != null ? username : record.playerDisplayName;
             }
             case IP_BAN -> {
                 item = IP_RECORD_ITEM;
-                name = record.playerIp();
+                name = record.playerIp;
             }
             default -> throw new IllegalArgumentException("Unsupported punishment type: " + record.type());
         }
@@ -131,19 +131,19 @@ public final class MenuUtilities {
                 Component.literal("Expires: ").setStyle(Style.EMPTY.withBold(true))
                         .append(Component.literal(punishment.getFormattedExpirationDate()).setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW))),
                 Component.literal("By: ").setStyle(Style.EMPTY.withBold(true))
-                        .append(Component.literal(punishment.punisherDisplayName()).setStyle(Style.EMPTY.withColor(ChatFormatting.GREEN))),
+                        .append(Component.literal(punishment.punisherDisplayName).setStyle(Style.EMPTY.withColor(ChatFormatting.GREEN))),
                 Component.literal("Reason: ").setStyle(Style.EMPTY.withBold(true))
-                        .append(Component.literal(punishment.reason()).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)))
+                        .append(Component.literal(punishment.reason).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)))
         };
     }
 
     private static ResolvableProfile getResolvableProfile(PunishmentRecord punishment) {
-        ServerUser serverUser = new ServerUser(punishment.playerUuid());
+        ServerUser serverUser = new ServerUser(punishment.playerUuid);
         GameProfile gameProfile;
         if (serverUser.isOnline()) {
             gameProfile = serverUser.getOnlinePlayer().getGameProfile();
         } else {
-            gameProfile = new GameProfile(punishment.playerUuid(), punishment.playerDisplayName());
+            gameProfile = new GameProfile(punishment.playerUuid, punishment.playerDisplayName);
         }
         return new ResolvableProfile(gameProfile);
     }

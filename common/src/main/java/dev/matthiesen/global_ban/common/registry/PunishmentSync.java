@@ -28,13 +28,14 @@ public final class PunishmentSync {
             return;
         }
 
-        HttpRequest request = createPostRequest(apiUrl, getPendingSyncPunishments());
+        List<PunishmentRecord.Sync> pending = getPendingSyncPunishments();
+        HttpRequest request = createPostRequest(apiUrl, pending);
         HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(response -> {
                     if (response.statusCode() != 200) {
                         throw new RuntimeException("Failed to sync punishments: " + response.statusCode() + " - " + response.body());
                     }
-                    GlobalBanConfig.clearPendingSyncPunishments();
+                    GlobalBanConfig.markPendingSynced(pending);
                     return SyncData.fromJson(response.body());
                 })
                 .thenAccept(syncData -> {
@@ -43,9 +44,10 @@ public final class PunishmentSync {
                     } else {
                         GlobalBanCommon.INSTANCE.createInfoLog("Received " + syncData.punishments().size() + " punishments from the sync API.");
                         for (var newPunishment : syncData.punishments()) {
+                            newPunishment.record().markAsSynced();
                             switch (newPunishment.type()) {
                                 case ADD -> GlobalBanCommon.Events.PUNISH_PLAYER.emit(new PunishPlayerEvent(newPunishment.record()));
-                                case REMOVE -> GlobalBanCommon.Events.UNPUNISH_PLAYER.emit(new UnPunishPlayerEvent(newPunishment.record(), false));
+                                case REMOVE -> GlobalBanCommon.Events.UNPUNISH_PLAYER.emit(new UnPunishPlayerEvent(newPunishment.record(), false, true));
                             }
                         }
                     }

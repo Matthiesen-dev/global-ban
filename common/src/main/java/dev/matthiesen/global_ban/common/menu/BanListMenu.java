@@ -23,7 +23,7 @@ public final class BanListMenu extends PaginatedScreen {
     public BanListMenu(ServerPlayer player) {
         super(player);
         List<PunishmentRecord> punishments = GlobalBanConfig.getPunished();
-        punishments.sort(Comparator.comparingLong(p -> -p.timestamp()));
+        punishments.sort(Comparator.comparingLong(p -> -p.timestamp));
         this.punishments = new ArrayList<>(punishments);
     }
 

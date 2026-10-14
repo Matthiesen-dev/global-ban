@@ -12,45 +12,69 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public record PunishmentRecord(
-        PunishmentType type,
-        long timestamp,
-        long duration,
-        UUID playerUuid,
-        String playerIp,
-        String playerDisplayName,
-        UUID punisherUuid,
-        String punisherDisplayName,
-        String reason,
-        UUID serverUuid
-) {
+public final class PunishmentRecord {
     public static final long NON_EXPIRING_PUNISHMENT = -1L;
     public static final String UNKNOWN_PLAYER_NAME = "UnknownPlayer";
     public static final String UNDEFINED_IP_ADDRESS = "undefined";
 
+    public PunishmentType type;
+    public PunishmentType type() {
+        return type;
+    }
+    public long timestamp;
+    public long duration;
+    public UUID playerUuid;
+    public String playerIp;
+    public String playerDisplayName;
+    public UUID punisherUuid;
+    public String punisherDisplayName;
+    public String reason;
+    public UUID serverUuid;
+    public boolean synced;
+    // Soft-delete marker: the record stays in the list until the removal has been synced. Not sent to the API.
+    public transient boolean removed;
+
+    public void markAsSynced() {
+        this.synced = true;
+    }
+
+    public void markAsRemoved() {
+        this.removed = true;
+        this.synced = false;
+    }
+
+    public boolean matches(PunishmentRecord other) {
+        return this.type == other.type
+                && this.timestamp == other.timestamp
+                && this.playerUuid.equals(other.playerUuid)
+                && java.util.Objects.equals(this.playerIp, other.playerIp);
+    }
+
+    public PunishmentRecord(
+            PunishmentType type,
+            long timestamp,
+            long duration,
+            UUID playerUuid,
+            String playerIp,
+            String playerDisplayName,
+            UUID punisherUuid,
+            String punisherDisplayName,
+            String reason,
+            UUID serverUuid
+    ) {
+        this.type = type;
+        this.timestamp = timestamp;
+        this.duration = duration;
+        this.playerUuid = playerUuid;
+        this.playerIp = playerIp;
+        this.playerDisplayName = playerDisplayName;
+        this.punisherUuid = punisherUuid;
+        this.punisherDisplayName = punisherDisplayName;
+        this.reason = reason;
+        this.serverUuid = serverUuid;
+    }
+
     public record Sync(PunishmentRecord record, SyncType type) {
-        public static Config serialize(Sync sync) {
-            Config config = Config.inMemory();
-            config.set("record", sync.record.serialize());
-            config.set("type", sync.type.name());
-            return config;
-        }
-
-        public static Sync deserialize(Config config) {
-            PunishmentRecord record = PunishmentRecord.deserialize(config.get("record"));
-            SyncType type = SyncType.fromName(config.get("type"));
-            return new Sync(record, type);
-        }
-
-        public static boolean isValid(Config config) {
-            if (!(config.get("record") instanceof Config recordConfig) || !PunishmentRecord.isValid(recordConfig)) {
-                return false;
-            }
-            if (!(config.get("type") instanceof String typeRaw)) {
-                return false;
-            }
-            return SyncType.fromName(typeRaw) != null;
-        }
     }
 
     public static PunishmentRecord punishAlt(UUID playerUuid, String playerDisplayName, PunishmentRecord previousRecord) {
@@ -69,7 +93,9 @@ public record PunishmentRecord(
     }
 
     public static PunishmentRecord deserialize(Config config) {
-        return new PunishmentRecord(
+        boolean isSynced = config.get("synced") instanceof Boolean synced && synced;
+        boolean isRemoved = config.get("removed") instanceof Boolean removed && removed;
+        PunishmentRecord record = new PunishmentRecord(
                 PunishmentType.fromName(config.get("type")),
                 config.getLong("timestamp"),
                 config.getLong("duration"),
@@ -81,6 +107,9 @@ public record PunishmentRecord(
                 config.get("reason"),
                 UUID.fromString(config.get("serverUuid"))
         );
+        record.removed = isRemoved;
+        record.synced = isSynced;
+        return record;
     }
 
     public static boolean isValid(Config config) {
@@ -179,6 +208,8 @@ public record PunishmentRecord(
         config.set("punisherDisplayName", this.punisherDisplayName);
         config.set("reason", this.reason);
         config.set("serverUuid", this.serverUuid.toString());
+        config.set("synced", this.synced);
+        config.set("removed", this.removed);
         return config;
     }
 
@@ -191,11 +222,11 @@ public record PunishmentRecord(
     }
 
     public Date getExpirationDate() {
-        return this.isTemporary() ? new Date((this.timestamp() + this.duration)) : new Date(Long.MAX_VALUE - 1);
+        return this.isTemporary() ? new Date((this.timestamp + this.duration)) : new Date(Long.MAX_VALUE - 1);
     }
 
     public Date getDate() {
-        return new Date(this.timestamp() * 1000);
+        return new Date(this.timestamp * 1000);
     }
 
     public String getFormattedDate() {
@@ -207,7 +238,7 @@ public record PunishmentRecord(
     }
 
     public String getFormattedExpirationTime() {
-        if (this.duration() > NON_EXPIRING_PUNISHMENT) {
+        if (this.duration > NON_EXPIRING_PUNISHMENT) {
             long x = this.duration + this.timestamp - System.currentTimeMillis() / 1000;
 
             long seconds = x % 60;

@@ -23,6 +23,8 @@ public final class PermissionRegistry {
             GlobalBanConfig.PERMISSIONS_CONFIG.commands_root_reload.get());
     public static final Permission COMMAND_IMPORT_PERMISSION = register("command.global_ban.import",
             GlobalBanConfig.PERMISSIONS_CONFIG.commands_root_import.get());
+    public static final Permission COMMAND_FORCE_SYNC_PERMISSION = register("command.global_ban.force_sync",
+            GlobalBanConfig.PERMISSIONS_CONFIG.commands_root_forcesync.get());
     public static final Permission COMMAND_KICK_PERMISSION = register("command.kick",
             GlobalBanConfig.PERMISSIONS_CONFIG.commands_kick.get());
     public static final Permission COMMAND_BAN_PERMISSION = register("command.ban",

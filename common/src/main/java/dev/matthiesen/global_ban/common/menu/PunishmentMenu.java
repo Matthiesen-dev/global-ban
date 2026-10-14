@@ -21,8 +21,8 @@ import java.util.List;
 public record PunishmentMenu(ServerPlayer player, PunishmentRecord punishment) {
     public String getLabel() {
         return switch (punishment.type()) {
-            case BAN -> punishment.playerDisplayName();
-            case IP_BAN -> punishment.playerIp();
+            case BAN -> punishment.playerDisplayName;
+            case IP_BAN -> punishment.playerIp;
             default -> "Unknown";
         };
     }
@@ -48,15 +48,15 @@ public record PunishmentMenu(ServerPlayer player, PunishmentRecord punishment) {
         GooeyButton pardonButton = GooeyButton.builder()
                 .display(MenuUtilities.getPardonItem(getLabel()))
                 .onClick(event -> {
-                    GlobalBanCommon.Events.CLEAR_PUNISHMENTS.emit(ClearPunishmentEvent.fromUUID(punishment.playerUuid()));
+                    GlobalBanCommon.Events.CLEAR_PUNISHMENTS.emit(ClearPunishmentEvent.fromUUID(punishment.playerUuid));
                     new BanListMenu(player).open();
                 })
                 .build();
 
         GooeyButton pardonIpButton = GooeyButton.builder()
-                .display(MenuUtilities.getPardonItem(punishment.playerIp()))
+                .display(MenuUtilities.getPardonItem(punishment.playerIp))
                 .onClick(event -> {
-                    GlobalBanCommon.Events.CLEAR_PUNISHMENTS.emit(ClearPunishmentEvent.fromIpAddress(punishment.playerIp()));
+                    GlobalBanCommon.Events.CLEAR_PUNISHMENTS.emit(ClearPunishmentEvent.fromIpAddress(punishment.playerIp));
                     new BanListMenu(player).open();
                 })
                 .build();
