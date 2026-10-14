@@ -80,83 +80,88 @@ public final class UnpunishCommands implements CoreCommand {
 
     private int unpunishAction(CommandContext<CommandSourceStack> ctx, PunishmentType type) {
         CompletableFuture.runAsync(() -> {
-            ServerConfig serverConfig = GlobalBanConfig.SERVER_CONFIG;
-            var playerArg = StringArgumentType.getString(ctx, "player");
-            var player = Helpers.lookupServerUser(playerArg);
-
-            if (player == null) {
-                Component message = Component.literal("Player entry not found: " + playerArg).withStyle(ChatFormatting.RED);
-                ctx.getSource().sendSystemMessage(message);
-                return;
-            }
-
-            ServerPlayer executor;
             try {
-                executor = ctx.getSource().getPlayerOrException();
+                ServerConfig serverConfig = GlobalBanConfig.SERVER_CONFIG;
+                var playerArg = StringArgumentType.getString(ctx, "player");
+                var player = Helpers.lookupServerUser(playerArg);
+
+                if (player == null) {
+                    Component message = Component.literal("Player entry not found: " + playerArg).withStyle(ChatFormatting.RED);
+                    ctx.getSource().sendSystemMessage(message);
+                    return;
+                }
+
+                ServerPlayer executor;
+                try {
+                    executor = ctx.getSource().getPlayerOrException();
+                } catch (Exception e) {
+                    executor = null;
+                }
+
+                var punishments = Helpers.getPunishmentsForUser(player);
+
+                for (var punishment : punishments) {
+                    Component message = null;
+                    int count = 0;
+
+                    if (type != null) {
+                        switch (type) {
+                            case BAN -> {
+                                Integer result = GlobalBanCommon.Events.UNPUNISH_PLAYER.emit(new UnPunishPlayerEvent(punishment, false));
+                                count += result != null ? result : 0;
+                                var temp = String.join("\n", serverConfig.messages_unbanChatMessage.get());
+                                var processed = Helpers.processPlaceholders(temp, punishment.getPlaceholders());
+                                message = processed.toComponent();
+                            }
+                            case IP_BAN -> {
+                                Integer result = GlobalBanCommon.Events.UNPUNISH_PLAYER.emit(new UnPunishPlayerEvent(punishment, false));
+                                count += result != null ? result : 0;
+                                var temp = String.join("\n", serverConfig.messages_ipUnbanChatMessage.get());
+                                var processed = Helpers.processPlaceholders(temp, punishment.getPlaceholders());
+                                message = processed.toComponent();
+                            }
+                        }
+                    } else {
+                        if (player.getUUID() != null) {
+                            Integer result = GlobalBanCommon.Events.CLEAR_PUNISHMENTS.emit(ClearPunishmentEvent.fromUUID(player.getUUID()));
+                            count += result != null ? result : 0;
+                        }
+                        if (player.getOnlinePlayer() != null) {
+                            Integer result = GlobalBanCommon.Events.CLEAR_PUNISHMENTS.emit(ClearPunishmentEvent.fromIpAddress(player.getOnlinePlayer().getIpAddress()));
+                            count += result != null ? result : 0;
+                        }
+                        if (punishment.playerUuid() != null) {
+                            Integer result = GlobalBanCommon.Events.CLEAR_PUNISHMENTS.emit(ClearPunishmentEvent.fromUUID(punishment.playerUuid()));
+                            count += result != null ? result : 0;
+                        }
+                        if (punishment.playerIp() != null) {
+                            Integer result = GlobalBanCommon.Events.CLEAR_PUNISHMENTS.emit(ClearPunishmentEvent.fromIpAddress(punishment.playerIp()));
+                            count += result != null ? result : 0;
+                        }
+
+                        var temp = String.join("\n", serverConfig.messages_pardonChatMessage.get());
+                        var processed = Helpers.processPlaceholders(temp, punishment.getPlaceholders());
+                        message = processed.toComponent();
+                    }
+
+                    if (count > 0) {
+                        if (executor != null) {
+                            executor.sendSystemMessage(message);
+                        } else {
+                            ctx.getSource().sendSystemMessage(message);
+                        }
+                    } else {
+                        MutableComponent noPunishmentMessage = Component.literal("No punishment found for: " + player.getUsername()).withStyle(ChatFormatting.RED);
+                        if (executor != null) {
+                            executor.sendSystemMessage(noPunishmentMessage);
+                        } else {
+                            ctx.getSource().sendSystemMessage(noPunishmentMessage);
+                        }
+                    }
+                }
             } catch (Exception e) {
-                executor = null;
-            }
-
-            var punishments = Helpers.getPunishmentsForUser(player);
-
-            for (var punishment : punishments) {
-                Component message = null;
-                int count = 0;
-
-                if (type != null) {
-                    switch (type) {
-                        case BAN -> {
-                            Integer result = GlobalBanCommon.Events.UNPUNISH_PLAYER.emit(new UnPunishPlayerEvent(punishment, false));
-                            count += result != null ? result : 0;
-                            var temp = String.join("\n", serverConfig.messages_unbanChatMessage.get());
-                            var processed = Helpers.processPlaceholders(temp, punishment.getPlaceholders());
-                            message = processed.toComponent();
-                        }
-                        case IP_BAN -> {
-                            Integer result = GlobalBanCommon.Events.UNPUNISH_PLAYER.emit(new UnPunishPlayerEvent(punishment, false));
-                            count += result != null ? result : 0;
-                            var temp = String.join("\n", serverConfig.messages_ipUnbanChatMessage.get());
-                            var processed = Helpers.processPlaceholders(temp, punishment.getPlaceholders());
-                            message = processed.toComponent();
-                        }
-                    }
-                } else {
-                    if (player.getUUID() != null) {
-                        Integer result = GlobalBanCommon.Events.CLEAR_PUNISHMENTS.emit(ClearPunishmentEvent.fromUUID(player.getUUID()));
-                        count += result != null ? result : 0;
-                    }
-                    if (player.getOnlinePlayer() != null) {
-                        Integer result = GlobalBanCommon.Events.CLEAR_PUNISHMENTS.emit(ClearPunishmentEvent.fromIpAddress(player.getOnlinePlayer().getIpAddress()));
-                        count += result != null ? result : 0;
-                    }
-                    if (punishment.playerUuid() != null) {
-                        Integer result = GlobalBanCommon.Events.CLEAR_PUNISHMENTS.emit(ClearPunishmentEvent.fromUUID(punishment.playerUuid()));
-                        count += result != null ? result : 0;
-                    }
-                    if (punishment.playerIp() != null) {
-                        Integer result = GlobalBanCommon.Events.CLEAR_PUNISHMENTS.emit(ClearPunishmentEvent.fromIpAddress(punishment.playerIp()));
-                        count += result != null ? result : 0;
-                    }
-
-                    var temp = String.join("\n", serverConfig.messages_pardonChatMessage.get());
-                    var processed = Helpers.processPlaceholders(temp, punishment.getPlaceholders());
-                    message = processed.toComponent();
-                }
-
-                if (count > 0) {
-                    if (executor != null) {
-                        executor.sendSystemMessage(message);
-                    } else {
-                        ctx.getSource().sendSystemMessage(message);
-                    }
-                } else {
-                    MutableComponent noPunishmentMessage = Component.literal("No punishment found for: " + player.getUsername()).withStyle(ChatFormatting.RED);
-                    if (executor != null) {
-                        executor.sendSystemMessage(noPunishmentMessage);
-                    } else {
-                        ctx.getSource().sendSystemMessage(noPunishmentMessage);
-                    }
-                }
+                GlobalBanCommon.INSTANCE.createErrorLog("Failed to execute unpunish command", e);
+                ctx.getSource().sendFailure(Component.literal("Failed to execute unpunish command. Check the server logs for more information.").withStyle(ChatFormatting.RED));
             }
         });
         return 1;
