@@ -33,7 +33,7 @@ public final class BanImporter {
 
     public static void handlePlayerBans(boolean cleanup) {
         UserBanList banList = getServer().getPlayerList().getBans();
-        for (UserBanListEntry entry : banList.getEntries()) {
+        for (UserBanListEntry entry : new java.util.ArrayList<>(banList.getEntries())) {
             try {
                 GameProfile profile = ((StoredUserEntryAccessor<GameProfile>) entry).getKeyServer();
                 PunishmentRecord punishment = getPunishment(entry, profile);
@@ -49,7 +49,7 @@ public final class BanImporter {
 
     public static void handleIpBans(boolean cleanup) {
         IpBanList ipBanList = getServer().getPlayerList().getIpBans();
-        for (IpBanListEntry entry : ipBanList.getEntries()) {
+        for (IpBanListEntry entry : new java.util.ArrayList<>(ipBanList.getEntries())) {
             try {
                 String ip = ((StoredUserEntryAccessor<String>) entry).getKeyServer();
                 PunishmentRecord punishment = getPunishment(entry, ip);

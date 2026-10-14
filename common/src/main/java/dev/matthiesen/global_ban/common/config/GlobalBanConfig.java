@@ -47,7 +47,9 @@ public final class GlobalBanConfig {
      * Active punishments only; records that are soft-deleted while awaiting removal sync are excluded.
      */
     public static List<PunishmentRecord> getPunished() {
-        return getAllRecords().stream().filter(punishment -> !punishment.removed).toList();
+        return getAllRecords().stream()
+                .filter(punishment -> !punishment.removed)
+                .collect(java.util.stream.Collectors.toCollection(ArrayList::new));
     }
 
     public static synchronized void reloadPunished() {
