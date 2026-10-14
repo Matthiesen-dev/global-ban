@@ -109,7 +109,8 @@ public final class MenuUtilities {
         switch (record.type()) {
             case BAN -> {
                 item = PLAYER_RECORD_ITEM;
-                name = new ServerUser(record.playerUuid()).getUsername();
+                String username = new ServerUser(record.playerUuid()).getUsername();
+                name = username != null ? username : record.playerDisplayName();
             }
             case IP_BAN -> {
                 item = IP_RECORD_ITEM;
@@ -117,6 +118,7 @@ public final class MenuUtilities {
             }
             default -> throw new IllegalArgumentException("Unsupported punishment type: " + record.type());
         }
+        if (name == null) name = PunishmentRecord.UNKNOWN_PLAYER_NAME;
         return new ItemBuilder(item).hideAdditional().setCustomName(Component.literal(name)).addLore(lore);
     }
 
