@@ -13,8 +13,10 @@ import dev.matthiesen.global_ban.common.def.PunishmentRecord;
 import dev.matthiesen.global_ban.common.def.events.ClearPunishmentEvent;
 import dev.matthiesen.global_ban.common.def.events.UnPunishPlayerEvent;
 import dev.matthiesen.global_ban.common.utils.MenuUtilities;
+import dev.matthiesen.matthiesen_core.common.utility.SoundsPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 
 import java.util.List;
 
@@ -87,5 +89,6 @@ public record PunishmentMenu(ServerPlayer player, PunishmentRecord punishment) {
 
     public void open() {
         UIManager.openUIForcefully(player, getPage());
+        new SoundsPlayer(SoundEvents.UI_BUTTON_CLICK.value()).play(player);
     }
 }

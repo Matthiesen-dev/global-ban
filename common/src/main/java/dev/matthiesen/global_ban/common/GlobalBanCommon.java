@@ -13,20 +13,11 @@ import dev.matthiesen.matthiesen_core.common.api.events.PlatformEvents;
 import dev.matthiesen.matthiesen_core.common.api.platform.loader.ModConfigType;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
 public final class GlobalBanCommon extends AbstractCommonMod {
     public static final String MOD_ID = "global_ban";
     public static final String MOD_NAME = "Global Ban";
     public static @Token final String METRICS_TOKEN = "382f15e125d207a935a0999a3d268084";
     public static final GlobalBanCommon INSTANCE = new GlobalBanCommon();
-
-    public static ConcurrentHashMap<UUID, String> UUID_TO_IP_CACHE = new ConcurrentHashMap<>();
-    public static ConcurrentHashMap<String, Set<UUID>> IP_TO_UUID_CACHE = new ConcurrentHashMap<>();
-    public static final File IP_CACHE_FILE = Paths.get("ipcache.json").toFile();
 
     public static class Events {
         public static final EventObservable<CanPlayerLogin.Pre> CAN_PLAYER_LOGIN_PRE = new EventObservable<>();

@@ -43,11 +43,13 @@ public abstract class PaginatedScreen {
         LinkedPageButton previous = LinkedPageButton.builder()
                 .display(MenuUtilities.getNavPreviousItem())
                 .linkType(LinkType.Previous)
+                .onClick(() -> new SoundsPlayer(SoundEvents.UI_BUTTON_CLICK.value()).play(player))
                 .build();
 
         LinkedPageButton next = LinkedPageButton.builder()
                 .display(MenuUtilities.getNavNextItem())
                 .linkType(LinkType.Next)
+                .onClick(() -> new SoundsPlayer(SoundEvents.UI_BUTTON_CLICK.value()).play(player))
                 .build();
 
         Button close = GooeyButton.builder()
@@ -73,6 +75,7 @@ public abstract class PaginatedScreen {
 
     public void open() {
         UIManager.openUIForcefully(player, getPage());
+        new SoundsPlayer(SoundEvents.UI_BUTTON_CLICK.value()).play(player);
     }
 
     private Button getInfoButton(int currentPage, int totalPages) {

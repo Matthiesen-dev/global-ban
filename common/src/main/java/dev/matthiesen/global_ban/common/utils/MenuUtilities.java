@@ -125,15 +125,15 @@ public final class MenuUtilities {
     private static Component[] getRecordLore(PunishmentRecord punishment) {
         return new Component[]{
                 Component.literal("Type: ").setStyle(Style.EMPTY.withBold(true))
-                        .append(Component.literal(punishment.type().name()).setStyle(Style.EMPTY.withColor(ChatFormatting.RED))),
+                        .append(Component.literal(punishment.type().name()).setStyle(Style.EMPTY.withColor(ChatFormatting.RED).withBold(false))),
                 Component.literal("Date: ").setStyle(Style.EMPTY.withBold(true))
-                        .append(Component.literal(punishment.getFormattedDate()).setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW))),
+                        .append(Component.literal(punishment.getFormattedDate()).setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW).withBold(false))),
                 Component.literal("Expires: ").setStyle(Style.EMPTY.withBold(true))
-                        .append(Component.literal(punishment.getFormattedExpirationDate()).setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW))),
+                        .append(Component.literal(punishment.getFormattedExpirationDate()).setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW).withBold(false))),
                 Component.literal("By: ").setStyle(Style.EMPTY.withBold(true))
-                        .append(Component.literal(punishment.punisherDisplayName).setStyle(Style.EMPTY.withColor(ChatFormatting.GREEN))),
+                        .append(Component.literal(punishment.punisherDisplayName).setStyle(Style.EMPTY.withColor(ChatFormatting.GREEN).withBold(false))),
                 Component.literal("Reason: ").setStyle(Style.EMPTY.withBold(true))
-                        .append(Component.literal(punishment.reason).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)))
+                        .append(Component.literal(punishment.reason).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY).withBold(false)))
         };
     }
 
