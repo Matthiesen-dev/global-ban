@@ -57,24 +57,34 @@ public final class GeneralCommands implements CoreCommand {
     }
 
     public int reloadAction(CommandContext<CommandSourceStack> context) {
-        GlobalBanConfig.invalidatePunished();
-        context.getSource().sendSystemMessage(
-                Component.literal("Global Ban configuration reloaded successfully.")
-        );
+        try {
+            GlobalBanConfig.invalidatePunished();
+            context.getSource().sendSystemMessage(
+                    Component.literal("Global Ban configuration reloaded successfully.")
+            );
+        } catch (Exception e) {
+            GlobalBanCommon.INSTANCE.createErrorLog("Failed to reload configuration", e);
+            context.getSource().sendFailure(Component.literal("Failed to reload configuration. Check the server logs for more information."));
+        }
         return 1;
     }
 
     public int importAction(CommandContext<CommandSourceStack> context) {
-        boolean cleanup = BoolArgumentType.getBool(context, "cleanup");
-        boolean status = BanImporter.importVanillaBans(cleanup);
-        if (status) {
-            context.getSource().sendSystemMessage(
-                    Component.literal("Successfully imported vanilla bans into Global Ban.")
-            );
-        } else {
-            context.getSource().sendSystemMessage(
-                    Component.literal("Failed to import vanilla bans into Global Ban. Check the server logs for more information.")
-            );
+        try {
+            boolean cleanup = BoolArgumentType.getBool(context, "cleanup");
+            boolean status = BanImporter.importVanillaBans(cleanup);
+            if (status) {
+                context.getSource().sendSystemMessage(
+                        Component.literal("Successfully imported vanilla bans into Global Ban.")
+                );
+            } else {
+                context.getSource().sendSystemMessage(
+                        Component.literal("Failed to import vanilla bans into Global Ban. Check the server logs for more information.")
+                );
+            }
+        } catch (Exception e) {
+            GlobalBanCommon.INSTANCE.createErrorLog("Failed to import vanilla bans", e);
+            context.getSource().sendFailure(Component.literal("Failed to import vanilla bans into Global Ban. Check the server logs for more information."));
         }
         return 1;
     }
@@ -82,12 +92,17 @@ public final class GeneralCommands implements CoreCommand {
     public int listAction(CommandContext<CommandSourceStack> context) {
         var source = context.getSource();
         CompletableFuture.runAsync(() -> {
-            List<PunishmentRecord> punishments = GlobalBanConfig.getPunished();
-            punishments.sort(Comparator.comparingLong(p -> -p.timestamp()));
-            if (source.isPlayer() && GlobalBanCommon.INSTANCE.isGooeyLibsLoaded()) {
-                createBanListMenu(punishments, source);
-            } else {
-                createBanListTextOutput(punishments, source, context);
+            try {
+                List<PunishmentRecord> punishments = GlobalBanConfig.getPunished();
+                punishments.sort(Comparator.comparingLong(p -> -p.timestamp()));
+                if (source.isPlayer() && GlobalBanCommon.INSTANCE.isGooeyLibsLoaded()) {
+                    createBanListMenu(punishments, source);
+                } else {
+                    createBanListTextOutput(punishments, source, context);
+                }
+            } catch (Exception e) {
+                GlobalBanCommon.INSTANCE.createErrorLog("Failed to list punishments", e);
+                source.sendFailure(Component.literal("Failed to list punishments. Check the server logs for more information."));
             }
         });
         return 1;

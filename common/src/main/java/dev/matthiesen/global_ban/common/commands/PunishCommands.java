@@ -74,57 +74,61 @@ public final class PunishCommands implements CoreCommand {
 
     private int punishAction(CommandContext<CommandSourceStack> ctx, PunishmentType type, boolean isTemp) {
         CompletableFuture.runAsync(() -> {
-            ServerConfig serverConfig = GlobalBanConfig.SERVER_CONFIG;
-            var playerArg = StringArgumentType.getString(ctx, "player");
-            long duration = PunishmentRecord.NON_EXPIRING_PUNISHMENT;
-
-            if (isTemp) {
-                try {
-                    var durationArg = StringArgumentType.getString(ctx, "duration");
-                    long parsedDuration = Helpers.parseDuration(durationArg);
-                    if (parsedDuration <= 0) {
-                        ctx.getSource().sendFailure(Component.literal("Duration must be greater than 0."));
-                        return;
-                    }
-                    duration = parsedDuration;
-                } catch (Exception e) {
-                    ctx.getSource().sendFailure(Component.literal("Invalid duration format. Supported formats: \"1d\", \"2h\", \"30m\", \"15s\", \"1y\", \"6mo\", \"2w\", and combinations like \"1d2h30m\""));
-                }
-            }
-
-            String reason;
-
             try {
-                String reasonArg = StringArgumentType.getString(ctx, "reason");
-                if (reasonArg == null || reasonArg.isEmpty()) {
+                ServerConfig serverConfig = GlobalBanConfig.SERVER_CONFIG;
+                var playerArg = StringArgumentType.getString(ctx, "player");
+                long duration = PunishmentRecord.NON_EXPIRING_PUNISHMENT;
+
+                if (isTemp) {
+                    try {
+                        var durationArg = StringArgumentType.getString(ctx, "duration");
+                        long parsedDuration = Helpers.parseDuration(durationArg);
+                        if (parsedDuration <= 0) {
+                            ctx.getSource().sendFailure(Component.literal("Duration must be greater than 0."));
+                            return;
+                        }
+                        duration = parsedDuration;
+                    } catch (Exception e) {
+                        ctx.getSource().sendFailure(Component.literal("Invalid duration format. Supported formats: \"1d\", \"2h\", \"30m\", \"15s\", \"1y\", \"6mo\", \"2w\", and combinations like \"1d2h30m\""));
+                    }
+                }
+
+                String reason;
+
+                try {
+                    String reasonArg = StringArgumentType.getString(ctx, "reason");
+                    if (reasonArg == null || reasonArg.isEmpty()) {
+                        reason = serverConfig.defaultBanReason.get();
+                    } else {
+                        reason = reasonArg;
+                    }
+                } catch (Exception e) {
                     reason = serverConfig.defaultBanReason.get();
+                }
+
+                var players = Helpers.lookupServerUsers(playerArg);
+
+                if (players.isEmpty()) {
+                    Component message = Component.literal("Player entry not found: " + playerArg).withStyle(net.minecraft.ChatFormatting.RED);
+                    ctx.getSource().sendSystemMessage(message);
                 } else {
-                    reason = reasonArg;
+                    for (var player : players) {
+                        if (Helpers.isPunishableBy(player, ctx.getSource())) {
+                            var punishment = PunishmentRecord.create(
+                                    player.getUUID(),
+                                    player.getOnlinePlayer() != null ? player.getOnlinePlayer().getIpAddress() : null,
+                                    player.getUsername(),
+                                    ctx.getSource(),
+                                    type, duration, reason
+                            );
+                            GlobalBanCommon.Events.PUNISH_PLAYER.emit(new PunishPlayerEvent(punishment));
+                        }
+                    }
                 }
             } catch (Exception e) {
-                reason = serverConfig.defaultBanReason.get();
+                GlobalBanCommon.INSTANCE.createErrorLog("Failed to execute punishment command", e);
+                ctx.getSource().sendFailure(Component.literal("Failed to execute punishment command. Check the server logs for more information."));
             }
-
-            var players = Helpers.lookupServerUsers(playerArg);
-
-            if (players.isEmpty()) {
-                Component message = Component.literal("Player entry not found: " + playerArg).withStyle(net.minecraft.ChatFormatting.RED);
-                ctx.getSource().sendSystemMessage(message);
-            } else {
-                for (var player : players) {
-                    if (Helpers.isPunishableBy(player, ctx.getSource())) {
-                        var punishment = PunishmentRecord.create(
-                                player.getUUID(),
-                                player.getOnlinePlayer() != null ? player.getOnlinePlayer().getIpAddress() : null,
-                                player.getUsername(),
-                                ctx.getSource(),
-                                type, duration, reason
-                        );
-                        GlobalBanCommon.Events.PUNISH_PLAYER.emit(new PunishPlayerEvent(punishment));
-                    }
-                }
-            }
-
         });
         return 1;
     }
