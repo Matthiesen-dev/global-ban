@@ -34,21 +34,22 @@ public final class GlobalBanConfig {
         PERMISSIONS_SPEC = permissionsSpecPair.getRight();
     }
 
-    private static List<PunishmentRecord> punishmentCache = null;
+    private static final List<PunishmentRecord> punishmentCache = new ArrayList<>();
 
     public static List<PunishmentRecord> getPunished() {
-        if (punishmentCache == null) {
-            punishmentCache = loadPunished();
+        if (punishmentCache.isEmpty()) {
+            punishmentCache.addAll(loadPunished());
         }
         return new ArrayList<>(punishmentCache);
     }
 
     public static void reloadPunished() {
-        punishmentCache = loadPunished();
+        punishmentCache.clear();
+        punishmentCache.addAll(loadPunished());
     }
 
     public static void invalidatePunished() {
-        punishmentCache = null;
+        punishmentCache.clear();
     }
 
     private static List<PunishmentRecord> loadPunished() {
