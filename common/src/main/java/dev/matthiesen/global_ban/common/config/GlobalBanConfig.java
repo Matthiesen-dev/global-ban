@@ -60,13 +60,13 @@ public final class GlobalBanConfig {
 
     public static List<PunishmentRecord> isPlayerUUIDPunished(UUID player) {
         return getPunished().stream()
-                .filter(punishment -> punishment.playerUuid().equals(player) && punishment.type() == PunishmentType.BAN)
+                .filter(punishment -> punishment.playerUuid.equals(player) && punishment.type() == PunishmentType.BAN)
                 .toList();
     }
 
     public static List<PunishmentRecord> isIpPunished(String ipAddress) {
         return getPunished().stream()
-                .filter(punishment -> punishment.playerIp().equals(ipAddress) && punishment.type() == PunishmentType.IP_BAN)
+                .filter(punishment -> punishment.playerIp.equals(ipAddress) && punishment.type() == PunishmentType.IP_BAN)
                 .toList();
     }
 
@@ -98,12 +98,12 @@ public final class GlobalBanConfig {
     public static int clearPunishments(UUID player) {
         List<PunishmentRecord> bannedPlayers = getPunished();
         List<PunishmentRecord> updatedList = bannedPlayers.stream()
-                .filter(punishment -> !punishment.playerUuid().equals(player))
+                .filter(punishment -> !punishment.playerUuid.equals(player))
                 .toList();
 
         if (GlobalBanConfig.SERVER_CONFIG.scheduler_apiSyncEnabled.getAsBoolean()) {
             var removedPunishments = bannedPlayers.stream()
-                    .filter(punishment -> punishment.playerUuid().equals(player))
+                    .filter(punishment -> punishment.playerUuid.equals(player))
                     .toList();
             removedPunishments.forEach(punishment -> appendPunishmentToPendingSync(punishment, SyncType.REMOVE));
         }
@@ -118,12 +118,12 @@ public final class GlobalBanConfig {
     public static int clearIpPunishments(String ipAddress) {
         List<PunishmentRecord> bannedPlayers = getPunished();
         List<PunishmentRecord> updatedList = bannedPlayers.stream()
-                .filter(punishment -> !punishment.playerIp().equals(ipAddress))
+                .filter(punishment -> !punishment.playerIp.equals(ipAddress))
                 .toList();
 
         if (GlobalBanConfig.SERVER_CONFIG.scheduler_apiSyncEnabled.getAsBoolean()) {
             var removedPunishments = bannedPlayers.stream()
-                    .filter(punishment -> punishment.playerIp().equals(ipAddress))
+                    .filter(punishment -> punishment.playerIp.equals(ipAddress))
                     .toList();
             removedPunishments.forEach(punishment -> appendPunishmentToPendingSync(punishment, SyncType.REMOVE));
         }

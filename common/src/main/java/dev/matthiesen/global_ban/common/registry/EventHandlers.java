@@ -152,23 +152,23 @@ public final class EventHandlers {
             boolean alreadyBanned = false;
 
             // If punishment is an IP ban, we need to ensure that the IP is not a private IP address scope before proceeding with the punishment.
-            if (Helpers.isPrivateIpAddress(record.playerIp()) ) {
-                GlobalBanCommon.INSTANCE.createWarnLog("Admin " + record.punisherDisplayName() + " (" + record.punisherUuid() + ") attempted to punish IP " + record.playerIp() + ", which is a private IP address. This action has been blocked.");
-                ServerPlayer punisher = getServer().getPlayerList().getPlayer(record.punisherUuid());
+            if (Helpers.isPrivateIpAddress(record.playerIp) ) {
+                GlobalBanCommon.INSTANCE.createWarnLog("Admin " + record.punisherDisplayName + " (" + record.punisherUuid + ") attempted to punish IP " + record.playerIp + ", which is a private IP address. This action has been blocked.");
+                ServerPlayer punisher = getServer().getPlayerList().getPlayer(record.punisherUuid);
                 if (punisher != null) {
-                    punisher.sendSystemMessage(Component.literal("You attempted to punish IP " + record.playerIp() + ", which is a private IP address. This action has been blocked.").withStyle(ChatFormatting.RED));
+                    punisher.sendSystemMessage(Component.literal("You attempted to punish IP " + record.playerIp + ", which is a private IP address. This action has been blocked.").withStyle(ChatFormatting.RED));
                 }
                 return;
             }
 
             for (ServerPlayer player : getServer().getPlayerList().getPlayers()) {
-                if (player.getIpAddress().equals(record.playerIp())) {
+                if (player.getIpAddress().equals(record.playerIp)) {
                     player.connection.disconnect(record.getDisconnectScreenComponent());
 
                     if (serverConfig.autoBanPlayersByIP.getAsBoolean() && record.type() == PunishmentType.IP_BAN) {
                         PunishmentRecord newPunishment = PunishmentRecord.punishAlt(player.getUUID(), player.getName().getString(), record);
 
-                        if (player.getUUID() == record.playerUuid()) {
+                        if (player.getUUID() == record.playerUuid) {
                             alreadyBanned = true;
                         }
 
@@ -178,11 +178,11 @@ public final class EventHandlers {
             }
 
             if (serverConfig.autoBanPlayersByIP.getAsBoolean() && record.type() == PunishmentType.IP_BAN && !alreadyBanned) {
-                PunishmentRecord newPunishment = PunishmentRecord.punishAlt(record.playerUuid(), record.playerDisplayName(), record);
+                PunishmentRecord newPunishment = PunishmentRecord.punishAlt(record.playerUuid, record.playerDisplayName, record);
                 GlobalBanCommon.Events.PUNISH_PLAYER.emit(new PunishPlayerEvent(newPunishment));
             }
         } else if (record.type().shouldKick) {
-            ServerPlayer player = getServer().getPlayerList().getPlayer(record.playerUuid());
+            ServerPlayer player = getServer().getPlayerList().getPlayer(record.playerUuid);
 
             if (player != null) {
                 player.connection.disconnect(record.getDisconnectScreenComponent());
@@ -262,8 +262,8 @@ public final class EventHandlers {
 
         for (var entry : GlobalBanConfig.getPunished()) {
             if (!entry.isExpired() &&
-                    (entry.type() == PunishmentType.IP_BAN && entry.playerIp().equals(ip)) ||
-                    (entry.type() == PunishmentType.BAN && entry.playerUuid().equals(gameProfile.getId()))
+                    (entry.type() == PunishmentType.IP_BAN && entry.playerIp.equals(ip)) ||
+                    (entry.type() == PunishmentType.BAN && entry.playerUuid.equals(gameProfile.getId()))
             ) {
                 punishment = entry;
                 break;

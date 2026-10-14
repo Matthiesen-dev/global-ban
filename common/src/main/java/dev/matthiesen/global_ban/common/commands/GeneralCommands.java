@@ -123,7 +123,7 @@ public final class GeneralCommands implements CoreCommand {
         CompletableFuture.runAsync(() -> {
             try {
                 List<PunishmentRecord> punishments = GlobalBanConfig.getPunished();
-                punishments.sort(Comparator.comparingLong(p -> -p.timestamp()));
+                punishments.sort(Comparator.comparingLong(p -> -p.timestamp));
                 if (source.isPlayer() && GlobalBanCommon.INSTANCE.isGooeyLibsLoaded()) {
                     createBanListMenu(punishments, source);
                 } else {
@@ -147,7 +147,7 @@ public final class GeneralCommands implements CoreCommand {
         if (player == null) {
             for (PunishmentRecord punishment : punishments) {
                 Component punishmentInfo = Component.literal(String.format("Player: %s, Type: %s, Reason: %s, Timestamp: %d",
-                        punishment.playerDisplayName(), punishment.type(), punishment.reason(), punishment.timestamp()));
+                        punishment.playerDisplayName, punishment.type(), punishment.reason, punishment.timestamp));
                 source.sendSystemMessage(punishmentInfo);
             }
             return;
@@ -167,7 +167,7 @@ public final class GeneralCommands implements CoreCommand {
         messages.add(Component.literal(String.format("Global Ban List - Page %d/%d", startPage + 1, totalPages)));
         for (PunishmentRecord punishment : pagePunishments) {
             Component punishmentInfo = Component.literal(String.format("Player: %s, Type: %s, Reason: %s, Timestamp: %d",
-                    punishment.playerDisplayName(), punishment.type(), punishment.reason(), punishment.timestamp()));
+                    punishment.playerDisplayName, punishment.type(), punishment.reason, punishment.timestamp));
             messages.add(punishmentInfo);
         }
         if (startPage + 1 < totalPages) {

@@ -12,21 +12,55 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public record PunishmentRecord(
-        PunishmentType type,
-        long timestamp,
-        long duration,
-        UUID playerUuid,
-        String playerIp,
-        String playerDisplayName,
-        UUID punisherUuid,
-        String punisherDisplayName,
-        String reason,
-        UUID serverUuid
-) {
+public class PunishmentRecord {
     public static final long NON_EXPIRING_PUNISHMENT = -1L;
     public static final String UNKNOWN_PLAYER_NAME = "UnknownPlayer";
     public static final String UNDEFINED_IP_ADDRESS = "undefined";
+
+    public PunishmentType type;
+    public PunishmentType type() {
+        return type;
+    }
+    public long timestamp;
+    public long duration;
+    public UUID playerUuid;
+    public String playerIp;
+    public String playerDisplayName;
+    public UUID punisherUuid;
+    public String punisherDisplayName;
+    public String reason;
+    public UUID serverUuid;
+    public boolean synced;
+
+    public void markAsSynced() {
+        this.synced = true;
+    }
+
+    public PunishmentRecord(
+            PunishmentType type,
+            long timestamp,
+            long duration,
+            UUID playerUuid,
+            String playerIp,
+            String playerDisplayName,
+            UUID punisherUuid,
+            String punisherDisplayName,
+            String reason,
+            UUID serverUuid,
+            boolean synced
+    ) {
+        this.type = type;
+        this.timestamp = timestamp;
+        this.duration = duration;
+        this.playerUuid = playerUuid;
+        this.playerIp = playerIp;
+        this.playerDisplayName = playerDisplayName;
+        this.punisherUuid = punisherUuid;
+        this.punisherDisplayName = punisherDisplayName;
+        this.reason = reason;
+        this.serverUuid = serverUuid;
+        this.synced = synced;
+    }
 
     public record Sync(PunishmentRecord record, SyncType type) {
         public static Config serialize(Sync sync) {
@@ -64,11 +98,16 @@ public record PunishmentRecord(
                 previousRecord.punisherUuid,
                 previousRecord.punisherDisplayName,
                 previousRecord.reason,
-                previousRecord.serverUuid
+                previousRecord.serverUuid,
+                false
         );
     }
 
     public static PunishmentRecord deserialize(Config config) {
+        boolean isSynced = false;
+        if (config.get("synced") instanceof Boolean) {
+            isSynced = config.get("synced");
+        }
         return new PunishmentRecord(
                 PunishmentType.fromName(config.get("type")),
                 config.getLong("timestamp"),
@@ -79,7 +118,8 @@ public record PunishmentRecord(
                 UUID.fromString(config.get("punisherUuid")),
                 config.get("punisherDisplayName"),
                 config.get("reason"),
-                UUID.fromString(config.get("serverUuid"))
+                UUID.fromString(config.get("serverUuid")),
+                isSynced
         );
     }
 
@@ -163,7 +203,8 @@ public record PunishmentRecord(
                 punisher.getEntity() != null ? punisher.getEntity().getUUID() : net.minecraft.Util.NIL_UUID,
                 punisher.getTextName(),
                 reason,
-                serverUuid
+                serverUuid,
+                false
         );
     }
 
@@ -179,6 +220,7 @@ public record PunishmentRecord(
         config.set("punisherDisplayName", this.punisherDisplayName);
         config.set("reason", this.reason);
         config.set("serverUuid", this.serverUuid.toString());
+        config.set("synced", this.synced);
         return config;
     }
 
@@ -191,11 +233,11 @@ public record PunishmentRecord(
     }
 
     public Date getExpirationDate() {
-        return this.isTemporary() ? new Date((this.timestamp() + this.duration)) : new Date(Long.MAX_VALUE - 1);
+        return this.isTemporary() ? new Date((this.timestamp + this.duration)) : new Date(Long.MAX_VALUE - 1);
     }
 
     public Date getDate() {
-        return new Date(this.timestamp() * 1000);
+        return new Date(this.timestamp * 1000);
     }
 
     public String getFormattedDate() {
@@ -207,7 +249,7 @@ public record PunishmentRecord(
     }
 
     public String getFormattedExpirationTime() {
-        if (this.duration() > NON_EXPIRING_PUNISHMENT) {
+        if (this.duration > NON_EXPIRING_PUNISHMENT) {
             long x = this.duration + this.timestamp - System.currentTimeMillis() / 1000;
 
             long seconds = x % 60;

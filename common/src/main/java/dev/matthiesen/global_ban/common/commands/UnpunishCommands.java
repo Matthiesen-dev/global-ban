@@ -57,7 +57,7 @@ public final class UnpunishCommands implements CoreCommand {
                 try {
                     ServerPlayer player = ctx.getSource().getPlayer();
                     List<PunishmentRecord> punishments = GlobalBanConfig.getPunished();
-                    punishments.sort(Comparator.comparingLong(p -> -p.timestamp()));
+                    punishments.sort(Comparator.comparingLong(p -> -p.timestamp));
                     switch (type) {
                         case IP_BAN -> punishments = punishments.stream()
                                 .filter(p -> p.type() == PunishmentType.IP_BAN)
@@ -130,12 +130,12 @@ public final class UnpunishCommands implements CoreCommand {
                             Integer result = GlobalBanCommon.Events.CLEAR_PUNISHMENTS.emit(ClearPunishmentEvent.fromIpAddress(player.getOnlinePlayer().getIpAddress()));
                             count += result != null ? result : 0;
                         }
-                        if (punishment.playerUuid() != null) {
-                            Integer result = GlobalBanCommon.Events.CLEAR_PUNISHMENTS.emit(ClearPunishmentEvent.fromUUID(punishment.playerUuid()));
+                        if (punishment.playerUuid != null) {
+                            Integer result = GlobalBanCommon.Events.CLEAR_PUNISHMENTS.emit(ClearPunishmentEvent.fromUUID(punishment.playerUuid));
                             count += result != null ? result : 0;
                         }
-                        if (punishment.playerIp() != null) {
-                            Integer result = GlobalBanCommon.Events.CLEAR_PUNISHMENTS.emit(ClearPunishmentEvent.fromIpAddress(punishment.playerIp()));
+                        if (punishment.playerIp != null) {
+                            Integer result = GlobalBanCommon.Events.CLEAR_PUNISHMENTS.emit(ClearPunishmentEvent.fromIpAddress(punishment.playerIp));
                             count += result != null ? result : 0;
                         }
 

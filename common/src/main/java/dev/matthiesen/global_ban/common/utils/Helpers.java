@@ -40,7 +40,7 @@ public final class Helpers {
 
     public static List<PunishmentRecord> getPunishmentsForUser(ServerUser user) {
         return GlobalBanConfig.getPunished().stream()
-                .filter(p -> !p.isExpired() && (p.playerUuid().equals(user.getUUID())))
+                .filter(p -> !p.isExpired() && (p.playerUuid.equals(user.getUUID())))
                 .toList();
     }
 
