@@ -40,7 +40,7 @@ public final class GlobalBanConfig {
         if (punishmentCache == null) {
             punishmentCache = loadPunished();
         }
-        return punishmentCache;
+        return new ArrayList<>(punishmentCache);
     }
 
     public static void reloadPunished() {
