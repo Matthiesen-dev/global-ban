@@ -15,6 +15,7 @@ public final class PermissionsConfig {
     public ModConfigSpec.EnumValue<PermissionLevel> commands_root;
     public ModConfigSpec.EnumValue<PermissionLevel> commands_root_reload;
     public ModConfigSpec.EnumValue<PermissionLevel> commands_root_import;
+    public ModConfigSpec.EnumValue<PermissionLevel> commands_root_forcesync;
     public ModConfigSpec.EnumValue<PermissionLevel> commands_kick;
     public ModConfigSpec.EnumValue<PermissionLevel> commands_ban;
     public ModConfigSpec.EnumValue<PermissionLevel> commands_ban_ip;
@@ -48,6 +49,8 @@ public final class PermissionsConfig {
                 .defineEnum("reload", PermissionLevel.ALL_COMMANDS);
         commands_root_import = builder.comment("Permission level required to use the /global-ban import command")
                 .defineEnum("import", PermissionLevel.ALL_COMMANDS);
+        commands_root_forcesync = builder.comment("Permission level required to use the /global-ban force-sync command")
+                .defineEnum("force_sync", PermissionLevel.ALL_COMMANDS);
         commands_kick = builder.comment("Permission level required to use the /kick command")
                 .defineEnum("kick", PermissionLevel.ALL_COMMANDS);
         commands_ban = builder.comment("Permission level required to use the /ban command")

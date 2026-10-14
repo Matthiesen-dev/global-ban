@@ -157,6 +157,20 @@ public final class GlobalBanConfig {
         PUNISHMENTS.punished_pendingSync.save();
     }
 
+    /**
+     * This method is intended to be called when a server is first registered with a Remote API server, and already has punishments in it's cache.
+     * This method will take all current punishments in the server's cache and add them to the pending sync list, so that they can be sent to the Remote API server on the next sync.
+     */
+    public static void createForceSyncRequest() {
+        List<PunishmentRecord> currentPunishments = getPunished();
+        List<PunishmentRecord.Sync> pendingSyncList = new ArrayList<>(getPendingSyncPunishments());
+        for (PunishmentRecord punishment : currentPunishments) {
+            pendingSyncList.add(new PunishmentRecord.Sync(punishment, SyncType.ADD));
+        }
+        PUNISHMENTS.punished_pendingSync.set(pendingSyncList.stream().map(PunishmentRecord.Sync::serialize).toList());
+        PUNISHMENTS.punished_pendingSync.save();
+    }
+
     public static UUID getServerUUID() {
         return UUID.fromString(SERVER_CONFIG.serverUUID.get());
     }

@@ -46,11 +46,16 @@ public final class GeneralCommands implements CoreCommand {
                 .executes(this::listAction)
                 .argument("page", IntegerArgumentType.integer(1), arg -> arg.executes(this::listAction));
 
+        CommandBuilder forceSyncCmd = CommandBuilder.create("force-sync")
+                .requires(src -> PermissionRegistry.checkPermission(src, PermissionRegistry.COMMAND_FORCE_SYNC_PERMISSION))
+                .executes(this::forceSyncAction);
+
         CommandBuilder rootCmd = CommandBuilder.create("global-ban")
                 .requires(src -> PermissionRegistry.checkPermission(src, PermissionRegistry.COMMAND_ROOT_PERMISSION))
                 .then(reloadCmd)
                 .then(importCmd)
-                .then(banListCmd);
+                .then(banListCmd)
+                .then(forceSyncCmd);
 
         commandDispatcher.register(rootCmd.build());
         commandDispatcher.register(banListCmd.build()); // We also register the banlist command as a root command for convenience, so that players can use /banlist instead of /global-bans banlist
@@ -66,6 +71,30 @@ public final class GeneralCommands implements CoreCommand {
             GlobalBanCommon.INSTANCE.createErrorLog("Failed to reload configuration", e);
             context.getSource().sendFailure(Component.literal("Failed to reload configuration. Check the server logs for more information."));
         }
+        return 1;
+    }
+
+    public int forceSyncAction(CommandContext<CommandSourceStack> context) {
+        CompletableFuture.runAsync(() -> {
+            try {
+                var config = GlobalBanConfig.SERVER_CONFIG;
+                if (!config.scheduler_apiSyncEnabled.getAsBoolean()) {
+                    context.getSource().sendSystemMessage(
+                            Component.literal("API sync is disabled. This action is disabled.")
+                    );
+                }
+                if (config.scheduler_apiSyncUrl.get().isEmpty()) {
+                    context.getSource().sendSystemMessage(
+                            Component.literal("API sync URL is empty. This action is disabled.")
+                    );
+                }
+                GlobalBanConfig.createForceSyncRequest();
+                context.getSource().sendSystemMessage(Component.literal("Successfully forced a sync of punishments."));
+            } catch (Exception e) {
+                GlobalBanCommon.INSTANCE.createErrorLog("Failed to force sync punishments", e);
+                context.getSource().sendFailure(Component.literal("Failed to force sync punishments. Check the server logs for more information."));
+            }
+        });
         return 1;
     }
 
