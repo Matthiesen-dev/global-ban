@@ -32,8 +32,7 @@ public record PunishmentMenu(ServerPlayer player, PunishmentRecord punishment) {
         VirtualBookContainer container = new VirtualBookContainer(label, "Server Console");
 
         container.addSection(
-                Component.literal(label + "\n\n")
-                        .append(createLine("Type: ", punishment.type().name(), ChatFormatting.RED, ChatFormatting.RED))
+                createLine("Type: ", punishment.type().name(), ChatFormatting.RED, ChatFormatting.RED)
                         .append(createLine("Date: ", punishment.getFormattedDate(), ChatFormatting.YELLOW, ChatFormatting.YELLOW))
                         .append(createLine("Expires: ", punishment.getFormattedExpirationDate(), ChatFormatting.AQUA, ChatFormatting.AQUA))
                         .append(createLine("By: ", punishment.punisherDisplayName, ChatFormatting.GREEN, ChatFormatting.GREEN))
