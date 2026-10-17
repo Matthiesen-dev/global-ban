@@ -9,13 +9,4 @@ public enum SyncType {
     SyncType(String name) {
         this.name = name;
     }
-
-    public static SyncType fromName(String name) {
-        for (SyncType type : values()) {
-            if (type.name.equalsIgnoreCase(name)) {
-                return type;
-            }
-        }
-        return null;
-    }
 }

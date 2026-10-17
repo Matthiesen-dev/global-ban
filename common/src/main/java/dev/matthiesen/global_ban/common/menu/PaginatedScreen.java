@@ -1,17 +1,13 @@
 package dev.matthiesen.global_ban.common.menu;
 
-import ca.landonjw.gooeylibs2.api.UIManager;
-import ca.landonjw.gooeylibs2.api.button.Button;
-import ca.landonjw.gooeylibs2.api.button.GooeyButton;
-import ca.landonjw.gooeylibs2.api.button.PlaceholderButton;
-import ca.landonjw.gooeylibs2.api.button.linked.LinkType;
-import ca.landonjw.gooeylibs2.api.button.linked.LinkedPageButton;
-import ca.landonjw.gooeylibs2.api.helpers.PaginationHelper;
-import ca.landonjw.gooeylibs2.api.page.LinkedPage;
-import ca.landonjw.gooeylibs2.api.page.Page;
-import ca.landonjw.gooeylibs2.api.template.slot.TemplateSlotDelegate;
-import ca.landonjw.gooeylibs2.api.template.types.ChestTemplate;
 import dev.matthiesen.global_ban.common.utils.MenuUtilities;
+import dev.matthiesen.matthiesen_core.common.api.server_menu.ServerUIManager;
+import dev.matthiesen.matthiesen_core.common.api.server_menu.button.*;
+import dev.matthiesen.matthiesen_core.common.api.server_menu.button.linked.*;
+import dev.matthiesen.matthiesen_core.common.api.server_menu.helpers.PaginationHelper;
+import dev.matthiesen.matthiesen_core.common.api.server_menu.page.*;
+import dev.matthiesen.matthiesen_core.common.api.server_menu.template.slot.TemplateSlotDelegate;
+import dev.matthiesen.matthiesen_core.common.api.server_menu.template.types.ChestTemplate;
 import dev.matthiesen.matthiesen_core.common.utility.SoundsPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -36,7 +32,7 @@ public abstract class PaginatedScreen {
     public abstract List<Button> getContentButtons();
 
     public Page getPage() {
-        Button frame = GooeyButton.builder()
+        Button frame = ServerButton.builder()
                 .display(MenuUtilities.getBackgroundItem())
                 .build();
 
@@ -52,10 +48,10 @@ public abstract class PaginatedScreen {
                 .onClick(() -> new SoundsPlayer(SoundEvents.UI_BUTTON_CLICK.value()).play(player))
                 .build();
 
-        Button close = GooeyButton.builder()
+        Button close = ServerButton.builder()
                 .display(MenuUtilities.getCloseItem())
                 .onClick(() -> {
-                    UIManager.closeUI(player);
+                    ServerUIManager.closeUI(player);
                     new SoundsPlayer(SoundEvents.UI_BUTTON_CLICK.value()).play(player);
                 })
                 .build();
@@ -74,12 +70,12 @@ public abstract class PaginatedScreen {
     }
 
     public void open() {
-        UIManager.openUIForcefully(player, getPage());
+        ServerUIManager.openUIForcefully(player, getPage());
         new SoundsPlayer(SoundEvents.UI_BUTTON_CLICK.value()).play(player);
     }
 
     private Button getInfoButton(int currentPage, int totalPages) {
-        return GooeyButton.builder()
+        return ServerButton.builder()
                 .display(MenuUtilities.getPageItem(currentPage, totalPages))
                 .build();
     }

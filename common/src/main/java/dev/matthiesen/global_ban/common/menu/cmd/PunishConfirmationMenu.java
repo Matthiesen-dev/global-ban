@@ -1,17 +1,14 @@
 package dev.matthiesen.global_ban.common.menu.cmd;
 
-import ca.landonjw.gooeylibs2.api.UIManager;
-import ca.landonjw.gooeylibs2.api.button.Button;
-import ca.landonjw.gooeylibs2.api.button.GooeyButton;
-import ca.landonjw.gooeylibs2.api.helpers.PaginationHelper;
-import ca.landonjw.gooeylibs2.api.page.LinkedPage;
-import ca.landonjw.gooeylibs2.api.page.Page;
-import ca.landonjw.gooeylibs2.api.template.types.ChestTemplate;
 import dev.matthiesen.global_ban.common.GlobalBanCommon;
-import dev.matthiesen.global_ban.common.def.PunishmentRecord;
-import dev.matthiesen.global_ban.common.def.PunishmentType;
+import dev.matthiesen.global_ban.common.def.*;
 import dev.matthiesen.global_ban.common.def.events.PunishPlayerEvent;
 import dev.matthiesen.global_ban.common.utils.MenuUtilities;
+import dev.matthiesen.matthiesen_core.common.api.server_menu.ServerUIManager;
+import dev.matthiesen.matthiesen_core.common.api.server_menu.button.*;
+import dev.matthiesen.matthiesen_core.common.api.server_menu.helpers.PaginationHelper;
+import dev.matthiesen.matthiesen_core.common.api.server_menu.page.*;
+import dev.matthiesen.matthiesen_core.common.api.server_menu.template.types.ChestTemplate;
 import dev.matthiesen.matthiesen_core.common.utility.SoundsPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -46,29 +43,29 @@ public record PunishConfirmationMenu(
     }
 
     public Page getPage() {
-        Button frame = GooeyButton.builder()
+        Button frame = ServerButton.builder()
                 .display(MenuUtilities.getBackgroundItem())
                 .build();
 
         PunishmentRecord record = getPunishmentRecord();
 
-        Button recordItem = GooeyButton.builder()
+        Button recordItem = ServerButton.builder()
                 .display(MenuUtilities.getRecordItem(record))
                 .build();
 
-        Button confirmButton = GooeyButton.builder()
+        Button confirmButton = ServerButton.builder()
                 .display(MenuUtilities.getPunishItem(target.getName().getString()))
                 .onClick(action -> {
                     GlobalBanCommon.Events.PUNISH_PLAYER.emit(new PunishPlayerEvent(record));
-                    UIManager.closeUI(executor);
+                    ServerUIManager.closeUI(executor);
                     new SoundsPlayer(SoundEvents.UI_BUTTON_CLICK.value()).play(executor);
                 })
                 .build();
 
-        Button cancelButton = GooeyButton.builder()
+        Button cancelButton = ServerButton.builder()
                 .display(MenuUtilities.getCancelItem())
                 .onClick(action -> {
-                    UIManager.closeUI(executor);
+                    ServerUIManager.closeUI(executor);
                     new SoundsPlayer(SoundEvents.UI_BUTTON_CLICK.value()).play(executor);
                 })
                 .build();
@@ -87,7 +84,7 @@ public record PunishConfirmationMenu(
     }
 
     public void open() {
-        UIManager.openUIForcefully(executor, getPage());
+        ServerUIManager.openUIForcefully(executor, getPage());
         new SoundsPlayer(SoundEvents.UI_BUTTON_CLICK.value()).play(executor);
     }
 }

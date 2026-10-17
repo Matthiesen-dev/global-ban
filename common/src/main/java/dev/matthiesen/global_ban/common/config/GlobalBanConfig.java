@@ -1,8 +1,6 @@
 package dev.matthiesen.global_ban.common.config;
 
-import dev.matthiesen.global_ban.common.def.PunishmentRecord;
-import dev.matthiesen.global_ban.common.def.PunishmentType;
-import dev.matthiesen.global_ban.common.def.SyncType;
+import dev.matthiesen.global_ban.common.def.*;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -112,10 +110,6 @@ public final class GlobalBanConfig {
         records.removeIf(record -> record.removed && record.matches(punishment));
         records.add(punishment);
         saveRecords(records);
-    }
-
-    public static int removePunishment(PunishmentRecord punishment) {
-        return removePunishment(punishment, false);
     }
 
     /**

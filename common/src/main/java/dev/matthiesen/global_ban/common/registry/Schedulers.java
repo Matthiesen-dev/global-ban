@@ -1,8 +1,7 @@
 package dev.matthiesen.global_ban.common.registry;
 
 import dev.matthiesen.global_ban.common.GlobalBanCommon;
-import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
-import dev.matthiesen.global_ban.common.config.ServerConfig;
+import dev.matthiesen.global_ban.common.config.*;
 import dev.matthiesen.global_ban.common.def.PunishmentRecord;
 import dev.matthiesen.global_ban.common.def.events.UnPunishPlayerEvent;
 

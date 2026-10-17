@@ -3,9 +3,7 @@ package dev.matthiesen.global_ban.common;
 import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
 import dev.matthiesen.global_ban.common.def.PunishmentRecord;
 import dev.matthiesen.global_ban.common.def.events.*;
-import dev.matthiesen.global_ban.common.registry.CommandRegistry;
-import dev.matthiesen.global_ban.common.registry.EventHandlers;
-import dev.matthiesen.global_ban.common.registry.PermissionRegistry;
+import dev.matthiesen.global_ban.common.registry.*;
 import dev.matthiesen.libs.faststats.Token;
 import dev.matthiesen.matthiesen_core.common.AbstractCommonMod;
 import dev.matthiesen.matthiesen_core.common.api.events.EventObservable;
@@ -67,9 +65,5 @@ public final class GlobalBanCommon extends AbstractCommonMod {
         Events.CAN_PLAYER_LOGIN_POST.subscribe(EventHandlers::onCanPlayerLoginPost);
 
         createInfoLog("Initialized");
-    }
-
-    public boolean isGooeyLibsLoaded() {
-        return getCommonUtils().isModLoaded("gooeylibs");
     }
 }

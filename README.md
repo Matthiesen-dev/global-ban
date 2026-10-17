@@ -2,7 +2,6 @@
 
 <div>
   <img src="https://mods.matthiesen.dev/badges/matthiesenCore.svg" alt="Matthiesen Core">
-  <img src="https://mods.matthiesen.dev/badges/gooeylibs_optional.svg" alt="GooeyLibs">
 </div>
 
 Server side ban management plugin, sync multiple servers, or connect multiple communities together. Gives server owner's the 
@@ -94,7 +93,6 @@ For more information on how to set up a Remote API server, please see the [Globa
 
 ### Optional Dependencies
 
-- [GooeyLibs](https://modrinth.com/mod/gooeylibs) - Required for GUI-based moderation tools, otherwise all moderation is done via commands.
 - [LuckPerms](https://modrinth.com/mod/luckperms) - Required for permission management, otherwise all permissions are managed via the Vanilla Permissions System.
 
 ## Docs
@@ -103,9 +101,10 @@ Documentation for this mod can be found at [mods.matthiesen.dev](https://mods.ma
 
 ## Version Compatibility
 
-| Minecraft Version | Matthiesen Core Version | Mod Version |
-|-------------------|-------------------------|-------------|
-| 1.21.1            | 1.x.x                   | 1.x.x       |
+| Minecraft Version | Matthiesen Core Version | Mod Version    |
+|-------------------|-------------------------|----------------|
+| 1.21.1            | 1.2.7+                  | 1.0.0-beta.1+  |
+| 1.21.1            | 1.3.0+                  | 1.0.0-beta.12+ |
 
 ## FastStats Metrics
 

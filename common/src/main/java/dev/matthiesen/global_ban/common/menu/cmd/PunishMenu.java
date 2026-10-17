@@ -1,11 +1,10 @@
 package dev.matthiesen.global_ban.common.menu.cmd;
 
-import ca.landonjw.gooeylibs2.api.button.Button;
 import dev.matthiesen.global_ban.common.GlobalBanCommon;
-import dev.matthiesen.global_ban.common.def.PunishmentRecord;
-import dev.matthiesen.global_ban.common.def.PunishmentType;
+import dev.matthiesen.global_ban.common.def.*;
 import dev.matthiesen.global_ban.common.menu.PaginatedScreen;
 import dev.matthiesen.global_ban.common.utils.Helpers;
+import dev.matthiesen.matthiesen_core.common.api.server_menu.button.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
