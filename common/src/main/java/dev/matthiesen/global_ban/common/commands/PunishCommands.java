@@ -6,10 +6,8 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.matthiesen.global_ban.common.GlobalBanCommon;
-import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
-import dev.matthiesen.global_ban.common.config.ServerConfig;
-import dev.matthiesen.global_ban.common.def.PunishmentRecord;
-import dev.matthiesen.global_ban.common.def.PunishmentType;
+import dev.matthiesen.global_ban.common.config.*;
+import dev.matthiesen.global_ban.common.def.*;
 import dev.matthiesen.global_ban.common.def.events.PunishPlayerEvent;
 import dev.matthiesen.global_ban.common.menu.cmd.PunishMenu;
 import dev.matthiesen.global_ban.common.registry.PermissionRegistry;
@@ -17,7 +15,6 @@ import dev.matthiesen.global_ban.common.utils.Helpers;
 import dev.matthiesen.matthiesen_core.common.api.command.CoreCommand;
 import dev.matthiesen.matthiesen_core.common.api.permissions.Permission;
 import dev.matthiesen.matthiesen_core.common.utility.commands.CommandBuilder;
-import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -57,16 +54,11 @@ public final class PunishCommands implements CoreCommand {
 
     private int punishGUIAction(CommandContext<CommandSourceStack> ctx, PunishmentType type, boolean isTemp) {
         CompletableFuture.runAsync(() -> {
-            if (GlobalBanCommon.INSTANCE.isGooeyLibsLoaded()) {
-                try {
-                    ServerPlayer executor = ctx.getSource().getPlayerOrException();
-                    new PunishMenu(executor, type, isTemp).open();
-                } catch (CommandSyntaxException e) {
-                    ctx.getSource().sendFailure(Component.literal("This command can only be executed by a player."));
-                }
-            } else {
-                // When Gooeylibs is not loaded, we cannot open the menu, so mimic the vanilla behavior of an incomplete command
-                ctx.getSource().sendFailure(Component.literal("Command is invalid or incomplete.").withStyle(ChatFormatting.RED));
+            try {
+                ServerPlayer executor = ctx.getSource().getPlayerOrException();
+                new PunishMenu(executor, type, isTemp).open();
+            } catch (CommandSyntaxException e) {
+                ctx.getSource().sendFailure(Component.literal("This command can only be executed by a player."));
             }
         });
         return 1;

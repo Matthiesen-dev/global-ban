@@ -1,10 +1,9 @@
 package dev.matthiesen.global_ban.common.menu;
 
-import ca.landonjw.gooeylibs2.api.button.Button;
-import ca.landonjw.gooeylibs2.api.button.GooeyButton;
 import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
 import dev.matthiesen.global_ban.common.def.PunishmentRecord;
 import dev.matthiesen.global_ban.common.utils.MenuUtilities;
+import dev.matthiesen.matthiesen_core.common.api.server_menu.button.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -37,7 +36,7 @@ public final class BanListMenu extends PaginatedScreen {
         List<Button> buttons = new ArrayList<>();
 
         for (PunishmentRecord record : punishments) {
-            Button button = GooeyButton.builder()
+            Button button = ServerButton.builder()
                     .display(MenuUtilities.getRecordItem(record))
                     .onClick(action -> new PunishmentMenu(player, record).open())
                     .build();

@@ -5,12 +5,9 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import dev.matthiesen.global_ban.common.GlobalBanCommon;
-import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
-import dev.matthiesen.global_ban.common.config.ServerConfig;
-import dev.matthiesen.global_ban.common.def.PunishmentRecord;
-import dev.matthiesen.global_ban.common.def.PunishmentType;
-import dev.matthiesen.global_ban.common.def.events.ClearPunishmentEvent;
-import dev.matthiesen.global_ban.common.def.events.UnPunishPlayerEvent;
+import dev.matthiesen.global_ban.common.config.*;
+import dev.matthiesen.global_ban.common.def.*;
+import dev.matthiesen.global_ban.common.def.events.*;
 import dev.matthiesen.global_ban.common.menu.BanListMenu;
 import dev.matthiesen.global_ban.common.registry.PermissionRegistry;
 import dev.matthiesen.global_ban.common.utils.Helpers;
@@ -53,26 +50,21 @@ public final class UnpunishCommands implements CoreCommand {
 
     private int createBanListMenu(CommandContext<CommandSourceStack> ctx, PunishmentType type) {
         CompletableFuture.runAsync(() -> {
-            if (GlobalBanCommon.INSTANCE.isGooeyLibsLoaded()) {
-                try {
-                    ServerPlayer player = ctx.getSource().getPlayer();
-                    List<PunishmentRecord> punishments = GlobalBanConfig.getPunished();
-                    punishments.sort(Comparator.comparingLong(p -> -p.timestamp));
-                    switch (type) {
-                        case IP_BAN -> punishments = punishments.stream()
-                                .filter(p -> p.type() == PunishmentType.IP_BAN)
-                                .toList();
-                        case BAN -> punishments = punishments.stream()
-                                .filter(p -> p.type() == PunishmentType.BAN)
-                                .toList();
-                    }
-                    new BanListMenu(player, punishments).open();
-                } catch (Exception e) {
-                    ctx.getSource().sendFailure(Component.literal("You must be a player to use this command."));
+            try {
+                ServerPlayer player = ctx.getSource().getPlayer();
+                List<PunishmentRecord> punishments = GlobalBanConfig.getPunished();
+                punishments.sort(Comparator.comparingLong(p -> -p.timestamp));
+                switch (type) {
+                    case IP_BAN -> punishments = punishments.stream()
+                            .filter(p -> p.type() == PunishmentType.IP_BAN)
+                            .toList();
+                    case BAN -> punishments = punishments.stream()
+                            .filter(p -> p.type() == PunishmentType.BAN)
+                            .toList();
                 }
-            } else {
-                // When Gooeylibs is not loaded, we cannot open the menu, so mimic the vanilla behavior of an incomplete command
-                ctx.getSource().sendFailure(Component.literal("Command is invalid or incomplete.").withStyle(ChatFormatting.RED));
+                new BanListMenu(player, punishments).open();
+            } catch (Exception e) {
+                ctx.getSource().sendFailure(Component.literal("You must be a player to use this command."));
             }
         });
         return 1;

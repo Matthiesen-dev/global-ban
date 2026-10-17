@@ -1,18 +1,14 @@
 package dev.matthiesen.global_ban.common.menu;
 
-import ca.landonjw.gooeylibs2.api.UIManager;
-import ca.landonjw.gooeylibs2.api.button.Button;
-import ca.landonjw.gooeylibs2.api.button.GooeyButton;
-import ca.landonjw.gooeylibs2.api.button.PlaceholderButton;
-import ca.landonjw.gooeylibs2.api.helpers.PaginationHelper;
-import ca.landonjw.gooeylibs2.api.page.LinkedPage;
-import ca.landonjw.gooeylibs2.api.page.Page;
-import ca.landonjw.gooeylibs2.api.template.types.ChestTemplate;
 import dev.matthiesen.global_ban.common.GlobalBanCommon;
 import dev.matthiesen.global_ban.common.def.PunishmentRecord;
-import dev.matthiesen.global_ban.common.def.events.ClearPunishmentEvent;
-import dev.matthiesen.global_ban.common.def.events.UnPunishPlayerEvent;
+import dev.matthiesen.global_ban.common.def.events.*;
 import dev.matthiesen.global_ban.common.utils.MenuUtilities;
+import dev.matthiesen.matthiesen_core.common.api.server_menu.ServerUIManager;
+import dev.matthiesen.matthiesen_core.common.api.server_menu.button.*;
+import dev.matthiesen.matthiesen_core.common.api.server_menu.helpers.PaginationHelper;
+import dev.matthiesen.matthiesen_core.common.api.server_menu.page.*;
+import dev.matthiesen.matthiesen_core.common.api.server_menu.template.types.ChestTemplate;
 import dev.matthiesen.matthiesen_core.common.utility.SoundsPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -34,12 +30,12 @@ public record PunishmentMenu(ServerPlayer player, PunishmentRecord punishment) {
     }
 
     public List<Button> getButtons() {
-        Button cancelButton = GooeyButton.builder()
+        Button cancelButton = ServerButton.builder()
                 .display(MenuUtilities.getCancelItem())
                 .onClick(event -> new BanListMenu(player).open())
                 .build();
 
-        GooeyButton unpunishButton = GooeyButton.builder()
+        ServerButton unpunishButton = ServerButton.builder()
                 .display(MenuUtilities.getUnpunishItem(getLabel()))
                 .onClick(event -> {
                     GlobalBanCommon.Events.UNPUNISH_PLAYER.emit(new UnPunishPlayerEvent(punishment, false));
@@ -47,7 +43,7 @@ public record PunishmentMenu(ServerPlayer player, PunishmentRecord punishment) {
                 })
                 .build();
 
-        GooeyButton pardonButton = GooeyButton.builder()
+        ServerButton pardonButton = ServerButton.builder()
                 .display(MenuUtilities.getPardonItem(getLabel()))
                 .onClick(event -> {
                     GlobalBanCommon.Events.CLEAR_PUNISHMENTS.emit(ClearPunishmentEvent.fromUUID(punishment.playerUuid));
@@ -55,7 +51,7 @@ public record PunishmentMenu(ServerPlayer player, PunishmentRecord punishment) {
                 })
                 .build();
 
-        GooeyButton pardonIpButton = GooeyButton.builder()
+        ServerButton pardonIpButton = ServerButton.builder()
                 .display(MenuUtilities.getPardonItem(punishment.playerIp))
                 .onClick(event -> {
                     GlobalBanCommon.Events.CLEAR_PUNISHMENTS.emit(ClearPunishmentEvent.fromIpAddress(punishment.playerIp));
@@ -67,11 +63,11 @@ public record PunishmentMenu(ServerPlayer player, PunishmentRecord punishment) {
     }
 
     public Page getPage() {
-        Button frame = GooeyButton.builder()
+        Button frame = ServerButton.builder()
                 .display(MenuUtilities.getBackgroundItem())
                 .build();
 
-        Button recordItem = GooeyButton.builder()
+        Button recordItem = ServerButton.builder()
                 .display(MenuUtilities.getRecordItem(punishment))
                 .build();
 
@@ -88,7 +84,7 @@ public record PunishmentMenu(ServerPlayer player, PunishmentRecord punishment) {
     }
 
     public void open() {
-        UIManager.openUIForcefully(player, getPage());
+        ServerUIManager.openUIForcefully(player, getPage());
         new SoundsPlayer(SoundEvents.UI_BUTTON_CLICK.value()).play(player);
     }
 }

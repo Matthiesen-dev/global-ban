@@ -1,12 +1,10 @@
 package dev.matthiesen.global_ban.common.menu.cmd;
 
-import ca.landonjw.gooeylibs2.api.button.Button;
-import ca.landonjw.gooeylibs2.api.button.GooeyButton;
 import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
-import dev.matthiesen.global_ban.common.def.PunishmentRecord;
-import dev.matthiesen.global_ban.common.def.PunishmentType;
+import dev.matthiesen.global_ban.common.def.*;
 import dev.matthiesen.global_ban.common.menu.PaginatedScreen;
 import dev.matthiesen.global_ban.common.utils.MenuUtilities;
+import dev.matthiesen.matthiesen_core.common.api.server_menu.button.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -29,7 +27,7 @@ public final class PunishReasonMenu extends PaginatedScreen {
     }
 
     public static Button create(ServerPlayer executor, PunishmentType type, ServerPlayer target, long duration) {
-        return GooeyButton.builder()
+        return ServerButton.builder()
                 .display(MenuUtilities.getPlayerHeadItem(target))
                 .onClick(action ->
                         new PunishReasonMenu(executor, type, target, duration).open()
@@ -59,9 +57,9 @@ public final class PunishReasonMenu extends PaginatedScreen {
         return Component.literal(getLabel());
     }
 
-    public List<GooeyButton> getReasonButtons() {
+    public List<ServerButton> getReasonButtons() {
         return getReasons().stream()
-                .map(reason -> GooeyButton.builder()
+                .map(reason -> ServerButton.builder()
                         .display(MenuUtilities.getReasonItem(reason))
                         .onClick(action -> new PunishConfirmationMenu(executor, type, target, duration, reason).open())
                         .build())

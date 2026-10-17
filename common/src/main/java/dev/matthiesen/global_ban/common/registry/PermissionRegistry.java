@@ -2,8 +2,7 @@ package dev.matthiesen.global_ban.common.registry;
 
 import dev.matthiesen.global_ban.common.GlobalBanCommon;
 import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
-import dev.matthiesen.matthiesen_core.common.api.permissions.Permission;
-import dev.matthiesen.matthiesen_core.common.api.permissions.PermissionLevel;
+import dev.matthiesen.matthiesen_core.common.api.permissions.*;
 import dev.matthiesen.matthiesen_core.common.utility.AbstractPermission;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;

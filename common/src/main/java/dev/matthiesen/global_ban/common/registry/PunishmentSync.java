@@ -2,10 +2,8 @@ package dev.matthiesen.global_ban.common.registry;
 
 import dev.matthiesen.global_ban.common.GlobalBanCommon;
 import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
-import dev.matthiesen.global_ban.common.def.PunishmentRecord;
-import dev.matthiesen.global_ban.common.def.SyncData;
-import dev.matthiesen.global_ban.common.def.events.PunishPlayerEvent;
-import dev.matthiesen.global_ban.common.def.events.UnPunishPlayerEvent;
+import dev.matthiesen.global_ban.common.def.*;
+import dev.matthiesen.global_ban.common.def.events.*;
 
 import java.net.URI;
 import java.net.http.HttpClient;
