@@ -24,8 +24,8 @@ public record PunishmentMenu(ServerPlayer player, PunishmentRecord punishment) {
 
     private VirtualBookContainer getBook() {
         String label = switch (punishment.type()) {
-            case BAN -> punishment.playerDisplayName;
-            case IP_BAN -> punishment.playerIp;
+            case BAN -> "Player: " + punishment.playerDisplayName;
+            case IP_BAN -> "IP: " + punishment.playerIp;
             default -> "Unknown";
         };
 
