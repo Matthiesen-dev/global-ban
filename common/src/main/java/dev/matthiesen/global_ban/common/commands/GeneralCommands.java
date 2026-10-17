@@ -2,7 +2,6 @@ package dev.matthiesen.global_ban.common.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -41,8 +40,7 @@ public final class GeneralCommands implements CoreCommand {
 
         CommandBuilder banListCmd = CommandBuilder.create("banlist")
                 .requires(src -> PermissionRegistry.checkPermission(src, PermissionRegistry.COMMAND_BAN_LIST_PERMISSION))
-                .executes(this::listAction)
-                .argument("page", IntegerArgumentType.integer(1), arg -> arg.executes(this::listAction));
+                .executes(this::listAction);
 
         CommandBuilder forceSyncCmd = CommandBuilder.create("force-sync")
                 .requires(src -> PermissionRegistry.checkPermission(src, PermissionRegistry.COMMAND_FORCE_SYNC_PERMISSION))

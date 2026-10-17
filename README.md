@@ -17,7 +17,7 @@ This allows for a more personalized experience for the player, and can help to r
 | `/global-ban`                           | Root command for global-ban specific commands.                                                                            |
 | `/global-ban reload`                    | Reloads the configuration files for global-ban.                                                                           |
 | `/global-ban import [cleanup boolean]`  | Imports your existing vanilla ban list into the global-ban system.                                                        |
-| `/global-ban banlist [page integer]`    | Lists all players that are currently in your global-ban list.                                                             |
+| `/global-ban banlist`                   | Lists all players and IPs that are currently in your global-ban list.                                                     |
 | `/global-ban force-sync`                | Forces an initial sync of local punishments to a newly registered Remote API server. (Should only be ran once, if at all) |
 | `/kick <player> [reason]`               | Kicks a player from the server with an optional reason.                                                                   |
 | `/ban <player> [reason]`                | Bans a player from the server with an optional reason.                                                                    |

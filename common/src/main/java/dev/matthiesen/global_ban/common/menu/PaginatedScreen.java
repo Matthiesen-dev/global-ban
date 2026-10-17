@@ -27,11 +27,11 @@ public abstract class PaginatedScreen {
         this.player = player;
     }
 
-    public abstract Component getDisplayTitle();
+    protected abstract Component getDisplayTitle();
 
-    public abstract List<Button> getContentButtons();
+    protected abstract List<Button> getContentButtons();
 
-    public Page getPage() {
+    private Page getPage() {
         Button frame = ServerButton.builder()
                 .display(MenuUtilities.getBackgroundItem())
                 .build();
