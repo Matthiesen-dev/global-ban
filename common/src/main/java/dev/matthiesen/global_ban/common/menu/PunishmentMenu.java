@@ -1,6 +1,8 @@
 package dev.matthiesen.global_ban.common.menu;
 
 import dev.matthiesen.global_ban.common.def.PunishmentRecord;
+import dev.matthiesen.global_ban.common.registry.PermissionRegistry;
+import dev.matthiesen.matthiesen_core.common.api.permissions.Permission;
 import dev.matthiesen.matthiesen_core.common.api.server_menu.ServerUIManager;
 import dev.matthiesen.matthiesen_core.common.api.server_menu.container.VirtualBookContainer;
 import dev.matthiesen.matthiesen_core.common.utility.SoundsPlayer;
@@ -47,7 +49,15 @@ public record PunishmentMenu(ServerPlayer player, PunishmentRecord punishment) {
         return container;
     }
 
+    public Permission requiredPermission() {
+        return PermissionRegistry.COMMAND_BAN_LIST_PERMISSION;
+    }
+
     public void open() {
+        if (!PermissionRegistry.checkPermission(player, requiredPermission())) {
+            player.sendSystemMessage(Component.literal("You do not have permission to view this menu.").withStyle(ChatFormatting.RED));
+            return;
+        }
         ServerUIManager.openUIForcefully(player, getBook());
         new SoundsPlayer(SoundEvents.UI_BUTTON_CLICK.value()).play(player);
     }

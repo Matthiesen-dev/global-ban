@@ -1,6 +1,8 @@
 package dev.matthiesen.global_ban.common.menu;
 
+import dev.matthiesen.global_ban.common.registry.PermissionRegistry;
 import dev.matthiesen.global_ban.common.utils.MenuUtilities;
+import dev.matthiesen.matthiesen_core.common.api.permissions.Permission;
 import dev.matthiesen.matthiesen_core.common.api.server_menu.ServerUIManager;
 import dev.matthiesen.matthiesen_core.common.api.server_menu.button.*;
 import dev.matthiesen.matthiesen_core.common.api.server_menu.button.linked.*;
@@ -9,6 +11,7 @@ import dev.matthiesen.matthiesen_core.common.api.server_menu.page.*;
 import dev.matthiesen.matthiesen_core.common.api.server_menu.template.slot.TemplateSlotDelegate;
 import dev.matthiesen.matthiesen_core.common.api.server_menu.template.types.ChestTemplate;
 import dev.matthiesen.matthiesen_core.common.utility.SoundsPlayer;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -26,6 +29,8 @@ public abstract class PaginatedScreen {
     protected PaginatedScreen(ServerPlayer player) {
         this.player = player;
     }
+
+    protected abstract Permission requiredPermission();
 
     protected abstract Component getDisplayTitle();
 
@@ -70,6 +75,10 @@ public abstract class PaginatedScreen {
     }
 
     public void open() {
+        if (!PermissionRegistry.checkPermission(player, requiredPermission())) {
+            player.sendSystemMessage(Component.literal("You do not have permission to view this menu.").withStyle(ChatFormatting.RED));
+            return;
+        }
         ServerUIManager.openUIForcefully(player, getPage());
         new SoundsPlayer(SoundEvents.UI_BUTTON_CLICK.value()).play(player);
     }
