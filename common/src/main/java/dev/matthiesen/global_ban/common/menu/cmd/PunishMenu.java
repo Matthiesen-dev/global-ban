@@ -3,7 +3,9 @@ package dev.matthiesen.global_ban.common.menu.cmd;
 import dev.matthiesen.global_ban.common.GlobalBanCommon;
 import dev.matthiesen.global_ban.common.def.*;
 import dev.matthiesen.global_ban.common.menu.PaginatedScreen;
+import dev.matthiesen.global_ban.common.registry.PermissionRegistry;
 import dev.matthiesen.global_ban.common.utils.Helpers;
+import dev.matthiesen.matthiesen_core.common.api.permissions.Permission;
 import dev.matthiesen.matthiesen_core.common.api.server_menu.button.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,6 +30,15 @@ public final class PunishMenu extends PaginatedScreen {
             case BAN -> temp ? "Temporary Ban" : "Ban";
             case IP_BAN -> temp ? "Temporary IP Ban" : "IP Ban";
             case KICK -> "Kick";
+        };
+    }
+
+    @Override
+    protected Permission requiredPermission() {
+        return switch (type) {
+            case BAN -> temp ? PermissionRegistry.COMMAND_TEMP_BAN_PERMISSION : PermissionRegistry.COMMAND_BAN_PERMISSION;
+            case IP_BAN -> temp ? PermissionRegistry.COMMAND_TEMP_BAN_IP_PERMISSION : PermissionRegistry.COMMAND_BAN_IP_PERMISSION;
+            case KICK -> PermissionRegistry.COMMAND_KICK_PERMISSION;
         };
     }
 

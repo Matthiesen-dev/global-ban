@@ -2,7 +2,9 @@ package dev.matthiesen.global_ban.common.menu;
 
 import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
 import dev.matthiesen.global_ban.common.def.PunishmentRecord;
+import dev.matthiesen.global_ban.common.registry.PermissionRegistry;
 import dev.matthiesen.global_ban.common.utils.MenuUtilities;
+import dev.matthiesen.matthiesen_core.common.api.permissions.Permission;
 import dev.matthiesen.matthiesen_core.common.api.server_menu.button.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -24,6 +26,11 @@ public final class BanListMenu extends PaginatedScreen {
         List<PunishmentRecord> punishments = GlobalBanConfig.getPunished();
         punishments.sort(Comparator.comparingLong(p -> -p.timestamp));
         this.punishments = new ArrayList<>(punishments);
+    }
+
+    @Override
+    protected Permission requiredPermission() {
+        return PermissionRegistry.COMMAND_BAN_LIST_PERMISSION;
     }
 
     @Override
