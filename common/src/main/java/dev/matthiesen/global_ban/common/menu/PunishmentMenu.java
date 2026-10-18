@@ -15,9 +15,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 
 public record PunishmentMenu(ServerPlayer player, PunishmentRecord punishment) {
-    private MutableComponent createLine(String label, String value, ChatFormatting labelColor, ChatFormatting valueColor) {
+    private MutableComponent createLine(String label, String value, ChatFormatting valueColor) {
         return Component.literal(label)
-                .setStyle(Style.EMPTY.withBold(true).withColor(labelColor))
+                .setStyle(Style.EMPTY.withBold(true))
                 .append(Component.literal(value).setStyle(Style.EMPTY.withBold(false).withColor(valueColor)))
                 .append(Component.literal("\n"));
     }
@@ -32,17 +32,17 @@ public record PunishmentMenu(ServerPlayer player, PunishmentRecord punishment) {
         VirtualBookContainer container = new VirtualBookContainer(label, "Server Console");
 
         container.addSection(
-                createLine("Type: ", punishment.type().name(), ChatFormatting.RED, ChatFormatting.RED)
-                        .append(createLine("Date: ", punishment.getFormattedDate(), ChatFormatting.YELLOW, ChatFormatting.YELLOW))
-                        .append(createLine("Expires: ", punishment.getFormattedExpirationDate(), ChatFormatting.AQUA, ChatFormatting.AQUA))
-                        .append(createLine("By: ", punishment.punisherDisplayName, ChatFormatting.GREEN, ChatFormatting.GREEN))
-                        .append(createLine("Reason: ", punishment.reason, ChatFormatting.GRAY, ChatFormatting.RESET))
+                createLine("Type: ", punishment.type().name(), ChatFormatting.DARK_RED)
+                        .append(createLine("Date: ", punishment.getFormattedDate(), ChatFormatting.DARK_BLUE))
+                        .append(createLine("Expires: ", punishment.getFormattedExpirationDate(), ChatFormatting.AQUA))
+                        .append(createLine("By: ", punishment.punisherDisplayName, ChatFormatting.GREEN))
+                        .append(createLine("Reason: ", punishment.reason, ChatFormatting.RESET))
                         .append(Component.literal("\n"))
                         .append(
                                 container.createActionButton(
                                         "[Cancel]",
                                         eventPlayer -> new BanListMenu(eventPlayer).open(),
-                                        ChatFormatting.RED
+                                        ChatFormatting.DARK_RED
                                 )
                         )
                         .append(Component.literal(" "))
