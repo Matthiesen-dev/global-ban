@@ -22,16 +22,23 @@ public record PunishmentMenu(ServerPlayer player, PunishmentRecord punishment) {
     }
 
     private VirtualBookContainer getBook() {
+        String labelPrefix = switch (punishment.type()) {
+            case BAN -> "Player: ";
+            case IP_BAN -> "IP: ";
+            default -> "Unknown: ";
+        };
+
         String label = switch (punishment.type()) {
             case BAN -> punishment.playerDisplayName;
-            case IP_BAN -> "IP: " + punishment.playerIp;
-            default -> "Unknown";
+            case IP_BAN -> punishment.playerIp;
+            default -> "N/A";
         };
 
         VirtualBookContainer container = new VirtualBookContainer(label, "Server Console");
 
         container.addSection(
-                createLine("Type: ", punishment.type().name(), ChatFormatting.DARK_RED)
+                createLine(labelPrefix, label, ChatFormatting.DARK_BLUE)
+                        .append(createLine("Type: ", punishment.type().name(), ChatFormatting.DARK_RED))
                         .append(createLine("Date: ", punishment.getFormattedDate(), ChatFormatting.DARK_BLUE))
                         .append(createLine("Expires: ", punishment.getFormattedExpirationDate(), ChatFormatting.DARK_RED))
                         .append(createLine("By: ", punishment.punisherDisplayName, ChatFormatting.DARK_PURPLE))
