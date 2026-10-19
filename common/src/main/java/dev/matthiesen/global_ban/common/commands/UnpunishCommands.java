@@ -99,14 +99,14 @@ public final class UnpunishCommands implements CoreCommand {
                     if (type != null) {
                         switch (type) {
                             case BAN -> {
-                                Integer result = GlobalBanCommon.Events.UNPUNISH_PLAYER.emit(new UnPunishPlayerEvent(punishment, false));
+                                Integer result = GlobalBanCommon.Events.UNPUNISH_PLAYER.emit(new UnPunishPlayerEvent(punishment, false, executor));
                                 count += result != null ? result : 0;
                                 var temp = String.join("\n", serverConfig.messages_unbanChatMessage.get());
                                 var processed = Helpers.processPlaceholders(temp, punishment.getPlaceholders());
                                 message = processed.toComponent();
                             }
                             case IP_BAN -> {
-                                Integer result = GlobalBanCommon.Events.UNPUNISH_PLAYER.emit(new UnPunishPlayerEvent(punishment, false));
+                                Integer result = GlobalBanCommon.Events.UNPUNISH_PLAYER.emit(new UnPunishPlayerEvent(punishment, false, executor));
                                 count += result != null ? result : 0;
                                 var temp = String.join("\n", serverConfig.messages_ipUnbanChatMessage.get());
                                 var processed = Helpers.processPlaceholders(temp, punishment.getPlaceholders());

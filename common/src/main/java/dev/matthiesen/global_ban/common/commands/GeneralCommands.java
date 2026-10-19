@@ -63,6 +63,8 @@ public final class GeneralCommands implements CoreCommand {
             context.getSource().sendSystemMessage(
                     Component.literal("Global Ban configuration reloaded successfully.")
             );
+            GlobalBanCommon.securityLog("Player " + context.getSource().getTextName() + " reloaded the Global Ban configuration.");
+
         } catch (Exception e) {
             GlobalBanCommon.INSTANCE.createErrorLog("Failed to reload configuration", e);
             context.getSource().sendFailure(Component.literal("Failed to reload configuration. Check the server logs for more information."));
@@ -86,6 +88,7 @@ public final class GeneralCommands implements CoreCommand {
                 }
                 GlobalBanConfig.createForceSyncRequest();
                 context.getSource().sendSystemMessage(Component.literal("Successfully forced a sync of punishments."));
+                GlobalBanCommon.securityLog("Player " + context.getSource().getTextName() + " forced a sync of punishments.");
             } catch (Exception e) {
                 GlobalBanCommon.INSTANCE.createErrorLog("Failed to force sync punishments", e);
                 context.getSource().sendFailure(Component.literal("Failed to force sync punishments. Check the server logs for more information."));
@@ -107,6 +110,7 @@ public final class GeneralCommands implements CoreCommand {
                         Component.literal("Failed to import vanilla bans into Global Ban. Check the server logs for more information.")
                 );
             }
+            GlobalBanCommon.securityLog("Player " + context.getSource().getTextName() + " imported vanilla bans into Global Ban. Cleanup: " + cleanup);
         } catch (Exception e) {
             GlobalBanCommon.INSTANCE.createErrorLog("Failed to import vanilla bans", e);
             context.getSource().sendFailure(Component.literal("Failed to import vanilla bans into Global Ban. Check the server logs for more information."));
@@ -121,6 +125,7 @@ public final class GeneralCommands implements CoreCommand {
                 List<PunishmentRecord> punishments = GlobalBanConfig.getPunished();
                 punishments.sort(Comparator.comparingLong(p -> -p.timestamp));
                 createBanListMenu(punishments, source);
+                GlobalBanCommon.securityLog("Player " + source.getTextName() + " listed punishments.");
             } catch (Exception e) {
                 GlobalBanCommon.INSTANCE.createErrorLog("Failed to list punishments", e);
                 source.sendFailure(Component.literal("Failed to list punishments. Check the server logs for more information."));

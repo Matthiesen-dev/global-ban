@@ -14,6 +14,7 @@ public final class ServerConfig {
     public ModConfigSpec.BooleanValue showPunishActionsInChat;
     public ModConfigSpec.ConfigValue<String> defaultBanReason;
     public ModConfigSpec.EnumValue<BuiltInTextParsers> textParser;
+    public ModConfigSpec.BooleanValue securityLoggingEnabled;
 
     public ModConfigSpec.IntValue scheduler_cpuCorePoolSize;
     public ModConfigSpec.LongValue scheduler_expiredPunishmentsCheckInterval;
@@ -54,12 +55,12 @@ public final class ServerConfig {
                 .define("showKnownAccounts", false);
         showPunishActionsInChat = builder.comment("Show punish actions in chat")
                 .define("showPunishActionsInChat", false);
-
         defaultBanReason = builder.comment("Default ban reason to use when banning a player without a reason")
                 .define("defaultBanReason", "Unknown reason");
-
         textParser = builder.comment("The text parser to use for parsing text")
                 .defineEnum("textParser", BuiltInTextParsers.VANILLA);
+        securityLoggingEnabled = builder.comment("Enable security logging")
+                .define("securityLoggingEnabled", true);
 
         builder.comment("Scheduler Config").push("scheduler");
         scheduler_cpuCorePoolSize = builder.comment("The number of CPU cores to use for the scheduler")

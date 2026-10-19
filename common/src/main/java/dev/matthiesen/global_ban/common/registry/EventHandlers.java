@@ -24,6 +24,7 @@ import java.util.*;
 public final class EventHandlers {
     public static void onServerStarting(ServerEvent.Starting starting) {
         IpCache.handleServerStarting();
+        GlobalBanCommon.INSTANCE.createInfoLog("Global Ban is starting...");
     }
 
     public static void onServerStarted(ServerEvent.Started started) {
@@ -33,6 +34,7 @@ public final class EventHandlers {
 
     public static void onServerStopping(ServerEvent.Stopping stopping) {
         IpCache.writeCacheToFile();
+        GlobalBanCommon.INSTANCE.createInfoLog("Global Ban is stopping...");
     }
 
     public static void onConfigReloading(ConfigEvent.Reloading reloading) {
@@ -154,6 +156,8 @@ public final class EventHandlers {
         if (record.type().shouldRecord) {
             GlobalBanConfig.addPunishment(record);
         }
+
+        event.logSecurity();
     }
 
     public static Integer onUnpunishPlayer(UnPunishPlayerEvent event) {
@@ -182,6 +186,8 @@ public final class EventHandlers {
         } else {
             GlobalBanCommon.INSTANCE.createInfoLog("Punishment expired: " + record.toString());
         }
+
+        event.logSecurity();
         return GlobalBanConfig.removePunishment(record, event.fromRemote());
     }
 
@@ -191,6 +197,7 @@ public final class EventHandlers {
         } else if (event.uuid() != null) {
             return GlobalBanConfig.clearPunishments(event.uuid());
         }
+        event.logSecurity();
         return 0;
     }
 
@@ -240,6 +247,7 @@ public final class EventHandlers {
             }
         }
 
+        event.logSecurity(punishment);
         return punishment;
     }
 }

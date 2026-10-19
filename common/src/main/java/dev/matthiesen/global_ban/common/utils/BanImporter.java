@@ -25,7 +25,7 @@ public final class BanImporter {
             handleIpBans(cleanup);
             return true;
         } catch (Exception e) {
-            GlobalBanCommon.INSTANCE.createErrorLog("Failed to import vanilla bans", e);
+            GlobalBanCommon.INSTANCE.createErrorLog("[IMPORTER] Failed to import vanilla bans", e);
             return false;
         }
     }
@@ -41,7 +41,7 @@ public final class BanImporter {
                     banList.remove(profile);
                 }
             } catch (Exception e) {
-                GlobalBanCommon.INSTANCE.createErrorLog("Failed to handle player ban entry", e);
+                GlobalBanCommon.INSTANCE.createErrorLog("[IMPORTER] Failed to handle player ban entry", e);
             }
         }
     }
@@ -57,7 +57,7 @@ public final class BanImporter {
                     ipBanList.remove(ip);
                 }
             } catch (Exception e) {
-                GlobalBanCommon.INSTANCE.createErrorLog("Failed to handle IP ban entry", e);
+                GlobalBanCommon.INSTANCE.createErrorLog("[IMPORTER] Failed to handle IP ban entry", e);
             }
         }
     }

@@ -22,7 +22,7 @@ public final class PunishmentSync {
     public static void run() {
         String apiUrl = GlobalBanConfig.SERVER_CONFIG.scheduler_apiSyncUrl.get();
         if (apiUrl == null || apiUrl.isEmpty()) {
-            GlobalBanCommon.INSTANCE.createWarnLog("Sync API URL is not configured. Skipping punishment sync.");
+            GlobalBanCommon.INSTANCE.createWarnLog("[API SYNC] Sync API URL is not configured. Skipping punishment sync.");
             return;
         }
 
@@ -38,9 +38,9 @@ public final class PunishmentSync {
                 })
                 .thenAccept(syncData -> {
                     if (syncData.punishments().isEmpty()) {
-                        GlobalBanCommon.INSTANCE.createInfoLog("No punishments received from the sync API.");
+                        GlobalBanCommon.INSTANCE.createInfoLog("[API SYNC] No punishments received from the sync API.");
                     } else {
-                        GlobalBanCommon.INSTANCE.createInfoLog("Received " + syncData.punishments().size() + " punishments from the sync API.");
+                        GlobalBanCommon.INSTANCE.createInfoLog("[API SYNC] Received " + syncData.punishments().size() + " punishments from the sync API.");
                         for (var newPunishment : syncData.punishments()) {
                             newPunishment.record().markAsSynced();
                             switch (newPunishment.type()) {
@@ -51,7 +51,7 @@ public final class PunishmentSync {
                     }
                 })
                 .exceptionally(throwable -> {
-                    GlobalBanCommon.INSTANCE.createErrorLog("Error during punishment sync: " + throwable.getMessage());
+                    GlobalBanCommon.INSTANCE.createErrorLog("[API SYNC] Error during punishment sync: " + throwable.getMessage());
                     return null;
                 });
     }

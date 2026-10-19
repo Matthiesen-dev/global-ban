@@ -25,6 +25,12 @@ public final class GlobalBanCommon extends AbstractCommonMod {
         public static final ResultEventObservable<ClearPunishmentEvent, Integer> CLEAR_PUNISHMENTS = new ResultEventObservable<>();
     }
 
+    public static void securityLog(String message) {
+        if (GlobalBanConfig.SERVER_CONFIG.securityLoggingEnabled.get()) {
+            INSTANCE.createInfoLog("[SECURITY] " + message);
+        }
+    }
+
     public GlobalBanCommon() {
         super(MOD_ID, MOD_NAME);
     }
