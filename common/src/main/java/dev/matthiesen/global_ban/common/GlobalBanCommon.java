@@ -4,6 +4,7 @@ import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
 import dev.matthiesen.global_ban.common.def.PunishmentRecord;
 import dev.matthiesen.global_ban.common.def.events.*;
 import dev.matthiesen.global_ban.common.registry.*;
+import dev.matthiesen.global_ban.common.utils.AuditLog;
 import dev.matthiesen.libs.faststats.Token;
 import dev.matthiesen.matthiesen_core.common.AbstractCommonMod;
 import dev.matthiesen.matthiesen_core.common.api.events.EventObservable;
@@ -23,6 +24,15 @@ public final class GlobalBanCommon extends AbstractCommonMod {
         public static final EventObservable<PunishPlayerEvent> PUNISH_PLAYER = new EventObservable<>();
         public static final ResultEventObservable<UnPunishPlayerEvent, Integer> UNPUNISH_PLAYER = new ResultEventObservable<>();
         public static final ResultEventObservable<ClearPunishmentEvent, Integer> CLEAR_PUNISHMENTS = new ResultEventObservable<>();
+    }
+
+    public static void securityLog(String message) {
+        if (GlobalBanConfig.SERVER_CONFIG.securityLoggingEnabled.get()) {
+            INSTANCE.createInfoLog("[SECURITY] " + message);
+        }
+        if (GlobalBanConfig.SERVER_CONFIG.securityAuditLoggingEnabled.get()) {
+            AuditLog.appendToAuditLog(message);
+        }
     }
 
     public GlobalBanCommon() {

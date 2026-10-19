@@ -1,5 +1,6 @@
 package dev.matthiesen.global_ban.common.menu;
 
+import dev.matthiesen.global_ban.common.GlobalBanCommon;
 import dev.matthiesen.global_ban.common.def.PunishmentRecord;
 import dev.matthiesen.global_ban.common.registry.PermissionRegistry;
 import dev.matthiesen.matthiesen_core.common.api.permissions.Permission;
@@ -21,23 +22,28 @@ public record PunishmentMenu(ServerPlayer player, PunishmentRecord punishment) {
                 .append(Component.literal("\n"));
     }
 
-    private VirtualBookContainer getBook() {
-        String labelPrefix = switch (punishment.type()) {
+    private String getLabelPrefix() {
+        return switch (punishment.type()) {
             case BAN -> "Player: ";
             case IP_BAN -> "IP: ";
             default -> "Unknown: ";
         };
+    }
 
-        String label = switch (punishment.type()) {
+    private String getLabel() {
+        return switch (punishment.type()) {
             case BAN -> punishment.playerDisplayName;
             case IP_BAN -> punishment.playerIp;
             default -> "N/A";
         };
+    }
 
+    private VirtualBookContainer getBook() {
+        String label = getLabel();
         VirtualBookContainer container = new VirtualBookContainer(label, "Server Console");
 
         container.addSection(
-                createLine(labelPrefix, label, ChatFormatting.DARK_BLUE)
+                createLine(getLabelPrefix(), label, ChatFormatting.DARK_BLUE)
                         .append(createLine("Type: ", punishment.type().name(), ChatFormatting.DARK_RED))
                         .append(createLine("Date: ", punishment.getFormattedDate(), ChatFormatting.DARK_BLUE))
                         .append(createLine("Expires: ", punishment.getFormattedExpirationDate(), ChatFormatting.DARK_RED))
@@ -67,5 +73,6 @@ public record PunishmentMenu(ServerPlayer player, PunishmentRecord punishment) {
         }
         ServerUIManager.openUIForcefully(player, getBook());
         new SoundsPlayer(SoundEvents.UI_BUTTON_CLICK.value()).play(player);
+        GlobalBanCommon.securityLog("Player " + player.getGameProfile().getName() + " viewed punishment details for " + getLabelPrefix() + getLabel() + " (" + punishment.type() + ")");
     }
 }
