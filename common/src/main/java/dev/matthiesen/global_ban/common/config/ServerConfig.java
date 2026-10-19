@@ -15,6 +15,8 @@ public final class ServerConfig {
     public ModConfigSpec.ConfigValue<String> defaultBanReason;
     public ModConfigSpec.EnumValue<BuiltInTextParsers> textParser;
     public ModConfigSpec.BooleanValue securityLoggingEnabled;
+    public ModConfigSpec.BooleanValue securityAuditLoggingEnabled;
+    public ModConfigSpec.IntValue securityAuditLoggingMaxDays;
 
     public ModConfigSpec.IntValue scheduler_cpuCorePoolSize;
     public ModConfigSpec.LongValue scheduler_expiredPunishmentsCheckInterval;
@@ -61,6 +63,10 @@ public final class ServerConfig {
                 .defineEnum("textParser", BuiltInTextParsers.VANILLA);
         securityLoggingEnabled = builder.comment("Enable security logging")
                 .define("securityLoggingEnabled", true);
+        securityAuditLoggingEnabled = builder.comment("Enable security audit logging")
+                .define("securityAuditLoggingEnabled", false);
+        securityAuditLoggingMaxDays = builder.comment("The maximum number of days to keep security audit logs")
+                .defineInRange("securityAuditLoggingMaxDays", 30, 1, Integer.MAX_VALUE);
 
         builder.comment("Scheduler Config").push("scheduler");
         scheduler_cpuCorePoolSize = builder.comment("The number of CPU cores to use for the scheduler")
