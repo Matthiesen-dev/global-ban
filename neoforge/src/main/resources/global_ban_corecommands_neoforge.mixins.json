@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_21",
+  "package": "dev.matthiesen.global_ban.neoforge.mixins.corecommands",
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+    "CCKickCmdMixin",
+    "CCTempbanCmdMixin",
+    "CCUnbanCmdMixin"
+  ]
+}
