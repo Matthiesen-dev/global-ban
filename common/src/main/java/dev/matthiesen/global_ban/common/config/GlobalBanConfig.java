@@ -60,15 +60,25 @@ public final class GlobalBanConfig {
     }
 
     private static List<PunishmentRecord> loadPunished() {
-        return PUNISHMENTS.punished.get().stream()
-                .map(PunishmentRecord::deserialize)
-                .toList();
+        PunishmentStoreType storeType = SERVER_CONFIG.storage_type.get();
+        return switch (storeType) {
+            case CONFIG -> PUNISHMENTS.punished.get().stream()
+                    .map(PunishmentRecord::deserialize)
+                    .toList();
+        };
     }
 
+    // Warning Suppressed for now, Since we plan to add more storage types in the future, and this will be used then.
+    @SuppressWarnings("SwitchStatementWithTooFewBranches")
     private static void saveRecords(List<PunishmentRecord> records) {
-        PUNISHMENTS.punished.set(records.stream().map(PunishmentRecord::serialize).toList());
-        PUNISHMENTS.punished.save();
-        reloadPunished();
+        PunishmentStoreType storeType = SERVER_CONFIG.storage_type.get();
+        switch (storeType) {
+            case CONFIG -> {
+                PUNISHMENTS.punished.set(records.stream().map(PunishmentRecord::serialize).toList());
+                PUNISHMENTS.punished.save();
+                reloadPunished();
+            }
+        }
     }
 
     private static boolean isSyncEnabled() {

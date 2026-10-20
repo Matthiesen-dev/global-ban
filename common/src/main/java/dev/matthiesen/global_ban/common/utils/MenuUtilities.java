@@ -21,9 +21,9 @@ public final class MenuUtilities {
     public static final Item CLOSE_ITEM = Items.BARRIER;
     public static final Item PLAYER_RECORD_ITEM = Items.PLAYER_HEAD;
     public static final Item IP_RECORD_ITEM = Items.NAME_TAG;
-    public static final Item PUNISH_ITEM = Items.RED_DYE;
     public static final Item DURATION_ITEM = Items.CLOCK;
     public static final Item REASON_ITEM = Items.PAPER;
+    public static final Item CONFIRM_ITEM = Items.GREEN_DYE;
 
     private static ItemStack builder(Item item, Component name) {
         return new ItemBuilder(item)
@@ -56,8 +56,8 @@ public final class MenuUtilities {
         return builder(CLOSE_ITEM, Component.literal("Cancel"));
     }
 
-    public static ItemStack getPunishItem(String playerNameOrIp) {
-        return builder(PUNISH_ITEM, Component.literal("Punish " + playerNameOrIp));
+    public static ItemStack getConfirmItem() {
+        return builder(CONFIRM_ITEM, Component.literal("Confirm"));
     }
 
     public static ItemStack getDurationItem(String duration) {

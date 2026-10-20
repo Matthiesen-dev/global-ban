@@ -18,6 +18,7 @@ import java.time.format.DateTimeParseException;
 import java.util.stream.Stream;
 
 public final class AuditLog {
+    private static final String LOG_DIR = "logs";
     private static final String LOG_NAME = "audit.log";
     private static final String ROLLED_PREFIX = "audit-";
     private static final String ROLLED_SUFFIX = ".log";
@@ -29,7 +30,7 @@ public final class AuditLog {
     }
 
     private static Path getAuditLogPath() {
-        return GlobalBanCommon.INSTANCE.getCommonUtils().getModConfig(GlobalBanCommon.MOD_ID, LOG_NAME);
+        return GlobalBanCommon.INSTANCE.getCommonUtils().getModConfig(GlobalBanCommon.MOD_ID, LOG_DIR + "/" + LOG_NAME);
     }
 
     private static String buildAuditLogString(String message) {
@@ -75,7 +76,7 @@ public final class AuditLog {
         }
 
         if (dir != null) {
-            pruneOldLogs(dir, today.minusDays(GlobalBanConfig.SERVER_CONFIG.securityAuditLoggingMaxDays.get()));
+            pruneOldLogs(dir, today.minusDays(GlobalBanConfig.SERVER_CONFIG.security_auditLoggingMaxDays.get()));
         }
         lastMaintenance = today;
     }

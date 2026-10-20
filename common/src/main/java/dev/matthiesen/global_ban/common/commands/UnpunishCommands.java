@@ -38,13 +38,12 @@ public final class UnpunishCommands implements CoreCommand {
     }
 
     private LiteralArgumentBuilder<CommandSourceStack> create(String command, Permission permission, PunishmentType type) {
+        var playerArg = GeneralCommands.playerArgument("player")
+                .executes(ctx -> unpunishAction(ctx, type));
         return CommandBuilder.create(command)
                 .requires(src -> PermissionRegistry.checkPermission(src, permission))
                 .executes(ctx -> createBanListMenu(ctx, type))
-                .then(
-                        GeneralCommands.playerArgument("player")
-                                .executes(ctx -> unpunishAction(ctx, type))
-                )
+                .then(playerArg)
                 .build();
     }
 

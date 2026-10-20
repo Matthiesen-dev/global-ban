@@ -8,7 +8,6 @@ import dev.matthiesen.global_ban.common.utils.MenuUtilities;
 import dev.matthiesen.matthiesen_core.common.api.permissions.Permission;
 import dev.matthiesen.matthiesen_core.common.api.server_menu.ServerUIManager;
 import dev.matthiesen.matthiesen_core.common.api.server_menu.button.*;
-import dev.matthiesen.matthiesen_core.common.api.server_menu.helpers.PaginationHelper;
 import dev.matthiesen.matthiesen_core.common.api.server_menu.page.*;
 import dev.matthiesen.matthiesen_core.common.api.server_menu.template.types.ChestTemplate;
 import dev.matthiesen.matthiesen_core.common.utility.SoundsPlayer;
@@ -17,8 +16,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 
-import java.util.List;
-
 public record PunishConfirmationMenu(
         ServerPlayer executor,
         PunishmentType type,
@@ -26,10 +23,6 @@ public record PunishConfirmationMenu(
         long duration,
         String reason
 ) {
-
-    public List<Button> getButtons() {
-        return List.of();
-    }
 
     public Component getPageTitle() {
         return Component.literal("Confirm Punishment");
@@ -57,7 +50,7 @@ public record PunishConfirmationMenu(
                 .build();
 
         Button confirmButton = ServerButton.builder()
-                .display(MenuUtilities.getPunishItem(target.getName().getString()))
+                .display(MenuUtilities.getConfirmItem())
                 .onClick(action -> {
                     GlobalBanCommon.Events.PUNISH_PLAYER.emit(new PunishPlayerEvent(record));
                     ServerUIManager.closeUI(executor);
@@ -75,15 +68,15 @@ public record PunishConfirmationMenu(
 
         ChestTemplate template = ChestTemplate.builder(3)
                 .fill(frame)
-                .set(0, 4, recordItem)
-                .set(1, 3, confirmButton)
-                .set(1, 5, cancelButton)
+                .set(1, 4, recordItem)
+                .set(1, 2, confirmButton)
+                .set(1, 6, cancelButton)
                 .build();
 
-        LinkedPage page = PaginationHelper.createPagesFromPlaceholders(template, getButtons(), null);
-        page.setTitle(getPageTitle());
-
-        return page;
+        return ServerPage.builder()
+                .template(template)
+                .title(getPageTitle())
+                .build();
     }
 
     public Permission requiredPermission() {

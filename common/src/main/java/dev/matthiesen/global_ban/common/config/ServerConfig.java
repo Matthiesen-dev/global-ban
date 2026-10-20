@@ -1,5 +1,6 @@
 package dev.matthiesen.global_ban.common.config;
 
+import dev.matthiesen.global_ban.common.def.PunishmentStoreType;
 import dev.matthiesen.matthiesen_core.common.api.text_parsers.BuiltInTextParsers;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
@@ -14,9 +15,12 @@ public final class ServerConfig {
     public ModConfigSpec.BooleanValue showPunishActionsInChat;
     public ModConfigSpec.ConfigValue<String> defaultBanReason;
     public ModConfigSpec.EnumValue<BuiltInTextParsers> textParser;
-    public ModConfigSpec.BooleanValue securityLoggingEnabled;
-    public ModConfigSpec.BooleanValue securityAuditLoggingEnabled;
-    public ModConfigSpec.IntValue securityAuditLoggingMaxDays;
+
+    public ModConfigSpec.BooleanValue security_loggingEnabled;
+    public ModConfigSpec.BooleanValue security_auditLoggingEnabled;
+    public ModConfigSpec.IntValue security_auditLoggingMaxDays;
+
+    public ModConfigSpec.EnumValue<PunishmentStoreType> storage_type;
 
     public ModConfigSpec.IntValue scheduler_cpuCorePoolSize;
     public ModConfigSpec.LongValue scheduler_expiredPunishmentsCheckInterval;
@@ -61,12 +65,23 @@ public final class ServerConfig {
                 .define("defaultBanReason", "Unknown reason");
         textParser = builder.comment("The text parser to use for parsing text")
                 .defineEnum("textParser", BuiltInTextParsers.VANILLA);
-        securityLoggingEnabled = builder.comment("Enable security logging")
+
+        builder.comment("Security Config").push("security");
+        security_loggingEnabled = builder.comment("Enable security logging")
                 .define("securityLoggingEnabled", true);
-        securityAuditLoggingEnabled = builder.comment("Enable security audit logging")
+        security_auditLoggingEnabled = builder.comment("Enable security audit logging")
                 .define("securityAuditLoggingEnabled", false);
-        securityAuditLoggingMaxDays = builder.comment("The maximum number of days to keep security audit logs")
+        security_auditLoggingMaxDays = builder.comment("The maximum number of days to keep security audit logs")
                 .defineInRange("securityAuditLoggingMaxDays", 30, 1, Integer.MAX_VALUE);
+        builder.pop(); // security
+
+        builder.comment("Storage Config").push("storage");
+        storage_type = builder.comment(
+                "The type of storage to use for punishments",
+                "This feature is currently WIP and only supports the CONFIG storage type, which stores punishments in a config file. Other storage types may be added in the future."
+                )
+                .defineEnum("type", PunishmentStoreType.CONFIG);
+        builder.pop(); // storage
 
         builder.comment("Scheduler Config").push("scheduler");
         scheduler_cpuCorePoolSize = builder.comment("The number of CPU cores to use for the scheduler")
