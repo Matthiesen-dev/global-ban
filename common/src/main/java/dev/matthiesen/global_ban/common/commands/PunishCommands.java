@@ -15,6 +15,7 @@ import dev.matthiesen.global_ban.common.utils.Helpers;
 import dev.matthiesen.matthiesen_core.common.api.command.CoreCommand;
 import dev.matthiesen.matthiesen_core.common.api.permissions.Permission;
 import dev.matthiesen.matthiesen_core.common.utility.commands.CommandBuilder;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -101,7 +102,7 @@ public final class PunishCommands implements CoreCommand {
                 var players = Helpers.lookupServerUsers(playerArg);
 
                 if (players.isEmpty()) {
-                    Component message = Component.literal("Player entry not found: " + playerArg).withStyle(net.minecraft.ChatFormatting.RED);
+                    Component message = Component.literal("Player entry not found: " + playerArg).withStyle(ChatFormatting.RED);
                     ctx.getSource().sendSystemMessage(message);
                 } else {
                     for (var player : players) {
@@ -114,6 +115,9 @@ public final class PunishCommands implements CoreCommand {
                                     type, duration, reason
                             );
                             GlobalBanCommon.Events.PUNISH_PLAYER.emit(new PunishPlayerEvent(punishment));
+                        } else {
+                            Component message = Component.literal("You do not have permission to punish this player: " + player.getUsername()).withStyle(ChatFormatting.RED);
+                            ctx.getSource().sendSystemMessage(message);
                         }
                     }
                 }
