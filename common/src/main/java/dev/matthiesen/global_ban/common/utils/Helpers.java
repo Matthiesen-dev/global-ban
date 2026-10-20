@@ -31,7 +31,7 @@ public final class Helpers {
         var server = GlobalBanCommon.INSTANCE.getCommonUtils().getServer();
         var entry = server.getPlayerList().getOps().get(gameProfile);
         boolean canBanAdmins = PermissionRegistry.checkPermission(source, PermissionRegistry.CAN_BAN_ADMINS_PERMISSION);
-        boolean blocksPunishments = PermissionRegistry.checkPermission(source, PermissionRegistry.BLOCK_PUNISHMENTS_PERMISSION);
+        boolean blocksPunishments = PermissionRegistry.checkPermission(profile.getOnlinePlayer(), PermissionRegistry.BLOCK_PUNISHMENTS_PERMISSION);
         boolean permission = canBanAdmins && !blocksPunishments;
         return (server.name().equals("Server") && source.getEntity() == null) || ((entry == null || source.hasPermission(entry.getLevel())))
                 && !blocksPunishments
