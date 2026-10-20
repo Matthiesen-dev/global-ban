@@ -37,15 +37,15 @@ public final class PunishCommands implements CoreCommand {
     }
 
     private LiteralArgumentBuilder<CommandSourceStack> create(String command, Permission permission, PunishmentType type, boolean temp) {
-        var tempArg = GeneralCommands.playerArgument("player").then(
-                Commands.argument("duration", StringArgumentType.word())
+        var reasonArg = GeneralCommands.reasonArgument("reason").executes(ctx -> punishAction(ctx, type, temp));
+        var tempArg = GeneralCommands.playerArgument("player")
+                .then(Commands.argument("duration", StringArgumentType.word())
                         .executes(ctx -> punishAction(ctx, type, true))
-                        .then(GeneralCommands.reasonArgument("reason").executes(ctx -> punishAction(ctx, type, true)))
-        );
+                        .then(reasonArg)
+                );
         var permArg = GeneralCommands.playerArgument("player")
                 .executes(ctx -> punishAction(ctx, type, false))
-                .then(GeneralCommands.reasonArgument("reason").executes(ctx -> punishAction(ctx, type, false))
-        );
+                .then(reasonArg);
         return CommandBuilder.create(command)
                 .requires(src -> PermissionRegistry.checkPermission(src, permission))
                 .executes(ctx -> punishGUIAction(ctx, type, temp))
@@ -118,6 +118,7 @@ public final class PunishCommands implements CoreCommand {
                         } else {
                             Component message = Component.literal("You do not have permission to punish this player: " + player.getUsername()).withStyle(ChatFormatting.RED);
                             ctx.getSource().sendSystemMessage(message);
+                            GlobalBanCommon.securityLog("Player " + ctx.getSource().getTextName() + " attempted to punish player " + player.getUsername() + " but lacked permission.");
                         }
                     }
                 }

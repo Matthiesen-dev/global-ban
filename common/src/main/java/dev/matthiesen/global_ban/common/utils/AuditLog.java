@@ -75,7 +75,7 @@ public final class AuditLog {
         }
 
         if (dir != null) {
-            pruneOldLogs(dir, today.minusDays(GlobalBanConfig.SERVER_CONFIG.securityAuditLoggingMaxDays.get()));
+            pruneOldLogs(dir, today.minusDays(GlobalBanConfig.SERVER_CONFIG.security_auditLoggingMaxDays.get()));
         }
         lastMaintenance = today;
     }

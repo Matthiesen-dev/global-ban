@@ -27,10 +27,10 @@ public final class GlobalBanCommon extends AbstractCommonMod {
     }
 
     public static void securityLog(String message) {
-        if (GlobalBanConfig.SERVER_CONFIG.securityLoggingEnabled.get()) {
+        if (GlobalBanConfig.SERVER_CONFIG.security_loggingEnabled.get()) {
             INSTANCE.createInfoLog("[SECURITY] " + message);
         }
-        if (GlobalBanConfig.SERVER_CONFIG.securityAuditLoggingEnabled.get()) {
+        if (GlobalBanConfig.SERVER_CONFIG.security_auditLoggingEnabled.get()) {
             AuditLog.appendToAuditLog(message);
         }
     }
