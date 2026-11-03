@@ -6,7 +6,6 @@ import dev.matthiesen.global_ban.common.config.*;
 import dev.matthiesen.global_ban.common.def.*;
 import dev.matthiesen.global_ban.common.def.events.*;
 import dev.matthiesen.global_ban.common.utils.*;
-import dev.matthiesen.matthiesen_core.common.api.events.config.ConfigEvent;
 import dev.matthiesen.matthiesen_core.common.api.events.server.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
