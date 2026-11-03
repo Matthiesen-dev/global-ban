@@ -106,6 +106,7 @@ Documentation for this mod can be found at [mods.matthiesen.dev](https://mods.ma
 | 1.21.1            | 1.2.7+                  | 1.0.0-beta.1+  |
 | 1.21.1            | 1.3.0+                  | 1.0.0-beta.12+ |
 | 1.21.1            | 1.3.3+                  | 1.0.0-beta.17+ |
+| 1.21.1            | 2.0.0+                  | 1.0.0-beta.23+ |
 
 ## FastStats Metrics
 
@@ -115,7 +116,7 @@ how this mod is being used and improve it over time. You can learn more about th
 
 You can also view the data collected by this mod on the [FastStats: Global Ban](https://faststats.dev/project/global-ban) page.
 
-To opt out of this data collection, set the `enabled` property to `false` in the `<game_directory>/config/matthiesen_core/metrics.properties` file.
+To opt out of this data collection, set the `enabled` property to `false` in the `<game_directory>/config/faststats/config.properties` file.
 
 ## License
 

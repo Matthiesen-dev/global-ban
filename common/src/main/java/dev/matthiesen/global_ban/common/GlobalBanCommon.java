@@ -1,16 +1,17 @@
 package dev.matthiesen.global_ban.common;
 
+import dev.faststats.Token;
 import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
 import dev.matthiesen.global_ban.common.def.PunishmentRecord;
 import dev.matthiesen.global_ban.common.def.events.*;
 import dev.matthiesen.global_ban.common.registry.*;
 import dev.matthiesen.global_ban.common.utils.AuditLog;
-import dev.matthiesen.libs.faststats.Token;
 import dev.matthiesen.matthiesen_core.common.AbstractCommonMod;
-import dev.matthiesen.matthiesen_core.common.api.events.EventObservable;
 import dev.matthiesen.matthiesen_core.common.api.events.PlatformEvents;
+import dev.matthiesen.matthiesen_core.common.api.events.observable.EventObservable;
 import dev.matthiesen.matthiesen_core.common.api.platform.loader.ModConfigType;
 import org.jetbrains.annotations.NotNull;
+import dev.matthiesen.matthiesen_core.common.api.events.observable.results.ResultEventObservable;
 
 public final class GlobalBanCommon extends AbstractCommonMod {
     public static final String MOD_ID = "global_ban";
@@ -44,17 +45,13 @@ public final class GlobalBanCommon extends AbstractCommonMod {
         return METRICS_TOKEN;
     }
 
-    public static String modConfig(String path) {
-        return MOD_ID + "/" + path + ".toml";
-    }
-
     public void initialize() {
         super.initialize();
 
         // Configs
-        registerModConfig(MOD_ID, ModConfigType.COMMON, GlobalBanConfig.SERVER_SPEC, modConfig("server-config"));
-        registerModConfig(MOD_ID, ModConfigType.COMMON, GlobalBanConfig.PUNISHMENTS_SPEC, modConfig("punished-accounts"));
-        registerModConfig(MOD_ID, ModConfigType.STARTUP, GlobalBanConfig.PERMISSIONS_SPEC, modConfig("permissions"));
+        registerModConfig(MOD_ID, ModConfigType.COMMON, GlobalBanConfig.SERVER_SPEC, modConfigPath("server-config"));
+        registerModConfig(MOD_ID, ModConfigType.COMMON, GlobalBanConfig.PUNISHMENTS_SPEC, modConfigPath("punished-accounts"));
+        registerModConfig(MOD_ID, ModConfigType.STARTUP, GlobalBanConfig.PERMISSIONS_SPEC, modConfigPath("permissions"));
 
         // Registries
         PermissionRegistry.init();

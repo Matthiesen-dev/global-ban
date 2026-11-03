@@ -6,7 +6,7 @@ import dev.matthiesen.global_ban.common.GlobalBanCommon;
 import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
 import dev.matthiesen.global_ban.common.def.PunishmentRecord;
 import dev.matthiesen.global_ban.common.registry.PermissionRegistry;
-import dev.matthiesen.matthiesen_core.common.utility.player_data.ServerUser;
+import dev.matthiesen.matthiesen_core.common.core.data.ServerUser;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;

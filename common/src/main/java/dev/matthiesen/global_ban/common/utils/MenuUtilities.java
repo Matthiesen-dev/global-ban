@@ -2,8 +2,8 @@ package dev.matthiesen.global_ban.common.utils;
 
 import com.mojang.authlib.GameProfile;
 import dev.matthiesen.global_ban.common.def.PunishmentRecord;
+import dev.matthiesen.matthiesen_core.common.core.data.ServerUser;
 import dev.matthiesen.matthiesen_core.common.utility.item.ItemBuilder;
-import dev.matthiesen.matthiesen_core.common.utility.player_data.ServerUser;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
