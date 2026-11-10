@@ -17,6 +17,7 @@ This allows for a more personalized experience for the player, and can help to r
 | `/global-ban`                           | Root command for global-ban specific commands.                                                                            |
 | `/global-ban reload`                    | Reloads the configuration files for global-ban.                                                                           |
 | `/global-ban import [cleanup boolean]`  | Imports your existing vanilla ban list into the global-ban system.                                                        |
+| `/global-ban export`                    | Exports your existing global-ban list into a vanilla ban list format.                                                     |
 | `/global-ban banlist`                   | Lists all players and IPs that are currently in your global-ban list.                                                     |
 | `/global-ban force-sync`                | Forces an initial sync of local punishments to a newly registered Remote API server. (Should only be ran once, if at all) |
 | `/kick <player> [reason]`               | Kicks a player from the server with an optional reason.                                                                   |
@@ -60,6 +61,7 @@ commands and features of the global-ban system.
 | `global_ban.command.global_ban`            | Allows Admins to use the `/global-ban` command.                         |
 | `global_ban.command.global_ban.reload`     | Allows Admins to use the `/global-ban reload` command.                  |
 | `global_ban.command.global_ban.import`     | Allows Admins to use the `/global-ban import` command.                  |
+| `global_ban.command.global_ban.export`     | Allows Admins to use the `/global-ban export` command.                  |
 | `global_ban.command.global_ban.force_sync` | Allows Admins to use the `/global-ban force-sync` command.              |
 | `global_ban.command.kick`                  | Allows Admins to use the `/kick` command.                               |
 | `global_ban.command.ban`                   | Allows Admins to use the `/ban` command.                                |
