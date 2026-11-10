@@ -11,6 +11,7 @@ import dev.matthiesen.global_ban.common.config.GlobalBanConfig;
 import dev.matthiesen.global_ban.common.def.PunishmentRecord;
 import dev.matthiesen.global_ban.common.menu.BanListMenu;
 import dev.matthiesen.global_ban.common.registry.PermissionRegistry;
+import dev.matthiesen.global_ban.common.utils.BanExporter;
 import dev.matthiesen.global_ban.common.utils.BanImporter;
 import dev.matthiesen.matthiesen_core.common.api.command.CoreCommand;
 import dev.matthiesen.matthiesen_core.common.utility.commands.CommandBuilder;
@@ -38,6 +39,10 @@ public final class GeneralCommands implements CoreCommand {
                 .requires(src -> PermissionRegistry.checkPermission(src, PermissionRegistry.COMMAND_IMPORT_PERMISSION))
                 .argument("cleanup", BoolArgumentType.bool(), arg -> arg.executes(this::importAction));
 
+        CommandBuilder exportCmd = CommandBuilder.create("export")
+                .requires(src -> PermissionRegistry.checkPermission(src, PermissionRegistry.COMMAND_EXPORT_PERMISSION))
+                .executes(this::exportAction);
+
         CommandBuilder banListCmd = CommandBuilder.create("banlist")
                 .requires(src -> PermissionRegistry.checkPermission(src, PermissionRegistry.COMMAND_BAN_LIST_PERMISSION))
                 .executes(this::listAction);
@@ -50,6 +55,7 @@ public final class GeneralCommands implements CoreCommand {
                 .requires(src -> PermissionRegistry.checkPermission(src, PermissionRegistry.COMMAND_ROOT_PERMISSION))
                 .then(reloadCmd)
                 .then(importCmd)
+                .then(exportCmd)
                 .then(banListCmd)
                 .then(forceSyncCmd);
 
@@ -114,6 +120,20 @@ public final class GeneralCommands implements CoreCommand {
         } catch (Exception e) {
             GlobalBanCommon.INSTANCE.createErrorLog("Failed to import vanilla bans", e);
             context.getSource().sendFailure(Component.literal("Failed to import vanilla bans into Global Ban. Check the server logs for more information."));
+        }
+        return 1;
+    }
+
+    public int exportAction(CommandContext<CommandSourceStack> context) {
+        try {
+            GlobalBanCommon.securityLog("Player " + context.getSource().getTextName() + " exported punishments to files.");
+            BanExporter.exportBans();
+            context.getSource().sendSystemMessage(
+                    Component.literal("Successfully exported punishments to server's exports directory.")
+            );
+        } catch (Exception e) {
+            GlobalBanCommon.INSTANCE.createErrorLog("Failed to export punishments", e);
+            context.getSource().sendFailure(Component.literal("Failed to export punishments. Check the server logs for more information."));
         }
         return 1;
     }
