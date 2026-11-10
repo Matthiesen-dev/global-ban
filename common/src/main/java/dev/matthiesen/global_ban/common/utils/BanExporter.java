@@ -59,7 +59,7 @@ public final class BanExporter {
         }
 
         public record Entry(
-                String UUID,
+                String uuid,
                 String name,
                 String created,
                 String source,
